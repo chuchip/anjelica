@@ -75,6 +75,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.*;
+import java.beans.PropertyVetoException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -91,6 +92,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class MantDesp extends ventanaPad implements PAD
 {    
+    boolean swForzadoTraz=false;
     int ART_MER=80;
     int ART_MERMA=4;
     DatTrazFrame datTrazFrame;
@@ -240,12 +242,31 @@ public class MantDesp extends ventanaPad implements PAD
             if (ht.get("admin") != null)
                 setArgumentoAdmin(Boolean.parseBoolean(ht.get("admin")));
         }
-
+    }
+    public static boolean irDespiece(int ejeNume,int deoCodi,Principal jf )
+    {
+        ejecutable prog;
+        if (jf==null)
+            return false;
+        if ((prog = jf.gestor.getProceso(MantDesp.getNombreClase())) == null)
+            return false;
+        MantDesp cm = (MantDesp) prog;
+        if (cm.inTransation())
+        {
+            mensajes.mensajeAviso("Mantenimiento Despieces ocupado. No se puede realizar la busqueda");
+            return false;
+        }
+        cm.PADQuery();
+        cm.setEjeNume(ejeNume);
+        cm.setDeoCodi(deoCodi);
+        cm.ej_query();
+        jf.gestor.ir(cm);
+        return true;
     }
     private void jbInit() throws Exception {
         if (isAdmin() )
             MODPRECIO=true; 
-        setVersion("2018-03-30" + (MODPRECIO ? " (VER PRECIOS)" : "") + (isArgumentoAdmin() ? " ADMINISTRADOR" : ""));
+        setVersion("2018-04-08" + (MODPRECIO ? " (VER PRECIOS)" : "") + (isArgumentoAdmin() ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -320,6 +341,9 @@ public class MantDesp extends ventanaPad implements PAD
         etiquetaInterior=etiqueta.getCodigoEtiqInterior(EU);
         cli_codiE.setColumnaAlias("cli_codi");
         deo_desnueE.setEnabled(false);
+        deo_feccadE.setEnabled(false);
+        deo_fecproE.setEnabled(false);
+        deo_fecsacE.setEnabled(false);
         LoginDB.iniciarLKEmpresa(EU, dtStat);
 //    stUp.setMaxRows(1);
         jtCab.cuadrarGrid();
@@ -402,7 +426,13 @@ public class MantDesp extends ventanaPad implements PAD
 
     void activarEventos() 
     {
-      
+        Btrazabilidad.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mostrarDatosTraz();
+            }
+        });
         
 //        BRestFec.addActionListener(new ActionListener()
 //        {
@@ -705,6 +735,7 @@ public class MantDesp extends ventanaPad implements PAD
                     if (!jtLin.isEnabled())
                     {
                         pro_codlE.setText(jtLin.getValString(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));
+                        pro_codlE.getNombArt(jtLin.getValString(jtLin.getSelectedRowDisab(),JTLIN_PROCODI),EU.em_cod);
                     }
                     ponFechas(pro_codlE.getDiasCaducidad(),jtLin.getValDate(jtLin.getSelectedRowDisab(),JTLIN_FECCAD));
                 }catch (ParseException | SQLException ex ) {
@@ -723,7 +754,10 @@ public class MantDesp extends ventanaPad implements PAD
             public void actionPerformed(ActionEvent e) {                
                 try {
                    if (!jtLin.isEnabled())
+                   {
                         pro_codlE.setText(jtLin.getValString(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));
+                        pro_codlE.getNombArt(jtLin.getValString(jtLin.getSelectedRowDisab(),JTLIN_PROCODI));
+                   }
                    ponFechas(pro_codlE.getDiasCaducidad(),jtLin.getValDate(jtLin.getSelectedRowDisab(),JTLIN_FECCAD));
                 } catch (ParseException | SQLException ex) {
                        Error("Error al poner fechas produccion",ex);
@@ -1168,12 +1202,12 @@ public class MantDesp extends ventanaPad implements PAD
             return false;
         }
         
-//        if (Formatear.comparaFechas(deo_feccadE.getDate(), deo_fecproE.getDate()) < 1)
-//        {
-//            mensajeErr("Fecha Despiece debe ser superior en más de siete dias a la producion");
-//            deo_feccadE.requestFocusLater();
+        if (Formatear.comparaFechas(deo_feccadE.getDate(), deo_fecproE.getDate()) < 1)
+        {
+            msgBox("Fecha Despiece deberia ser superior en más de siete dias a la producion");
+///            deo_feccadE.requestFocusLater();
 //            return false;
-//        }
+        }
       
         if (!deo_fecsacE.isNull() )
         {
@@ -1394,9 +1428,7 @@ public class MantDesp extends ventanaPad implements PAD
                     desorca.updateTidCodi(dtAdd);
                     dtAdd.commit();
                     if (tid_codiE.getValorDec() == MantTipDesp.CONGELADO_DESPIECE)
-                    {
                         deo_feccadE.setDate(Formatear.sumaDiasDate(deo_fecproE.getDate(), MantTipDesp.DIAS_CONGELADO));
-                    }
                 }
             }
 
@@ -1468,7 +1500,10 @@ public class MantDesp extends ventanaPad implements PAD
             return ") order by eje_nume,grd_nume";
         }
     }
-
+    public void setDeoCodi(int deoCodi) {
+        deo_codiE.setValorInt(deoCodi);
+        opVerGrupo.setSelected(false);
+    }
     public void setDeoCodi(String deoCodi) {
         deo_codiE.setText(deoCodi);
         opVerGrupo.setSelected(false);
@@ -1684,7 +1719,7 @@ public class MantDesp extends ventanaPad implements PAD
     }
     @Override
     public void PADEdit() {
-         
+        
         if (opVerGrupo.isSelected())
         {
             msgBox("No puede editar si se estan viendo GRUPOS");
@@ -1803,6 +1838,7 @@ public class MantDesp extends ventanaPad implements PAD
             tid_codiE.setDeoCodi(deo_codiE.getText()); // Para q no se controle a si mismo.
             proCodTD = jtCab.getValorInt(0, JTCAB_PROCODI);
             genDatEtiq();
+            swForzadoTraz=utdesp.isForzadaTrazab();
             ultFecCaduc=jtLin.getValDate(jtLin.getRowCount()-1,JTLIN_FECCAD);
 //            proCodiB = 0;
             boolean isBlock = deo_blockE.getValor().equals("S");
@@ -1994,6 +2030,7 @@ public class MantDesp extends ventanaPad implements PAD
     public void PADAddNew() {
         try
         {
+            swForzadoTraz=false;
             inTidCodi=false;
             swErrCab=false;
 //            proCodiB = 0;
@@ -2177,9 +2214,13 @@ public class MantDesp extends ventanaPad implements PAD
                          jtCab.ponValores(jtCab.getSelectedRow());
                          cambiaLineajtCab(jtCab.getSelectedRow());
                          jtLin.setEnabled(false);
+                         msgBox("Introducido "+kgDifE.getValorDec()*-1+" KG en entrada para cuadrar despiece");
                     }
-                    msgBox("Kilos de salida superior a los de entrada. Corrija pesos");
-                    return false;               
+                    else
+                    {
+                        msgBox("SOBRAN "+kgDifE.getValorDec()*-1+" en SALIDA");
+                        return false;
+                    }
             }
             if (kgDifE.getValorDec() < kgOrigE.getValorDec() * 0.10 && kgDifE.getValorDec()> 0.01)
             { // Insertar linea de mer
@@ -2204,8 +2245,7 @@ public class MantDesp extends ventanaPad implements PAD
                     jtLin.ponValores(jtLin.getSelectedRow());
                     cambiaLineajtLin(jtLin.getSelectedRow());
                     jtCab.setEnabled(false);
-                     msgBox("Kilos de salida inferior a los de entrada. COMPRUEBE PESOS!");
-                     return false;  
+                    msgBox("Introducido "+kgDifE.getValorDec()+" KG en salida para cuadrar despiece!");
             }
             
             if (kgDifE.getValorDec() <= kgOrigE.getValorDec() * MantDesp.LIMDIF)
@@ -2222,10 +2262,16 @@ public class MantDesp extends ventanaPad implements PAD
                         return false;
                     }
                 }
-            } else
+            }
+            else
             {
-                if (getNuLiCab() > 1)
+                if (getNuLiCab() >= 1)
                 {
+                    if (!isAdmin() )
+                    {
+                        msgBox("Faltan kilos en salida. Imposible guardar despiece");
+                        return false;
+                    }
                     int res = mensajes.mensajePreguntar("Faltan kilos en productos salida. ¿Dejar despiece como pendiente?");
                     if (res != mensajes.OK)
                     {
@@ -2709,7 +2755,8 @@ public class MantDesp extends ventanaPad implements PAD
 
         switch (est)
         {
-            case navegador.TODOS:                
+            case navegador.TODOS:  
+                
                 opVerGrupo.setEnabled(enab);
                 deo_nulogeE.setEnabled(false);
                 deo_selogeE.setEnabled(false);
@@ -3873,11 +3920,15 @@ public class MantDesp extends ventanaPad implements PAD
            utdesp.setNumeroCrotal(crotal);       
         }
         s="update stockpart set stp_nucrot='"+crotal+"'"+
+                ", stp_traaut = 0 "+
                 ", stp_painac='"+utdesp.getPaisNacimiento()+"'"+
+                ", stp_paisde='"+utdesp.getPaisSalaDespiece()+"'"+
                 ", stp_engpai='"+utdesp.getPaisEngorde()+"'"+
                 ", stp_paisac='"+utdesp.getPaisSacrificio()+"'"+
-               (Formatear.comparaFechas(def_feccadE.getDate(),deo_feccadE.getDate())==0?"": ",stp_fecpro='"+Formatear.getFechaDB(deoFecpro)+"'")+
-               (deoFecSacr==null || Formatear.comparaFechas(def_feccadE.getDate(),deo_feccadE.getDate())==0?"":", stp_fecsac = '"+Formatear.getFechaDB(deoFecSacr)+"'")+
+                ", stp_matad='"+utdesp.getMatadero()+"'"+
+                ", stp_saldes='"+utdesp.getSalaDespiece()+"'"+            
+                ", stp_fecpro='"+Formatear.getFechaDB(deoFecpro)+"'"+
+                (deoFecSacr==null?", stp_fecsac = null":", stp_fecsac = '"+Formatear.getFechaDB(deoFecSacr)+"'")+
                " where pro_nupar="+ numLot+
                 " and pro_serie='"+serLot+"' "+
                 " and eje_nume="+ejeLot+
@@ -4201,6 +4252,10 @@ public class MantDesp extends ventanaPad implements PAD
 //            nInd, almCodi, kilos, unid);
 //    }
 
+     
+ 
+  
+  
     /**
      * Actualiza Total de kilos
      * @param grid Número de grid a actualizar (0: TODOS)
@@ -4437,6 +4492,7 @@ public class MantDesp extends ventanaPad implements PAD
         deo_almoriE = new gnu.chu.controles.CLinkBox();
         cLabel12 = new gnu.chu.controles.CLabel();
         deo_almdesE = new gnu.chu.controles.CLinkBox();
+        Btrazabilidad = new gnu.chu.controles.CButton();
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();
         Bcancelar = new gnu.chu.controles.CButton();
@@ -4886,12 +4942,12 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel6.setText("Fec. Caduc.");
                 Pcabe.add(cLabel6);
-                cLabel6.setBounds(400, 70, 70, 17);
+                cLabel6.setBounds(400, 67, 70, 17);
 
                 deo_feccadE.setDependePadre(false);
                 deo_feccadE.setPreferredSize(new java.awt.Dimension(10, 18));
                 Pcabe.add(deo_feccadE);
-                deo_feccadE.setBounds(470, 70, 70, 17);
+                deo_feccadE.setBounds(470, 67, 70, 17);
 
                 BsaltaCab.setText("cButton1");
                 Pcabe.add(BsaltaCab);
@@ -4936,13 +4992,18 @@ public class MantDesp extends ventanaPad implements PAD
 
                 cLabel12.setText("Alm. Destino");
                 Pcabe.add(cLabel12);
-                cLabel12.setBounds(380, 85, 80, 17);
+                cLabel12.setBounds(300, 85, 80, 17);
 
                 deo_almdesE.setToolTipText("Almacen Destino");
                 deo_almdesE.setAncTexto(30);
                 deo_almoriE.setFormato(Types.DECIMAL,"##9");
                 Pcabe.add(deo_almdesE);
-                deo_almdesE.setBounds(470, 85, 214, 17);
+                deo_almdesE.setBounds(390, 85, 214, 17);
+
+                Btrazabilidad.setText("Dat.Trazabilidad");
+                Btrazabilidad.setDependePadre(false);
+                Pcabe.add(Btrazabilidad);
+                Btrazabilidad.setBounds(550, 65, 120, 19);
 
                 Pprinc.add(Pcabe, new java.awt.GridBagConstraints());
 
@@ -5469,6 +5530,16 @@ public class MantDesp extends ventanaPad implements PAD
         cm.ejecutaConsulta();
         jf.gestor.ir(cm);
   }
+  void mostrarDatosTraz()
+  {
+      if (jtCab.isVacio())
+          return;
+       mostrarDatosTraz(jtCab.getValorInt(0,JTCAB_PROCODI),
+            jtCab.getValString(0,JTCAB_SERLOT),
+            jtCab.getValorInt(0,JTCAB_EJELOT),
+            jtCab.getValorInt(0,JTCAB_NUMLOT), 
+            jtCab.getValorInt(0,JTCAB_NUMIND));
+  }
   void mostrarDatosTraz(int proCodi,String serie,int ejeLote,int lote,int numind)
   {
       try {
@@ -5482,23 +5553,37 @@ public class MantDesp extends ventanaPad implements PAD
                        salirDatTraza();
                     }
               };
+              
               datTrazFrame.iniciar(dtStat, dtCon1,this,vl,EU);
-              vl.add(datTrazFrame);
+              datTrazFrame.setEditable(true);
+              vl.add(datTrazFrame);            
               datTrazFrame.setLocation(this.getLocation().x, this.getLocation().y + 30);
           }
+          
           datTrazFrame.setDatos(proCodi,
                       serie,
                       ejeLote,
                       lote,
                       numind);
+           datTrazFrame.setActualizado(false);
+           if (nav.pulsado==navegador.EDIT || nav.pulsado==navegador.ADDNEW)
+           {
+            datTrazFrame.activar(true);          
+            datTrazFrame.setFechaCaducidad(deo_feccadE.getDate());
+            datTrazFrame.resetCambio();                  
+          
+           }
+           else
+              datTrazFrame.activar(false);
            datTrazFrame.actualizar();
            this.setEnabled(false);
            datTrazFrame.mostrar();
-      } catch (SQLException k)
+      } catch (SQLException | ParseException k)
       {
           Error("Error a mostrar Datos de Trazabilidad",k);
       }
   }
+  
   private void salirDatTraza()
   {
     datTrazFrame.setVisible(false);
@@ -5506,9 +5591,33 @@ public class MantDesp extends ventanaPad implements PAD
     this.setEnabled(true);
     try
     {
+      if (datTrazFrame.getActualizado())
+      {
+        swForzadoTraz=true;
+        utdesp=datTrazFrame.getUtilDespiece();
+        deo_feccadE.setDate(datTrazFrame.getUtilDespiece().getFechaCaducidad());
+        deo_fecproE.setDate(datTrazFrame.getUtilDespiece().getFechaProduccion() );
+        deo_fecsacE.setDate(datTrazFrame.getUtilDespiece().getFechaSacrificio());
+        ultFecCaduc=datTrazFrame.getFechaCaducidad();
+        for (int n=0;n<jtLin.getRowCount();n++)
+        {
+            if (jtLin.getValorInt(n,JTLIN_NUMIND)==0)
+            {
+                jtLin.setValor(ultFecCaduc,n,JTLIN_FECCAD);
+                if (n==jtLin.getSelectedRow())
+                    def_feccadE.setDate(ultFecCaduc);
+            }
+        }
+      }
+      
       this.setSelected(true);
+      if (jtLin.isEnabled())
+          jtLin.requestFocusLater();
+      if (jtCab.isEnabled())
+          jtCab.requestFocusLater();
+      
     }
-    catch (Exception k)
+    catch (ParseException | SQLException | PropertyVetoException k)
     {}
     
   }
@@ -5522,6 +5631,7 @@ public class MantDesp extends ventanaPad implements PAD
     private gnu.chu.controles.CButton BirGrid;
     private gnu.chu.controles.CButton BsalLin;
     private gnu.chu.controles.CButton BsaltaCab;
+    private gnu.chu.controles.CButton Btrazabilidad;
     private gnu.chu.controles.CButton BvalDesp;
     private javax.swing.JMenuItem ImprEtiqMI;
     private javax.swing.JMenuItem MFechaCab;

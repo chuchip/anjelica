@@ -40,6 +40,7 @@ import javax.swing.event.ListSelectionEvent;
 
 public class pdregalm extends ventanaPad implements PAD
 {
+  int INVENTARIO;
   final int JT_PROCOD=0;
   final int JT_PRONOMB=1;
   final int JT_FECHA=2;
@@ -147,7 +148,7 @@ public class pdregalm extends ventanaPad implements PAD
    {
      iniciarFrame();
      this.setSize(new Dimension(583, 562));
-     this.setVersion("2017-11-12 "+(P_ADMIN?"  ADMIN":""));
+     this.setVersion("2018-04-08 "+(P_ADMIN?"  ADMIN":""));
      Pprinc.setDefButton(Baceptar);
      Pprinc.setDefButtonDisable(false);
      Pprinc.setLayout(null);
@@ -282,7 +283,7 @@ public class pdregalm extends ventanaPad implements PAD
    tir_codiE1.setAnchoComboDesp(450);
 //     tir_codiE1.setFormato(Types.DECIMAL, "##9", 3);
 
-   s = "SELECT * FROM v_motregu ORDER BY tir_nomb";
+   s = "SELECT * FROM v_motregu ORDER BY tir_tipo,tir_nomb";
    if (dtCon1.select(s))
    {
      do
@@ -301,7 +302,8 @@ public class pdregalm extends ventanaPad implements PAD
    linPantE.resetCambio();
    linPantE.setDependePadre(false);
    pRegAlm.iniciar(dtCon1);
-  
+   dtStat.select("select tir_codi from v_motregu where tir_afestk='=' ");
+   INVENTARIO=dtStat.getInt("tir_codi");
 
    pRegAlm.setDefButton(Baceptar);
    Pcond.setDefButton(Baceptar);
@@ -471,17 +473,20 @@ public void ej_query()
 {
   try
   {
-    if (feciniE.isNull() || feciniE.getError())
+    if ( rgs_numeE.getValorInt()==0)
     {
-      mensajeErr("Fecha Inicio NO VALIDA");
-      feciniE.requestFocus();
-      return;
-    }
-    if (fecfinE.isNull() || fecfinE.getError())
-    {
-      mensajeErr("Fecha FINAL NO VALIDA");
-      fecfinE.requestFocus();
-      return;
+        if (feciniE.isNull() || feciniE.getError() )
+        {
+          mensajeErr("Fecha Inicio NO VALIDA");
+          feciniE.requestFocus();
+          return;
+        }
+        if (fecfinE.isNull() || fecfinE.getError())
+        {
+          mensajeErr("Fecha FINAL NO VALIDA");
+          fecfinE.requestFocus();
+          return;
+        }
     }
     if (rgs_numeE.getValorInt()!=0)
         strSql = "select * from regalmacen WHERE rgs_nume = " + rgs_numeE.getValorInt();
@@ -532,15 +537,25 @@ public void ej_query()
    {
      activaTodo();
      mensajeErr("NO hay registros SELECIONADOS");
+     nav.pulsado=navegador.NINGUNO;
      return;
    }
    try
    {
+     if (pRegAlm.tir_codiE.getValorInt()==INVENTARIO )
+     {
+         mensaje("");
+         msgBox("No se puede editar una REGULARIZACION INVENTARIO");
+         nav.pulsado=navegador.NINGUNO;
+         activaTodo();
+         return;
+     }
      s = "select * from regalmacen WHERE rgs_nume = " + jt.getValorInt(JT_ID);
      if (!dtAdd.select(s, true))
      {
        mensaje("");
        mensajeErr("Regularizacion NO encontrada ... Probablemente se borro");
+       nav.pulsado=navegador.NINGUNO;
        activaTodo();
        return;
      }
@@ -578,6 +593,7 @@ public void ej_query()
    }
  }
 
+  @Override
  public void canc_edit()
  {
    try
@@ -687,6 +703,7 @@ public void ej_query()
    {
      activaTodo();
      mensajeErr("NO hay registros SELECIONADOS");
+     nav.pulsado=navegador.NINGUNO;
      return;
    }
    try
@@ -696,8 +713,17 @@ public void ej_query()
      {
        mensaje("");
        mensajeErr("Regularizacion NO encontrada ... Probablemente se borro");
+       nav.pulsado=navegador.NINGUNO;
        activaTodo();
        return;
+     }
+      if (pRegAlm.tir_codiE.getValorInt()==INVENTARIO )
+     {
+         mensaje("");
+         msgBox("No se puede BORRAR una REGULARIZACION INVENTARIO");
+         nav.pulsado=navegador.NINGUNO;
+         activaTodo();
+         return;
      }
    }
    catch (SQLException k)
@@ -713,6 +739,7 @@ public void ej_query()
 
  }
 
+  @Override
  public void ej_delete1()
  {
    try
@@ -839,6 +866,32 @@ public void ej_query()
   {
    return "gnu.chu.anjelica.almacen.pdregalm";
   }
+  /**
+   * Llama a esta ventana mostrando la regularización mandada como parametro.
+   * @param jf Clase Principal 
+   * @param numRegul 0 Si se desea buscar todo.
+   * @return 
+   */
+  public static String irRegulurazacion(Principal jf,int numRegul)
+  {
+      
+       ejecutable prog;
+       if ((prog = jf.gestor.getProceso(pdregalm.getNombreClase())) == null)
+       {
+          return "Clase Principal no establecidad. Imposible ir a Regularizacion";
+       }
+       pdregalm cm = (pdregalm) prog;
+       if (cm.inTransation())
+       {
+             return "Mantenimiento Regularizaciones Almacen ocupado. No se puede realizar la busqueda";
+       }
+       cm.PADQuery();
+       if (numRegul!=0)
+         cm.setNumeroRegula(numRegul);
+       cm.ej_query();
+       jf.gestor.ir(cm);
+       return null;
+  }
   public void setFecha(java.util.Date fecha)
   {
       pRegAlm.cci_fecconE.setDate(fecha);
@@ -873,6 +926,7 @@ public void ej_query()
   }       
   public void setNumeroRegula(int numReg)
   {
+      feciniE.resetTexto();
       rgs_numeE.setValorInt(numReg);
   }
 }

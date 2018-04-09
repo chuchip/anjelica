@@ -26,16 +26,24 @@ import gnu.chu.controles.CInternalFrame;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
+import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLayeredPane;
 
 public class DatTrazFrame extends ventana {
    ventana papa;
    boolean isInit=false;
+   boolean swActual=false;
    
   public DatTrazFrame() {
         initComponents();
@@ -77,10 +85,58 @@ public class DatTrazFrame extends ventana {
     }
   }
   
+  public void activar(boolean activo)
+  {
+      datTrazPanel.setEnabled(activo);
+      Bactualizar.setEnabled(activo);
+  }
   public void iniciar() throws SQLException
   {
       iniciar(papa.dtStat,papa.dtCon1,papa,vl,EU);
-      
+      activarEventos();      
+  }
+  void activarEventos()
+  {
+      Bactualizar.addActionListener(new ActionListener()
+      {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              actualizarDatos();
+          }
+      });
+  }
+  void actualizarDatos()
+  {
+      try
+      {
+          if (!datTrazPanel.hasCambio())
+          {
+              matar();
+              return;
+          }
+
+          utildesp utDesp = datTrazPanel.getUtilDespiece(true);
+          if (utDesp.getFechaProduccion() != null && Formatear.comparaFechas(utDesp.getFechaCaducidad(), utDesp.getFechaProduccion()) < 10)
+          {
+              msgBox("Fecha caducidad debe ser superior en 10 dias a fecha produccion");
+              return;
+          }
+          if (utDesp.getFechaSacrificio() != null && Formatear.comparaFechas(utDesp.getFechaProduccion(), utDesp.getFechaSacrificio()) < 0)
+          {
+              msgBox("Fecha Sacrificio debe ser inferior a fecha produccion");
+              return;
+          }
+
+          utDesp.actualTrazabilidad(dtAdd);
+
+          dtAdd.commit();
+          mensajeErr("Datos de trazabilidad ... actualizados");
+          swActual=true;
+          matar();
+      } catch (ParseException | SQLException ex)
+      {
+          papa.Error("Error al actualizar datos de trazabilidad", ex);
+      }
   }
   public void iniciar(DatosTabla dtStat, DatosTabla dtCon1,CInternalFrame intFrame,
                       JLayeredPane layPan, EntornoUsuario EU) throws SQLException
@@ -95,6 +151,7 @@ public class DatTrazFrame extends ventana {
         datTrazPanel.setVerDatosCompra(false);
         datTrazPanel.setLotePanel(lotePanel);
         datTrazPanel.setDatosCompraCheckBox(opDatCompra);
+        activarEventos();
   }
   public void setEditable(boolean editable)
   {
@@ -114,12 +171,46 @@ public class DatTrazFrame extends ventana {
   public void setDatos(int proCodi,String proSerie,int ejeNume,int proLote,int proNumind)
   {
       isInit=true;
+      
       lotePanel.setDatos(proCodi,proSerie, ejeNume, proLote, proNumind);
       datTrazPanel.setDatos(proCodi, ejeNume, proSerie, proLote, proNumind);
+      datTrazPanel.resetCambio();
   }
   public void actualizar() throws SQLException
   {
       datTrazPanel.actualizar();
+  }
+  
+  /**
+   * Establece la fecha caducidad
+   * @param fechaCaducidad 
+   */
+  public void setFechaCaducidad(Date fechaCaducidad) throws SQLException,ParseException
+  {
+      if (Formatear.comparaFechas(fechaCaducidad, getFechaCaducidad()) != 0)
+      {
+          datTrazPanel.setFechaCaducidad(fechaCaducidad);
+          datTrazPanel.getUtilDespiece(true).actualTrazabilidad(dtAdd);          
+          dtAdd.commit();
+          swActual=true;
+      }
+      datTrazPanel.setFechaCaducidad(fechaCaducidad);
+  }
+  public void setActualizado(boolean actualizado)
+  {
+      swActual=actualizado;
+  }
+  public boolean getActualizado()
+  {
+      return swActual;
+  }
+  public Date getFechaCaducidad()
+  {
+      return datTrazPanel.getFechaCaducidad();
+  }
+  public void resetCambio()
+  {
+      datTrazPanel.resetCambio();
   }
   public void mostrar()
   {
@@ -161,6 +252,7 @@ public class DatTrazFrame extends ventana {
         datTrazPanel = new gnu.chu.camposdb.DatTrazPanel();
         opDatCompra = new gnu.chu.controles.CCheckBox();
         lotePanel = new gnu.chu.camposdb.LotePanel();
+        Bactualizar = new gnu.chu.controles.CButton(Iconos.getImageIcon("check"));
 
         Pprinc.setLayout(null);
 
@@ -177,11 +269,16 @@ public class DatTrazFrame extends ventana {
         Pprinc.add(lotePanel);
         lotePanel.setBounds(0, 0, 370, 41);
 
+        Bactualizar.setText("Actualizar");
+        Pprinc.add(Bactualizar);
+        Bactualizar.setBounds(190, 200, 100, 24);
+
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private gnu.chu.controles.CButton Bactualizar;
     private gnu.chu.controles.CPanel Pprinc;
     private gnu.chu.camposdb.DatTrazPanel datTrazPanel;
     private gnu.chu.camposdb.LotePanel lotePanel;

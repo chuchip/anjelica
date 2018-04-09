@@ -11,7 +11,7 @@ package gnu.chu.anjelica.ventas;
 * solo podra modificar partes para poner kms,vehiculo y comentarios.
 * Por defecto modSala=false
 * </p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -33,10 +33,8 @@ import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.pdclien;
 import gnu.chu.anjelica.pad.pdconfig;
-import gnu.chu.anjelica.pad.pdprove;
 import gnu.chu.anjelica.pad.pdtransp;
 import gnu.chu.controles.StatusBar;
-import gnu.chu.controles.miCellRender;
 import gnu.chu.eventos.GridAdapter;
 import gnu.chu.eventos.GridEvent;
 import gnu.chu.interfaces.PAD;
@@ -49,9 +47,7 @@ import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.navegador;
 import gnu.chu.utilidades.ventanaPad;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -65,12 +61,9 @@ import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRResultSetDataSource;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;

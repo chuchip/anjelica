@@ -10,6 +10,8 @@ import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
@@ -22,7 +24,8 @@ import java.util.Hashtable;
  *
  * <p>Título: CVRegAlm</p>
  * <p>Descripcion: Consulta y Valoracion Regularizaciones Almacen </p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <P>Parametro: verprecio Ver Precios de Regularizaciones
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -42,9 +45,10 @@ import java.util.Hashtable;
 
 public class CVRegAlm extends ventana
 {
-  boolean P_VERPRECIO=false;
-  DatosTabla dtAdd;
+  boolean P_VERPRECIO=false; 
   Date feulin;
+  final int JT_NUMREG=9;
+  
    public CVRegAlm(EntornoUsuario eu, Principal p)
   {
       this(eu,p,null);
@@ -57,7 +61,7 @@ public class CVRegAlm extends ventana
     jf = p;
     eje = true;
 
-    setTitulo("Cons. Regularizaciones Alm.");
+    setTitulo("Cons. Regularizaciones Almacen");
     ponParametros(ht);
     try
     {
@@ -80,7 +84,7 @@ public class CVRegAlm extends ventana
 
     EU = eu;
     vl = p.getLayeredPane();
-    setTitulo("Cons. Regularizaciones Alm.");
+    setTitulo("Cons. Regularizaciones Almacen");
     ponParametros(ht);
     eje = false;
 
@@ -108,7 +112,7 @@ private void jbInit() throws Exception
   {
       iniciarFrame();
 
-      this.setVersion("2015-12-15");
+      this.setVersion("2018-03-31 "+(P_VERPRECIO?"":" NO VER PRECIOS"));
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -145,6 +149,8 @@ private void jbInit() throws Exception
         tir_afestkE = new gnu.chu.controles.CComboBox();
         cLabel5 = new gnu.chu.controles.CLabel();
         cli_codiE = new gnu.chu.camposdb.cliPanel();
+        cLabel6 = new gnu.chu.controles.CLabel();
+        tir_tipoE = new gnu.chu.controles.CLinkBox();
         jt = new gnu.chu.controles.Cgrid(10);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel11 = new gnu.chu.controles.CLabel();
@@ -191,15 +197,15 @@ private void jbInit() throws Exception
         Pcabe.add(fecfinE);
         fecfinE.setBounds(190, 2, 70, 17);
 
-        cLabel1.setText("Tipo");
+        cLabel1.setText("Afecta");
         Pcabe.add(cLabel1);
-        cLabel1.setBounds(410, 42, 30, 15);
+        cLabel1.setBounds(450, 40, 40, 15);
 
         tir_codiE.setFormato(Types.DECIMAL,"##9");
         tir_codiE.setAncTexto(35);
         tir_codiE.setAnchoComboDesp(350);
         Pcabe.add(tir_codiE);
-        tir_codiE.setBounds(410, 22, 220, 17);
+        tir_codiE.setBounds(410, 22, 250, 17);
 
         Baceptar.setText("Aceptar");
         Baceptar.addActionListener(new java.awt.event.ActionListener() {
@@ -208,7 +214,7 @@ private void jbInit() throws Exception
             }
         });
         Pcabe.add(Baceptar);
-        Baceptar.setBounds(530, 40, 90, 24);
+        Baceptar.setBounds(570, 40, 90, 24);
 
         cLabel9.setText("Producto");
         Pcabe.add(cLabel9);
@@ -218,31 +224,43 @@ private void jbInit() throws Exception
 
         cLabel2.setText("Tipo Prod.");
         Pcabe.add(cLabel2);
-        cLabel2.setBounds(430, 2, 62, 18);
+        cLabel2.setBounds(270, 0, 62, 18);
 
         pro_artconC.addItem("Todos", "T");
         pro_artconC.addItem("Congelado", "1");
         pro_artconC.addItem("No Congelado", "0");
         pro_artconC.setMinimumSize(new java.awt.Dimension(32, 20));
         Pcabe.add(pro_artconC);
-        pro_artconC.setBounds(490, 2, 142, 18);
+        pro_artconC.setBounds(330, 0, 110, 18);
 
-        cLabel3.setText("Cod.Reg.");
+        cLabel3.setText("Tipo Reg.");
         Pcabe.add(cLabel3);
-        cLabel3.setBounds(345, 22, 60, 15);
+        cLabel3.setBounds(450, 0, 60, 15);
 
         tir_afestkE.addItem("Todos","*");
         tir_afestkE.addItem("Suma","+");
         tir_afestkE.addItem("Resta","-");
         Pcabe.add(tir_afestkE);
-        tir_afestkE.setBounds(450, 42, 70, 17);
+        tir_afestkE.setBounds(490, 40, 70, 17);
 
         cLabel5.setText("Cliente");
         cLabel5.setPreferredSize(new java.awt.Dimension(50, 18));
         Pcabe.add(cLabel5);
         cLabel5.setBounds(10, 42, 50, 18);
         Pcabe.add(cli_codiE);
-        cli_codiE.setBounds(69, 42, 330, 18);
+        cli_codiE.setBounds(69, 42, 370, 18);
+
+        cLabel6.setText("Cod.Reg.");
+        Pcabe.add(cLabel6);
+        cLabel6.setBounds(345, 22, 60, 15);
+
+        tir_tipoE.setFormato(Types.CHAR, "XX", 2);
+        tir_tipoE.setMayusculas(true);
+        tir_tipoE.setAnchoComboDesp(200);
+        tir_tipoE.setAncTexto(30);
+        tir_tipoE.setPreferredSize(new java.awt.Dimension(92, 18));
+        Pcabe.add(tir_tipoE);
+        tir_tipoE.setBounds(510, 0, 150, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -414,8 +432,13 @@ private void jbInit() throws Exception
     @Override
     public void iniciarVentana() throws Exception
     {
-        dtAdd=new DatosTabla(ctUp);
-        String s = "SELECT * FROM v_motregu ORDER BY tir_codi";
+        String s = "SELECT * FROM v_tiporegu where tir_tipo != 'IN' " 
+            + " ORDER BY tir_tipo";
+        dtStat.select(s);
+        tir_tipoE.addDatos(dtStat);
+       
+        s = "SELECT * FROM v_motregu where tir_afestk != '=' " 
+            + " ORDER BY tir_tipo,tir_codi";
         if (dtCon1.select(s)) {
             do {
                 tir_codiE.addDatos(dtCon1.getString("tir_codi"),
@@ -427,6 +450,22 @@ private void jbInit() throws Exception
         pro_codiE.iniciar(dtStat, this, vl, EU);
         fecfinE.setDate(Formatear.getDateAct() );
         feciniE.setDate(Formatear.sumaMesDate(Formatear.getDateAct(), -1));
+        activarEventos();
+    }
+    void activarEventos()
+    {
+        jt.addMouseListener(new MouseAdapter()
+        {
+             @Override
+             public void mouseClicked(MouseEvent e) {
+                 if (jt.isVacio() || e.getClickCount()<2)
+                     return;
+                 String ret=pdregalm.irRegulurazacion(jf, jt.getValorInt(JT_NUMREG));
+                 if (ret!=null)
+                     msgBox(ret);
+             }
+
+        });
     }
     boolean checkCondiciones()
     {
@@ -453,6 +492,7 @@ private void jbInit() throws Exception
              fecfinE.getFechaDB()+"' "+
              " and a.pro_codi = r.pro_codi "+
              " and tir_afestk != '=' "+
+             (tir_tipoE.isNull()?"":" and tir_tipo='"+tir_tipoE.getText()+"'")+
              (tir_afestkE.getValor().equals("*")?"":" and tir_afestk = '"+tir_afestkE.getValor()+"'")+
              (pro_codiE.isNull()?"":" and r.pro_codi = "+pro_codiE.getValorInt())+
              (cli_codiE.isNull()?"":" and rgs_cliprv="+cli_codiE.getValorInt())+
@@ -479,8 +519,8 @@ private void jbInit() throws Exception
              v.add("("+dtCon1.getString("tir_afestk")+") "+dtCon1.getString("tir_nomb")); // 4
             v.add(dtCon1.getString("rgs_canti")); // 5
             v.add(dtCon1.getString("rgs_kilos")); // 6
-            v.add(dtCon1.getString("rgs_prregu")); // 7
-            v.add(dtCon1.getString("rgs_prmeco")); // 8
+            v.add(P_VERPRECIO?dtCon1.getString("rgs_prregu"):0); // 7
+            v.add(P_VERPRECIO?dtCon1.getString("rgs_prmeco"):0); // 8
             v.add(dtCon1.getString("rgs_nume"));  // 9
             jt.addLinea(v);
             if (dtCon1.getString("tir_afestk").equals("+"))
@@ -680,6 +720,7 @@ private void jbInit() throws Exception
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
     private gnu.chu.controles.CLabel cLabel5;
+    private gnu.chu.controles.CLabel cLabel6;
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.camposdb.cliPanel cli_codiE;
     private gnu.chu.controles.CTextField fecfinE;
@@ -700,6 +741,7 @@ private void jbInit() throws Exception
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CComboBox tir_afestkE;
     private gnu.chu.controles.CLinkBox tir_codiE;
+    private gnu.chu.controles.CLinkBox tir_tipoE;
     private gnu.chu.controles.CTextField uniDifE;
     private gnu.chu.controles.CTextField uniEntE;
     private gnu.chu.controles.CTextField uniSalE;

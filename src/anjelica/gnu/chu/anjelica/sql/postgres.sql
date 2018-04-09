@@ -3449,6 +3449,7 @@ INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',1); -- C
  insert into parametros values('*','diasAlbVentaMod','Restrincion modificar Alb.Venta con mas de n dias',0);
  insert into parametros values('*','errordiascad','Error si hay menos de n dias de cad.',-1); 
  insert into parametros values('*','solsinstock','Solucionar productos sin stock',0); 
+ insert into parametros values('*','formatocosto','Formato para campos costo','---9.99'); 
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --
@@ -4071,6 +4072,11 @@ create view anjelica.v_zonas as
 select dis_codi as zon_codi,dis_nomb as zon_nomb  from v_discrim
 where dis_tipo='Cz';
 grant select on anjelica.v_zonas to public;
+create view anjelica.v_tiporegu 
+select dis_codi as tir_tipo,dis_nomb as tir_nomb  from v_discrim
+where dis_tipo='Or';
+grant select on anjelica.v_tiporegu to public;
+
 --
 -- Vista para Representantes/Zona - segun discriminadores.
 create view anjelica.v_reprzona as

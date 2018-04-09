@@ -315,6 +315,8 @@ public class DatTrazPanel extends CPanel {
     }
     public Date getFechaCaducidad()
     {
+        if (utDesp==null)
+            return null;
         return utDesp.getFechaCaducidad();
     }
     @Override

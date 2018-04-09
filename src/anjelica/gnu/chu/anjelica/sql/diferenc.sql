@@ -1,3 +1,7 @@
+create view anjelica.v_tiporegu 
+select dis_codi as tir_tipo,dis_nomb as tir_nomb  from v_discrim
+where dis_tipo='Or';
+grant select on anjelica.v_tiporegu to public;
 -- 
 -- Anular opcion de desproteger despiece.
 --

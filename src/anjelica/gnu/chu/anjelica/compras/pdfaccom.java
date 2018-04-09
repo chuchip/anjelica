@@ -79,7 +79,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
   CLinkBox div_codiE = new CLinkBox();
   CPanel Ppie = new CPanel();
   CLabel fcc_kilfraL = new CLabel("Kilos Fra");
-  CTextField fcc_kilfraE = new CTextField(Types.DECIMAL,"---,--9.9");
+  CTextField fcc_kilfraE = new CTextField(Types.DECIMAL,"---,--9.99");
   CLabel fcc_implinL = new CLabel();
   CTextField fcc_implinE = new CTextField(Types.DECIMAL,"----,--9.99");
 
@@ -312,7 +312,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 
    iniciarFrame();
    this.setSize(new Dimension(764, 531));
-   this.setVersion("2017-06-27 "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("2018-04-02 "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+ (swConsulta?"-Solo Consulta-":""));
    strSql = "SELECT emp_codi,eje_nume,fcc_nume " +
        " FROM v_facaco WHERE emp_codi = " + EU.em_cod +

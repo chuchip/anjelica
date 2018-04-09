@@ -433,7 +433,7 @@ public class utildesp
 
                 if (prvCodi == 0 && swTidCodi)
                     prvCodi = dtStat.getInt("prv_codi", true);
-                if (swTidCodi)
+                if (swTidCodi && deoCodi==0)
                 {
                     deoCodi = dtStat.getInt("deo_codi");
                     deoAno = dtStat.getInt("eje_nume");
@@ -519,7 +519,7 @@ public class utildesp
                     fecProdE=dtStat.getDate("acp_fecpro");
                 fecProdPrvE = dtStat.getDate("acp_fecpro");
                 
-                if (fecSacrE == null)
+                if (fecSacrE == null && !swForzaTraza)
                     fecSacrE = dtStat.getDate("acp_fecsac");
                 fecSacPrvE=dtStat.getDate("acp_fecsac");
                 if (!swDesp)

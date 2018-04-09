@@ -39,12 +39,17 @@ public class pdconfig    extends ventanaPad     implements PAD
   public final static String D_REPRZONA="CR";
   public final static String D_CREDITO="CC";
   public final static String D_ZONA="Cz";
+  public final static String D_TIRTIPO="Or";
   public final static String D_REPRESENT="Cr";
   public final static String D_RUTAS="CU";
   public final static String D_CAMARAS="AC";
   public final static String[][] HM_CLIENTES ={
         {"Repr/Zona","Credito","Zona","Represent","Rutas"},
       {"R","C","z","r","U"}
+   };
+  public final static String[][] HM_OTROS ={
+        {"Tipo Reg."},
+      {"r"}
    };
   public final static String[][] HM_ARTICULOS ={    
     {"Camaras"},{"C"}
@@ -800,6 +805,8 @@ public class pdconfig    extends ventanaPad     implements PAD
   * @param dt DatosTabla
   * @param lkBox CLinkBox
   * @param discr String
+     * @param empCodi
+     * @param limitador
   * @throws SQLException
   */
  public static void llenaDiscr(DatosTabla dt,CLinkBox lkBox, String discr,int empCodi,String limitador) throws SQLException

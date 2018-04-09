@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Título: paregalm</p>
  * <p>Descripcion: Panel para mantenimientos  Regularizaciones en almacen  </p>
- *  <p>Copyright: Copyright (c) 2005-2016
+ *  <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -24,6 +24,7 @@ package gnu.chu.anjelica.almacen;
 
 import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.despiece.utildesp;
+import gnu.chu.anjelica.inventario.pdinven;
 import gnu.chu.camposdb.cliPanel;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.prvPanel;
@@ -32,6 +33,7 @@ import gnu.chu.eventos.CambioEvent;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.ventana;
 import java.awt.Color;
@@ -44,13 +46,17 @@ import java.awt.event.FocusEvent;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.SpinnerNumberModel;
 
 
 public class paregalm extends CPanel {
+    MvtosAlma mvtosAlm;
     boolean P_ADMIN=false;
     int rgsNume=0;
     public static int ESTPEND = 1; // Vert. Proveedor Pend.
@@ -97,7 +103,8 @@ public class paregalm extends CPanel {
             }
         }
     };
-    CTextField rgs_prreguE = new CTextField(Types.DECIMAL, "---,--9.999");
+    CTextField rgs_prreguE = new CTextField(Types.DECIMAL, "---9.999");
+    CButton rgs_prreguB=new CButton(Iconos.getImageIcon("calc"));
     CLabel cLabel16 = new CLabel();
     CTextField cci_fecconE = new CTextField(Types.DATE, "dd-MM-yyyy");
     CSpinner cci_horconE = new CSpinner(new SpinnerNumberModel(0,0,23,1));
@@ -184,7 +191,9 @@ public class paregalm extends CPanel {
         stp_unactE.setBounds(new Rectangle(261, 61, 40, 16));
         pro_codiE.setAncTexto(50);
         pro_codiE.setBounds(new Rectangle(83, 21, 430, 18));
-        rgs_prreguE.setBounds(new Rectangle(445, 61, 68, 16));
+        rgs_prreguE.setBounds(new Rectangle(445, 61, 48, 16));
+        rgs_prreguB.setToolTipText("Buscar costo en Fecha Regularización");
+        rgs_prreguB.setBounds(new Rectangle(495, 61, 18, 18));
         cLabel16.setText("Coment.");
         cLabel16.setBounds(new Rectangle(1, 133, 56, 16));
         cci_fecconE.setBounds(new Rectangle(40, 2, 70, 18));
@@ -291,6 +300,7 @@ public class paregalm extends CPanel {
         this.add(pro_loteE, null);
         this.add(cLabel7, null);
         this.add(rgs_prreguE, null);
+        this.add(rgs_prreguB, null);
         this.add(cLabel10, null);
         this.add(deo_kilosE, null);
         this.add(cLabel11, null);
@@ -349,16 +359,7 @@ public class paregalm extends CPanel {
        tir_codiE.setAnchoComboDesp(350);
 //     tir_codiE1.setFormato(Types.DECIMAL, "##9", 3);
 
-        s = "SELECT * FROM v_motregu ORDER BY tir_nomb";
-        if (dtCon1.select(s)) {
-            do {
-                tir_codiE.addDatos(dtCon1.getString("tir_codi"),
-                        dtCon1.getString("tir_nomb") + "  (" + dtCon1.getString("tir_afestk")
-                        + ")", true);
-            } while (dtCon1.next());
-        } else {
-            throw new Exception("NO HAY DEFINIDOS TIPOS DE REGULARIZACION. IMPOSIBLE EJECUTAR ESTE PROGRAMA");
-        }
+        llenaTipoReg(true);
 
         pro_codiE.iniciar(dtStat, papa, vl, EU);
         pro_codiE.setCamposLote(deo_ejelotE, deo_serlotE, pro_loteE, pro_numindE,
@@ -391,8 +392,34 @@ public class paregalm extends CPanel {
 // QtirCodi=tir_codiE1.getText();
         activarEventos();
     }
+    void llenaTipoReg(boolean incInventario) throws SQLException
+    {
+        if (dtCon1==null)
+            return;
+        tir_codiE.removeAllItems();
+        s = "SELECT * FROM v_motregu "
+            + (incInventario?"":" where tir_afestk != '=' ") 
+            + "ORDER BY tir_tipo, tir_nomb";
+        if (dtCon1.select(s)) 
+        {
+            do {
+                tir_codiE.addDatos(dtCon1.getString("tir_codi"),
+                        dtCon1.getString("tir_nomb") + "  (" + dtCon1.getString("tir_afestk")
+                        + ")", true);
+            } while (dtCon1.next());
+        } else {
+            throw new SQLException("NO HAY DEFINIDOS TIPOS DE REGULARIZACION. IMPOSIBLE EJECUTAR ESTE PROGRAMA");
+        }
 
+    }
     void activarEventos() {
+        rgs_prreguB.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calculaCosto();
+            }
+        });
         stp_unactE.addFocusListener(new FocusAdapter() {
 
             @Override
@@ -430,6 +457,7 @@ public class paregalm extends CPanel {
 
         rgs_recprvE.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     if (rgs_recprvE.getValor().equals("0")) {
@@ -450,14 +478,46 @@ public class paregalm extends CPanel {
         });
 
     }
+    
+    void calculaCosto()
+    {
+        try
+        {
+            if (mvtosAlm == null)
+            {
+                mvtosAlm = new MvtosAlma();
+                mvtosAlm.setResetCostoStkNeg(true);
+                mvtosAlm.setIncIniFechaInv(true);
+                mvtosAlm.setUsaDocumentos(false);
+            }       
+            String fecultInv=Formatear.getFecha(ActualStkPart.getDateUltInv(cci_fecconE.getDate() , dtStat),"dd-MM-yyyy");
+            mvtosAlm.iniciarMvtos(fecultInv , dtAdd);
+            if (mvtosAlm.getCostoRefInFecha(pro_codiE.getValorInt(),
+                    new Timestamp(
+                    Formatear.getDate(cci_fecconE.getFecha("yyyy-MM-dd")+" "+
+                    Formatear.format(cci_horconE.getText(),"99")+":"+
+                    Formatear.format(cci_minconE.getText(),"99"),"yyyy-MM-dd HH:mm").getTime())  , dtAdd, dtStat))
+            {
+                rgs_prreguE.setValorDec(mvtosAlm.getPrecioStock());
+            }
+            else
+            {                
+                mensajes.mensajeAviso("Costo NO ENCONTRADO!!");
+            }
+            
+        } catch (SQLException | ParseException ex)
+        {
+            Logger.getLogger(paregalm.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+    }
     void actProvCli() throws Exception {
         if (prv_codiE.isVisible() && prv_codiE.getValorInt() == 0) {
             utDesp.busDatInd(deo_serlotE.getText(), pro_codiE.getValorInt(), 0,
                     deo_ejelotE.getValorInt(),
                     pro_loteE.getValorInt(), pro_numindE.getValorInt(), dtCon1, dtStat, EU);
             if (utDesp.prvCompra == 0) {
-                mensajeErr("Datos de Compra NO encontrados");
+                mensajes.mensajeAviso("Datos de Compra NO encontrados");
             } else {
                 prv_codiE.setText("" + utDesp.prvCompra);
                 prv_codiE.controla(false);
@@ -468,7 +528,7 @@ public class paregalm extends CPanel {
                     deo_ejelotE.getValorInt(),
                     pro_loteE.getValorInt(), pro_numindE.getValorInt(), dtStat, null);
             if (cliCodi == 0) {
-                mensajeErr("Datos de Venta NO encontrados");
+                mensajes.mensajeAviso("Datos de Venta NO encontrados");
             } else {
                 cli_codiE.setText("" + cliCodi);
                 cli_codiE.controlar();
@@ -974,6 +1034,17 @@ public class paregalm extends CPanel {
     }
 
     void setActivo(boolean b) {
+        
+        if (!b && tir_codiE.isEnabled())
+        {
+            try {
+                 llenaTipoReg(true);
+            } catch (SQLException ex)
+            {
+                papa.Error("Error al dar de alta",ex);
+            }
+        }
+        rgs_prreguB.setEnabled(b);
         cci_fecconE.setEnabled(b);
         cci_horconE.setEnabled(b);
         cci_minconE.setEnabled(b);
@@ -1000,23 +1071,39 @@ public class paregalm extends CPanel {
     }
 
     public void addNew() {
-        this.resetTexto();
-        tir_codiE.resetCambio();
-        deo_ejelotE.setValorInt(EU.ejercicio);
-        par_codiE.setEnabled(false);
-        deo_serlotE.setText("A");
+        try
+        {
+            this.resetTexto();
+            llenaTipoReg(false);
+            tir_codiE.resetCambio();
+           
+            deo_ejelotE.setValorInt(EU.ejercicio);
+            par_codiE.setEnabled(false);
+            deo_serlotE.setText("A");
 //        deo_emplotE.setValorDec(EU.em_cod);
-        rgs_clidevE.setEnabled(true);
-        rgs_traspE.setSelected(true);
-        cci_fecconE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-        cci_minconE.setText("0");
-        cci_horconE.setText("0");
-        cci_fecconE.requestFocus();
+            rgs_clidevE.setEnabled(true);
+            rgs_traspE.setSelected(true);
+            cci_fecconE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+            cci_minconE.setText("0");
+            cci_horconE.setText("0");
+            cci_fecconE.requestFocus();
+        } catch (SQLException ex)
+        {
+            papa.Error("Error al dar de alta",ex);
+        }
     }
 
     void PADEdit() {
-        tir_codiE.resetCambio();        
-        par_codiE.setEnabled(false);
+        try {
+            int tirCodi=tir_codiE.getValorInt();
+            llenaTipoReg(false);
+            tir_codiE.setValorInt(tirCodi);
+            tir_codiE.resetCambio();        
+            par_codiE.setEnabled(false);
+        } catch (SQLException ex)
+        {
+            papa.Error("Error al dar de alta",ex);
+        }
 //      rgs_clidevE.setEnabled(tir_codiE.getValorInt() == MantAlbComCarne.ESTPEND ||
 //              tir_codiE.getValorInt() == MantAlbComCarne.ESTACEP ||
 //              tir_codiE.getValorInt() == MantAlbComCarne.ESTRECH);

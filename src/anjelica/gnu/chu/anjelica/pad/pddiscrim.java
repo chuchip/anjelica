@@ -14,7 +14,7 @@ import java.awt.event.*;
  *
  * <p>Título: pddiscrim </p>
  * <p>Descripción: Mantenimiento de Discriminadores</p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -190,6 +190,7 @@ public class pddiscrim    extends ventanaPad     implements PAD
       });
       dis_tipo2E.addActionListener(new ActionListener()
       {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
           try
@@ -294,11 +295,11 @@ public class pddiscrim    extends ventanaPad     implements PAD
      verDatos();
    }
 
+  @Override
    public void canc_edit(){
      activaTodo();
      verDatos();
      mensajeErr("Modificaciones ... Canceladas");
-     return;
    }
 
 
@@ -315,10 +316,13 @@ public class pddiscrim    extends ventanaPad     implements PAD
    public void PADDelete(){}
 
 
+  @Override
    public void ej_delete1(){}
 
+  @Override
    public void canc_delete(){}
 
+  @Override
    public void activar(boolean b) {
      nav.setEnabled(!modConsulta);
      dis_tipo1E.setEnabled(!modConsulta);
@@ -334,6 +338,7 @@ public class pddiscrim    extends ventanaPad     implements PAD
      dis_tipo1E.addItem("CLIENTE","C cl");
      dis_tipo1E.addItem("ARTICULO","A pr");
      dis_tipo1E.addItem("PROVEEDOR","P pv");
+     dis_tipo1E.addItem("OTROS","O ot");
      if (! pdconfig.getConfiguracion(EU.em_cod,dtStat,lkConf))
        throw new SQLException("No encontrados configuraciones ");
      llenaClases("cl");
@@ -345,6 +350,12 @@ public class pddiscrim    extends ventanaPad     implements PAD
      dis_tipo2E.setEnabled(false);
      dis_tipo2E.removeAllItems();
     
+     if (clase.equals("ot"))
+     {
+         llenaDiscr(dis_tipo2E,pdconfig.HM_OTROS);
+         dis_tipo2E.setEnabled(enab);
+         return;
+     }
      if (clase.equals("cl"))
      {
        llenaDiscr(dis_tipo2E,pdconfig.HM_CLIENTES);       
@@ -368,16 +379,16 @@ public class pddiscrim    extends ventanaPad     implements PAD
        }
    }
     void confGrid() throws Exception {
-        Vector v = new Vector();
-        v.addElement("Codigo");
-        v.addElement("Nombre");
+        ArrayList v = new ArrayList();
+        v.add("Codigo");
+        v.add("Nombre");
         jt.setCabecera(v);
         jt.setAnchoColumna(new int[]{50, 400});
         jt.setMaximumSize(new Dimension(522, 306));
         jt.setMinimumSize(new Dimension(522, 306));
         jt.setPreferredSize(new Dimension(522, 306));
         jt.setAlinearColumna(new int[]{0, 0});
-        Vector vc = new Vector();
+        ArrayList vc = new ArrayList();
         vc.add(dis_codiE);
         vc.add(dis_nombE);
         jt.setCampos(vc);

@@ -73,8 +73,8 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
   int pulsado=0;
   CGridEditable gridEdit=null;
   private double copNum=0;
-  final static char GROUPSEPARATOR=','; // Grupo separador para intr. formators (inglish)
-  final static char DECIMALSEPARATOR='.'; // Grupo separador para intr. formators (inglish)
+  public final static char GROUPSEPARATOR=','; // Grupo separador para intr. formators (inglish)
+  public final static char DECIMALSEPARATOR='.'; // Grupo separador para intr. formators (inglish)
   final static char MINUSSIGN='-'; // Grupo separador para intr. formators (inglish)
   boolean ceroIsNull=true; // Cero es equivalente a NULL (isNull devuelve true)
   private boolean SalirConError = true; // Indica se se puede abandonar el Campo con un Error.
@@ -550,18 +550,18 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
         boolean sw_dec=false;
         for (n=0;n<Formato.length();n++)
         {
-          if (Formato.charAt(n)==DECIMALSEPARATOR)
-          {
-          sw_dec=true;
-          continue;
-        }
-        if (Formato.charAt(n)==GROUPSEPARATOR)
-          continue;
+            if (Formato.charAt(n) == DECIMALSEPARATOR)
+            {
+                sw_dec = true;
+                continue;
+            }
+            if (Formato.charAt(n) == GROUPSEPARATOR)
+                continue;
 
-        if (sw_dec)
-          nc_DecMasc++;
-        else
-          nc_EntMasc++;
+            if (sw_dec)
+                nc_DecMasc++;
+            else
+                nc_EntMasc++;
         }
         if (aceptamenos)
         {

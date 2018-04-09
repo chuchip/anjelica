@@ -42,7 +42,7 @@ public class MvtosAlma
 {
   private boolean incluyeHora=false; // Incluir hora a la hora de buscar mvtos.
   private boolean swIgnComprasSinValor=false;
-  
+  private int numDecimalesCosto=2;
   private boolean swIncSalDep=false;// Incluir Salidas de depositos.
   private boolean swVerSalDep=false;// Ver Salidas de depositos.
   private boolean swIncInvDep=false;// Incluir Inventarios de depositos.
@@ -892,6 +892,10 @@ public class MvtosAlma
     {
         return swIgnComprasSinValor;
     }
+    public void setNumeroDeciamlesCosto(int numDecimal)
+    {
+        numDecimalesCosto=numDecimal;
+    }
   /**
    * Define la cadena para limitar accesos a las empresas.
    * @param acessoEmp
@@ -1037,7 +1041,7 @@ public class MvtosAlma
 
     /**
      * Inicia consulta sobre mvtos, usado para calcular costo en una fecha determinada.
-     * @param fecIni
+     * @param fecIni String con formato dd-MM-yyyy
      * @param dtCon1
      * @throws SQLException
      * @throws ParseException 
@@ -1571,10 +1575,10 @@ public class MvtosAlma
              else
                 v.add(dt.getString("sel"));
           }
-          v.add(!swVerPrecios?"":Formatear.redondea(dt.getDouble("precio"),2));
+          v.add(!swVerPrecios?"":Formatear.redondea(dt.getDouble("precio"),numDecimalesCosto ));
           v.add(uniStk);
           v.add(canStk);
-          v.add(!swVerPrecios?"":Formatear.redondea(preStk+incCosto,2) );
+          v.add(!swVerPrecios?"":Formatear.redondea(preStk+incCosto,numDecimalesCosto) );
           v.add(!swVerPrecios?"":impGana);
           v.add(dt.getString("ejedoc")+"-"+dt.getString("avc_serie")+"-"+dt.getString("numalb"));
           v.add(dt.getDate("fecdoc"));

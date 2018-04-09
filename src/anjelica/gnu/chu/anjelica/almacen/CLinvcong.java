@@ -129,7 +129,7 @@ public class CLinvcong extends ventana
     conecta();
     initComponents();
     this.setSize(new Dimension(632, 502));
-    this.setVersion("2016-08-16");
+    this.setVersion("2018-04-01");
   }
     @Override
   public void iniciarVentana() throws Exception
@@ -329,7 +329,12 @@ public class CLinvcong extends ventana
         pro_loteE = new gnu.chu.controles.CTextField(Types.DECIMAL,"####9");
         opDesgInd = new gnu.chu.controles.CCheckBox();
         opIncRes = new gnu.chu.controles.CCheckBox();
+        opDesgEstado = new gnu.chu.controles.CCheckBox();
+        cLabel13 = new gnu.chu.controles.CLabel();
+        diasCadFrescoE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9");
+        cTabbedPane1 = new gnu.chu.controles.CTabbedPane();
         jt = new gnu.chu.controles.Cgrid(15);
+        jtDes = new gnu.chu.controles.Cgrid(15);
         Ppie = new gnu.chu.controles.CPanel();
         cLabel6 = new gnu.chu.controles.CLabel();
         uniTotE = new gnu.chu.controles.CTextField(Types.DECIMAL,"----,--9");
@@ -358,7 +363,7 @@ public class CLinvcong extends ventana
             }
         });
         Pcabe.add(Baceptar);
-        Baceptar.setBounds(450, 42, 120, 30);
+        Baceptar.setBounds(490, 60, 90, 24);
 
         alm_codiE.setAncTexto(30);
         Pcabe.add(alm_codiE);
@@ -372,9 +377,9 @@ public class CLinvcong extends ventana
         Pcabe.add(cLabel3);
         cLabel3.setBounds(2, 2, 53, 17);
 
-        cLabel4.setText("Lote");
+        cLabel4.setText("Dias");
         Pcabe.add(cLabel4);
-        cLabel4.setBounds(310, 60, 40, 17);
+        cLabel4.setBounds(410, 60, 30, 17);
         cLabel4.getAccessibleContext().setAccessibleName("Con mas de");
 
         Pcabe.add(kilminE);
@@ -412,7 +417,7 @@ public class CLinvcong extends ventana
         fecfinE.setBounds(210, 16, 70, 17);
 
         Pcabe.add(cPanel1);
-        cPanel1.setBounds(10, 40, 300, 38);
+        cPanel1.setBounds(10, 40, 290, 38);
 
         cLabel11.setText("Orden");
         Pcabe.add(cLabel11);
@@ -437,11 +442,26 @@ public class CLinvcong extends ventana
         opDesgInd.setText("Desg. Indiv.");
         opDesgInd.setToolTipText("Desglosar Individuos");
         Pcabe.add(opDesgInd);
-        opDesgInd.setBounds(480, 22, 90, 18);
+        opDesgInd.setBounds(460, 20, 90, 18);
 
         opIncRes.setText("Inc. Reservas");
         Pcabe.add(opIncRes);
         opIncRes.setBounds(360, 20, 110, 18);
+
+        opDesgEstado.setSelected(true);
+        opDesgEstado.setText("Desg. Estado");
+        opDesgEstado.setToolTipText("Desglosar Individuos");
+        Pcabe.add(opDesgEstado);
+        opDesgEstado.setBounds(460, 40, 100, 18);
+
+        cLabel13.setText("Lote");
+        Pcabe.add(cLabel13);
+        cLabel13.setBounds(310, 60, 40, 17);
+
+        diasCadFrescoE.setText("5");
+        diasCadFrescoE.setToolTipText("Limite Dias caducidad fresco");
+        Pcabe.add(diasCadFrescoE);
+        diasCadFrescoE.setBounds(440, 60, 30, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -482,15 +502,49 @@ public class CLinvcong extends ventana
         jt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jt.setMaximumSize(new java.awt.Dimension(100, 100));
         jt.setMinimumSize(new java.awt.Dimension(100, 100));
+        cTabbedPane1.addTab("Datos", jt);
+
+        ArrayList vd=new ArrayList();
+        vd.add("Prod"); // 0
+        vd.add("Nombre"); // 1 Producto
+        vd.add("U.Total."); // 2
+        vd.add("Kg.Total"); // 3
+        vd.add("Costo"); // 4
+        vd.add("Imp.Total"); //5
+        vd.add("U.Viejo"); // 6
+        vd.add("Kg.Viejo"); // 7
+        vd.add("Imp.Viejo"); // 8
+        vd.add("U.Cad"); // 9
+        vd.add("Kg.Cad"); // 10
+        vd.add("Imp.Cad"); // 11
+        vd.add("U.Bien"); // 12
+        vd.add("Kg.Bien"); // 13
+        vd.add("Imp.Bien"); // 14
+        jtDes.setCabecera(vd);
+        jtDes.setAlinearColumna(new int[]{0,0,2,2,2,2,2,2,2,2,2,2,2,2,2});
+        jtDes.setAnchoColumna(new int[]{40,150,40,60,40,60,40,60,60,40,60,60,40,60,60});
+        jtDes.setFormatoColumna(2, "###9");
+        jtDes.setFormatoColumna(3, "##,##9");
+        jtDes.setFormatoColumna(4, "##9.99");
+        jtDes.setFormatoColumna(5, "###,##9");
+        jtDes.setFormatoColumna(6, "###9");
+        jtDes.setFormatoColumna(7, "##,##9");
+        jtDes.setFormatoColumna(8, "###,##9");
+        jtDes.setFormatoColumna(9, "###9");
+        jtDes.setFormatoColumna(10, "##,##9");
+        jtDes.setFormatoColumna(11, "###,##9");
+        jtDes.setFormatoColumna(12, "###9");
+        jtDes.setFormatoColumna(13, "##,##9");
+        jtDes.setFormatoColumna(14, "###,##9");
+        cTabbedPane1.addTab("Desglose", jtDes);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-        Pprinc.add(jt, gridBagConstraints);
+        Pprinc.add(cTabbedPane1, gridBagConstraints);
 
         Ppie.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
         Ppie.setMaximumSize(new java.awt.Dimension(450, 24));
@@ -553,7 +607,7 @@ public class CLinvcong extends ventana
         }
         else
         {
-            v.add("");
+            v.add(proCodi);
             v.add("Total");
         }
         v.add("");
@@ -656,6 +710,7 @@ public class CLinvcong extends ventana
         semanaE.resetCambio();
         cancelarConsulta=false;
         jt.removeAllDatos();
+        jtDes.removeAllDatos();
         msgEspere("A esperar.. estoy buscando datos");
         popEspere_BCancelarSetEnabled(true);
         activar(false);
@@ -706,7 +761,7 @@ public class CLinvcong extends ventana
     {
         String s;
         boolean swDesgInd=opDesgInd.isSelected();
-        if (!swDesgInd)
+        if (!swDesgInd ||  opSoloTot.isSelected())
         {
             s= "SELECT *  FROM   pg_catalog.pg_tables  WHERE   tablename  = '"+tablaTemp+"'";
             if (dtAdd.select(s))
@@ -757,8 +812,10 @@ public class CLinvcong extends ventana
             if (proCodi != dtCon1.getInt("pro_codi"))
             {
                 setMensajePopEspere("Cargando datos de consulta. Producto: " + proCodi, false);
-                if (nProd > 1 || opSoloTot.isSelected())
+                if ((nProd > 1 || opSoloTot.isSelected()) &&  swDesgInd)
+                {
                     datos.add(addSubTotal());
+                }
                 nProd = 0;
                 proCodi = dtCon1.getInt("pro_codi");
                 proNomb = gnu.chu.anjelica.pad.MantArticulos.getNombProd(proCodi, dtStat);
@@ -770,7 +827,7 @@ public class CLinvcong extends ventana
             }
             if (orden == 'F')
             {
-                if (famCodi != dtCon1.getInt("fam_codi"))
+                if (famCodi != dtCon1.getInt("fam_codi") && swDesgInd)
                 {
                     famCodi = dtCon1.getInt("fam_codi");
                     ArrayList al = new ArrayList();
@@ -838,22 +895,23 @@ public class CLinvcong extends ventana
                 if (Formatear.comparaFechas(fecfinE.getDate(), fecDesp) < 0)
                     continue;
             }
-            if (!opSoloTot.isSelected())
-            {
+         
                 ArrayList v = new ArrayList();
-                if (nProd == 0)
-                {
-                    v.add(proCodi);
-                    v.add(proNomb); //Producto
-                } else
-                {
-                    v.add("");
-                    v.add(""); //Producto
-                }
+                
                 String numDesp=utdesp.getEjercicioDespiece() == 0 ? "C" + utdesp.getAccSerie() + utdesp.getEjercicioAlbaranCompra() + "/"
                         + utdesp.getNumeroAlbaranCompra() : "D" + utdesp.getEjercicioDespiece() + "/" + utdesp.getNumeroDespiece();
-                if (!swDesgInd)
+                
+                if (!swDesgInd ||  opSoloTot.isSelected())
                 {
+                    if (nProd == 0)
+                    {
+                        v.add(proCodi);
+                        v.add(proNomb); //Producto
+                    } else
+                    {
+                        v.add("");
+                        v.add(""); //Producto
+                    }
                     String lote=dtCon1.getString("eje_nume") + "-" + dtCon1.getString("pro_serie") + "-"
                         + dtCon1.getString("pro_nupar");
 
@@ -884,6 +942,15 @@ public class CLinvcong extends ventana
                 }
                 else
                 {
+                    if (nProd == 0)
+                    {
+                        v.add(proCodi);
+                        v.add(proNomb); //Producto
+                    } else
+                    {
+                        v.add("");
+                        v.add(""); //Producto
+                    }
                     v.add(prvNomb); // Proveedor
                     v.add(agruFec ? "" : dtCon1.getString("eje_nume") + "-" + dtCon1.getString("pro_serie") + "-"
                         + dtCon1.getString("pro_nupar") + "-"
@@ -901,7 +968,6 @@ public class CLinvcong extends ventana
                     v.add(agruFec ? 0  : numDesp);
                     datos.add(v);
                 }                
-            }
           
             nProd++;
             uniAct += dtCon1.getInt("stp_unact");
@@ -912,7 +978,7 @@ public class CLinvcong extends ventana
             impTot += precCompra * dtCon1.getDouble("stp_kilact");
         } while (dtCon1.next());
         dtStat.commit();
-         if (!swDesgInd)
+        if (!swDesgInd)
         {
             s = "select sum(stp_unact) as unid, sum(stp_kilact) as kilos,tt.pro_codi,pro_nomb,prv_nomb,"
                 + "numdesp,lote,feccom,fecdes,feccong,fecadcon,costo,"
@@ -921,27 +987,127 @@ public class CLinvcong extends ventana
                 + " group by tt.pro_codi,pro_nomb,prv_nomb,numdesp,lote,feccom,fecdes,feccong,fecadcon,feccad,costo "
                 + " order by tt.pro_codi,feccom,lote ";
             if (dtAdd.select(s))
-            {
+            {                
+                uniAct = 0;
+                kilAct = 0;
+                impAct = 0;
+                boolean swProblema;
+                int diasCadMax=diasCadFrescoE.getValorInt();
+                long diasCadFresco;
+                int unidViejos=0,unidCad=0,unidBien=0;
+                double kilosViejos=0,kilosCad=0,kilosBien=0;
+                double impViejo=0,impCad=0,impBien=0;
+                Date fecActual=Formatear.getDateAct();
+                proCodi=dtAdd.getInt("pro_codi");
+                proNomb = gnu.chu.anjelica.pad.MantArticulos.getNombProd(proCodi, dtStat);
+                if (proNomb == null)
+                    proNomb = "*PRODUCTO NO ENCONTRADO*";
                 do
                 {
-                    ArrayList v= new ArrayList();
-                    v.add(dtAdd.getInt("pro_codi"));
-                    v.add(dtAdd.getString("pro_nomb"));
-                    v.add(dtAdd.getString("prv_nomb"));
-                    v.add(dtAdd.getString("lote"));
-                    v.add(dtAdd.getInt("unid"));
-                    v.add(dtAdd.getDouble("kilos"));
-                    v.add(dtAdd.getDate("feccom"));
-                    v.add(dtAdd.getDate("feccad"));
-                    v.add(Formatear.comparaFechas( dtAdd.getDate("feccad"),dtAdd.getDate("feccong"))); // Dias para caducar al desp.
-                    v.add(dtAdd.getDate("feccong"));
-                    v.add(dtAdd.getDate("fecadcon"));
-                    v.add(Formatear.comparaFechas(  Formatear.getDateAct(),dtAdd.getDate("fecadcon")));
-                    v.add(dtAdd.getDouble("costo"));
-                    v.add(dtAdd.getDouble("costo")*dtAdd.getDouble("kilos"));
-                    v.add(dtAdd.getString("numdesp"));
-                    datos.add(v);                    
-                } while (dtAdd.next());
+                    if (proCodi != dtAdd.getInt("pro_codi"))
+                    {
+                        if (nProd > 1 || opSoloTot.isSelected())
+                            datos.add(addSubTotal());
+                        if (opDesgEstado.isSelected())
+                        {
+                            ArrayList v=new ArrayList();
+                            v.add(proCodi);
+                            v.add(proNomb);
+                            v.add(uniAct);
+                            v.add(kilAct);
+                            v.add(impAct/kilAct);
+                            v.add(impAct);
+                            v.add(unidViejos);
+                            v.add(kilosViejos);
+                            v.add(impViejo);
+                            v.add(unidCad);
+                            v.add(kilosCad);
+                            v.add(impCad);
+                            v.add(unidBien);
+                            v.add(kilosBien);
+                            v.add(impBien);
+                            jtDes.addLinea(v);
+                        }
+                        proCodi = dtAdd.getInt("pro_codi");   
+                        proNomb = gnu.chu.anjelica.pad.MantArticulos.getNombProd(proCodi, dtStat);
+                        if (proNomb == null)
+                            proNomb = "*PRODUCTO NO ENCONTRADO*";
+                        nProd=0;
+                        uniAct = unidViejos = unidBien  = unidCad= 0 ;
+                        kilAct = kilosViejos = kilosBien  = kilosCad= 0 ;
+                        impAct = impViejo = impBien  = impCad= 0;
+                    }
+                    diasCadFresco=Formatear.comparaFechas( dtAdd.getDate("feccad"),dtAdd.getDate("feccong"));
+                    if (!opSoloTot.isSelected())
+                    {
+                        ArrayList v= new ArrayList();
+                        v.add(dtAdd.getInt("pro_codi"));
+                        v.add(dtAdd.getString("pro_nomb"));
+                        v.add(dtAdd.getString("prv_nomb"));
+                        v.add(dtAdd.getString("lote"));
+                        v.add(dtAdd.getInt("unid"));
+                        v.add(dtAdd.getDouble("kilos"));
+                        v.add(dtAdd.getDate("feccom"));
+                        v.add(dtAdd.getDate("feccad"));                       
+                        v.add(diasCadFresco); // Dias para caducar al desp.
+                        v.add(dtAdd.getDate("feccong"));
+                        v.add(dtAdd.getDate("fecadcon"));
+                        v.add(Formatear.comparaFechas(  Formatear.getDateAct(),dtAdd.getDate("fecadcon")));
+                        v.add(dtAdd.getDouble("costo"));
+                        v.add(dtAdd.getDouble("costo")*dtAdd.getDouble("kilos"));
+                        v.add(dtAdd.getString("numdesp"));
+                        datos.add(v);                    
+                     }
+                    uniAct += dtAdd.getInt("unid");
+                    kilAct += dtAdd.getDouble("kilos");
+                    impAct += dtAdd.getDouble("costo")*dtAdd.getDouble("kilos");
+                    swProblema=false;
+                    if (Formatear.comparaFechas(fecActual, dtAdd.getDate("fecadcon"))>0)
+                    {
+                        unidViejos += dtAdd.getInt("unid");
+                        kilosViejos += dtAdd.getDouble("kilos");
+//                        System.out.println("kilos "+dtAdd.getDouble("kilos"));
+                        impViejo += dtAdd.getDouble("costo")*dtAdd.getDouble("kilos");                        
+                        swProblema=true;
+                    }
+                    if (diasCadFresco<=diasCadMax)
+                    {
+                        unidCad += dtAdd.getInt("unid");
+                        kilosCad += dtAdd.getDouble("kilos");
+                        System.out.println("kilos1 "+dtAdd.getDouble("kilos"));
+                        impCad += dtAdd.getDouble("costo")*dtAdd.getDouble("kilos");                        
+                        swProblema=true;
+                    }
+                    if (!swProblema)
+                    {
+                        unidBien += dtAdd.getInt("unid");
+                        kilosBien += dtAdd.getDouble("kilos");
+                        impBien += dtAdd.getDouble("costo")*dtAdd.getDouble("kilos");                                               
+                    }
+                    nProd++;                    
+                } while (dtAdd.next());               
+                if (nProd > 1 || opSoloTot.isSelected())
+                     datos.add(addSubTotal());
+                 if (opDesgEstado.isSelected())
+                {
+                    ArrayList v=new ArrayList();
+                    v.add(proCodi);
+                    v.add(proNomb);
+                    v.add(uniAct);
+                    v.add(kilAct);
+                    v.add(impAct/kilAct);
+                    v.add(impAct);
+                    v.add(unidViejos);
+                    v.add(kilosViejos);
+                    v.add(impViejo);
+                    v.add(unidCad);
+                    v.add(kilosCad);
+                    v.add(impCad);
+                    v.add(unidBien);
+                    v.add(kilosBien);
+                    v.add(impBien);
+                    jtDes.addLinea(v);
+                } 
             }
         } else if (nProd > 1 || opSoloTot.isSelected())
             datos.add(addSubTotal());
@@ -979,6 +1145,7 @@ public class CLinvcong extends ventana
     private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
+    private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel2;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel4;
@@ -988,14 +1155,18 @@ public class CLinvcong extends ventana
     private gnu.chu.controles.CLabel cLabel8;
     private gnu.chu.controles.CLabel cLabel9;
     private gnu.chu.controles.CPanel cPanel1;
+    private gnu.chu.controles.CTabbedPane cTabbedPane1;
     private gnu.chu.controles.CTextField cTextField1;
+    private gnu.chu.controles.CTextField diasCadFrescoE;
     private gnu.chu.controles.CTextField fecfinE;
     private gnu.chu.controles.CTextField feciniE;
     private gnu.chu.controles.CTextField impTotE;
     private gnu.chu.controles.Cgrid jt;
+    private gnu.chu.controles.Cgrid jtDes;
     private gnu.chu.controles.CTextField kilTotE;
     private gnu.chu.controles.CTextField kilminE;
     private gnu.chu.controles.CTextField numDiasAgrE;
+    private gnu.chu.controles.CCheckBox opDesgEstado;
     private gnu.chu.controles.CCheckBox opDesgInd;
     private gnu.chu.controles.CCheckBox opIncRes;
     private gnu.chu.controles.CCheckBox opSoloTot;

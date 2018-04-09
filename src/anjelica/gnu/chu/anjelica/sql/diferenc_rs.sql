@@ -1,5 +1,12 @@
+insert into parametros values('*','formatocosto','Formato para campos costo','---9.99'); 
+--
+--
+create view anjelica.v_tiporegu 
+select dis_codi as tir_tipo,dis_nomb as tir_nomb  from v_discrim
+where dis_tipo='Or';
+grant select on anjelica.v_tiporegu to public;
+-
 insert into parametros values('*','solsinstock','Solucionar productos sin stock',0); 
-
 ---
 alter table usuarios add usu_clanum smallint not null default 0; -- Password Corta de usuario (sin encriptar)
 insert into parametros values('*','checkCodRep','Comprueba que el codigo Reparto este nulo',0);

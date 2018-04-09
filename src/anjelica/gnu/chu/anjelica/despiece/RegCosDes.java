@@ -2,7 +2,6 @@ package gnu.chu.anjelica.despiece;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.almacen.MvtosAlma;
-import static gnu.chu.anjelica.despiece.ValDespi.JTLIN_COSPOR;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
@@ -10,14 +9,14 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,13 +49,13 @@ public class RegCosDes extends ventana {
     private boolean swSinCosto=false;
     private boolean swRegenerar;
     private String condWhereOrig,condWhereGrupo;
-    DatosTabla dtAdd;
+//    DatosTabla dtAdd;
     final static int MAXPERM=1;
     PreparedStatement prstFin,prstFin1,prstFinCuantos,prstUpd1,prstUpd,prstDesp;
     ResultSet rsFin,rsFin1,rsDesp;
     MvtosAlma mvtosAlm;
     private final int NUMDEC_COSTO=4;
-    
+    PreparedStatement psInv;
    public RegCosDes(EntornoUsuario eu, Principal p) {
         EU = eu;
         vl = p.panel1;
@@ -96,7 +95,7 @@ public class RegCosDes extends ventana {
 
         iniciarFrame();
 
-        this.setVersion("2018-02-10");
+        this.setVersion("2018-04-08");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -150,7 +149,16 @@ public class RegCosDes extends ventana {
                   resetearDatos();
             }
         });
+        jt.addMouseListener(new MouseAdapter()
+        {
+             @Override
+             public void mouseClicked(MouseEvent e) {
+                 if (e.getClickCount()>1 && !jt.isVacio())
+                     MantDesp.irDespiece(eje_numeE.getValorInt(),jt.getValorInt(jt.getSelectedRowDisab(),0) , jf);
+             }
+        });
         popEspere_BCancelaraddActionListener(new ActionListener(){
+            @Override
             public void actionPerformed(ActionEvent e) {
               msgEspere("Cancelando actualización ");
               popEspere_BCancelarSetEnabled(false);
@@ -453,25 +461,13 @@ public class RegCosDes extends ventana {
                 nRegAf += stUp.executeUpdate(s);
                 textoE.setText(textoE.getText() + "\nAVISO: Puesto precio usuario a precio costo a " + nRegAf + " lineas de desp. Entrada");
            }
-           s = "select  pro_codi,deo_codi, deo_tiempo as fechaMvt,"
-                    + " deo_kilos as kilos,deo_kilos*deo_prcost as costo,deo_kilos*deo_preusu as costoAnt  "
-                    + " from v_despori as orig WHERE 1=1  " + condWhereOrig
-                    + " and deo_numdes = 0 "   
-                    + " and deo_kilos > 0 "
-                    + " order by deo_codi ";
-           if (dtCon1.select(s)) 
-            buscoDesp(false);
-           if ( getPopEspere().isBCancelarEnabled())
+         
+           for (int n=1;n<6;n++)
            {
-                s = "select  pro_codi,deo_numdes as deo_codi,  deo_tiempo as fechaMvt,"
-                         + " deo_kilos as kilos,deo_kilos*deo_prcost as costo,deo_kilos*deo_preusu as costoAnt  "
-                         + " from v_despiece as orig WHERE 1=1  " + condWhereGrupo
-                         + " and deo_numdes > 0"           
-                         + " and deo_kilos > 0 "
-                         + " order by deo_codi ";
-                if (dtCon1.select(s)) 
-                 buscoDesp(true);
+             if ( getPopEspere().isBCancelarEnabled())
+                buscoDesp(n);
            }
+//       
            ctUp.commit();
            if ( getPopEspere().isBCancelarEnabled())
             msgBox("Costos ... Recalculados");
@@ -484,41 +480,126 @@ public class RegCosDes extends ventana {
      * @param agrupados
      * @throws Exception 
      */
-    void buscoDesp(boolean agrupados) throws Exception
-    {
-        String condWhere=" where def_kilos !=  0 "
-                    + " and def_preusu != 0 "
-                    + " and eje_nume = " + eje_numeE.getValorInt();
-        String condWher1= condWhere   
-                    + (agrupados?" and deo_numdes = ? ":" AND deo_codi = ? ");
-        String s = "select pro_codi, def_blkcos, sum(def_kilos) as def_kilos, sum(def_kilos*def_preusu) as def_prcost"
-                    + " from v_despsal  "+
-                     condWher1
-                    + " group by pro_codi,def_blkcos ";
+    void buscoDesp(int n) throws Exception {
+        String s = "select * from mvtosalm "
+            + " where mvt_time between to_date('" + feciniE.getText() + "','dd-MM-yyyy')"
+            + " and to_date('" + fecfinE.getText() + "','dd-MM-yyyy')"
+            //                + " and pro_codi = 10993 "
+            + " order by pro_codi,mvt_time,mvt_tipo";
+        if (!dtCon1.select(s, true))
+        {
+            msgBox("No encontrado mvtos entre estas fechas");
+            return;
+        }
+        s = "SELECT sum(rgs_kilos) as kilos, sum(rgs_kilos*rgs_prregu) as importe "
+            + " from v_inventar  "
+            + " where pro_codi =  ?"
+            + " AND rgs_fecha::date = to_date('" + fecinvE.getValor() + "','dd-MM-yyyy')";
+        psInv = dtCon1.getPreparedStatement(s);
+
+        int proCodi = -1;
+        double kilos = 0;
+        double importe;
+        double precio;
+        double precioMedio = 0;
+        do
+        {
+            if (proCodi != dtCon1.getInt("pro_codi"))
+            {
+                setMensajePopEspere("Regenerando costos. Vuelta "+n+ " de 5\n"
+                    + "Recalculando Costos mvtos de articulo  " + proCodi, false);
+                proCodi = dtCon1.getInt("pro_codi");
+                psInv.setInt(1, proCodi);
+                ResultSet rs = psInv.executeQuery();
+                rs.next();
+                kilos = rs.getDouble("kilos");
+//                   importe=rs.getDouble("importe");
+                precioMedio = rs.getDouble("kilos") == 0 ? 0 : rs.getDouble("importe") / rs.getDouble("kilos");
+            }
+            precio = dtCon1.getDouble("mvt_prec");
+            if (dtCon1.getString("mvt_tipdoc").equals("D"))
+            {
+                dtAdd.executeUpdate("update desorilin set deo_prcost= " + precioMedio
+                    + " where eje_nume=" + dtCon1.getInt("mvt_ejedoc")
+                    + " and deo_codi=" + dtCon1.getInt("mvt_numdoc")
+                    + " and pro_codi = " + dtCon1.getInt("pro_codi")
+                    + " and deo_ejelot = " + dtCon1.getInt("pro_ejelot")
+                    + " and deo_serlot = '" + dtCon1.getString("pro_serlot") + "'"
+                    + " and pro_lote = " + dtCon1.getInt("pro_numlot")
+                    + " and pro_numind = " + dtCon1.getInt("pro_indlot"));
+                precio = precioMedio;
+            }
+//                if (dtCon1.getString("mvt_tipdoc").equals("R"))
+//                {
+//                    System.out.println("Reg. "+dtCon1.getDouble("mvt_canti"));  
+//                }
+            if (dtCon1.getString("mvt_tipo").equals("E"))
+            {
+                if (precioMedio > 0 && kilos > 0)
+                    importe = kilos * precioMedio;
+                else
+                {
+                    kilos = 0;
+                    importe = 0;
+                }
+                if (kilos < -0.01)
+                {
+                    kilos = 0;
+                    importe = 0;
+                    continue;
+                }
+                kilos += dtCon1.getDouble("mvt_canti");
+                if (precio != 0)
+                {
+                    importe += dtCon1.getDouble("mvt_canti")
+                        * precio;
+                    precioMedio = kilos == 0 ? 0 : importe / kilos;
+                }
+            } else
+                kilos -= dtCon1.getDouble("mvt_canti");
+        } while (dtCon1.next());
+
+        s = "select deo_codi,sum(deo_kilos*deo_prcost) as costo "
+            + " from v_despori as orig WHERE 1=1  " + condWhereOrig
+            + " and deo_kilos > 0 "
+            + " group by deo_codi "
+            + " order by deo_codi ";
+        dtCon1.select(s);
+        String condWhere = " where def_kilos !=  0 "
+            + " and def_preusu != 0 "
+            + " and eje_nume = " + eje_numeE.getValorInt();
+        String condWher1 = condWhere
+            + " AND deo_codi = ? ";
+        s = "select pro_codi, def_blkcos, sum(def_kilos) as def_kilos, sum(def_kilos*def_preusu) as def_prcost"
+            + " from v_despsal  "
+            + condWher1
+            + " group by pro_codi,def_blkcos ";
         prstFin = ct.prepareStatement(s);
-        s="select count(distinct pro_codi) as cuantos "
-                    + " from v_despsal  "+
-                     condWher1;
-        prstFinCuantos=ct.prepareStatement(s);    
+        s = "select count(distinct pro_codi) as cuantos "
+            + " from v_despsal  "
+            + condWher1;
+        prstFinCuantos = ct.prepareStatement(s);
         s = "select  sum(def_kilos*def_preusu) as def_prcost "
-                    + " from v_despsal  "+  condWher1;
+            + " from v_despsal  " + condWher1;
         prstFin1 = ct.prepareStatement(s); // Importe total de productos salida.
-        condWher1+= " and pro_codi = ? ";
-            
-        s = "update v_despfin set def_prcost = ?"+
-                (agrupados?condWhere+" and deo_codi in (select deo_codi from desporig where eje_nume="+
-                eje_numeE.getValorInt()+ " and deo_numdes= ?)  and pro_codi = ? " :
-                condWher1);
+        condWher1 += " and pro_codi = ? ";
+
+        s = "update v_despfin set def_prcost = ?"
+            + condWher1;
         prstUpd1 = ctUp.prepareStatement(s);
-        s="select * from desporig where eje_nume="+eje_numeE.getValorInt()+
-                     (agrupados?" and deo_numdes = ? ":" AND deo_codi = ? and deo_numdes=0 ");
-        prstDesp= ct.prepareStatement(s);
-        swSinCosto=false;
-        double impTotCalc = 0, impTotAnt = 0;
-        int deoCodi= dtCon1.getInt("deo_codi");
-        int nRows=1;
-        do {
-            if (! getPopEspere().isBCancelarEnabled())
+        s = "select * from desporig where eje_nume=" + eje_numeE.getValorInt()
+            + " AND deo_codi = ?  ";
+        prstDesp = ct.prepareStatement(s);
+        swSinCosto = false;
+        double impTotAnt = 0;
+        int deoCodi = dtCon1.getInt("deo_codi");
+        int nRows = 1;
+        s = "select count (distinct deo_codi) as cuantos from v_despori as orig  WHERE 1=1  " + condWhereOrig;
+        dtStat.select(s);
+        int totalRows = dtStat.getInt("cuantos");
+        do
+        {
+            if (!getPopEspere().isBCancelarEnabled())
             {
                 ctUp.rollback();
                 msgBox("Cancelada actualizacion costos");
@@ -526,61 +607,12 @@ public class RegCosDes extends ventana {
             }
             if ( nRows % 50 ==  0)
             {
-                getPopEspere().setMensaje("Recalculando despiece  ... Fecha: "+dtCon1.getFecha("fechaMvt","dd-MM-yy"));
-                nRows=1;
+              setMensajePopEspere("Regenerando costos. Vuelta "+n+ " de 5\n"+
+                  "Recalculando despiece " + dtCon1.getInt("deo_codi") + "  ... " + nRows + " de " + totalRows, false);
             }
             nRows++;
-            if (deoCodi != dtCon1.getInt("deo_codi")) 
-            { // Roto Numero de despiece. Valoramos lineas.
-                setMensajePopEspere("Valorando despiece: " + dtCon1.getInt("deo_codi") +
-                        " de fecha: " + dtCon1.getFecha("fechaMvt"),false);
-                recalcEntr(deoCodi, impTotCalc, impTotAnt);
-                swSinCosto=false;
-                deoCodi = dtCon1.getInt("deo_codi");
-                impTotCalc = 0;
-                impTotAnt = 0;              
-            }
-            double precioStock=0;
-//            mvtosAlm.setDespieceLimite(deoCodi);
-            if (mvtosAlm.getCostoRefInFecha(dtCon1.getInt("pro_codi"),dtCon1.getTimeStamp("fechaMvt"), dtAdd, dtStat))
-            {
-                precioStock=mvtosAlm.getPrecioStock();
-                if ( precioStock == 0)
-                {
-                    if (gnu.chu.anjelica.pad.MantArticulos.getTipoProd(dtCon1.getInt("pro_codi"), dtStat).equals("V"))
-                        addLineaComent(deoCodi,"ERR","Costo Cero para  prod: "+dtCon1.getInt("pro_codi"));
-                swSinCosto=true;
-                }
-                if ( precioStock < 0)
-                {
-                    addLineaComent(deoCodi,"ERR","Costo para  prod: "+dtCon1.getInt("pro_codi")+
-                        " Inferior a 0: "+mvtosAlm.getPrecioStock() );
-                    precioStock=0;
-                    swSinCosto=true;
-                }
-            }
-            else
-            {
-                if (gnu.chu.anjelica.pad.MantArticulos.getTipoProd(dtCon1.getInt("pro_codi"), dtStat).equals("V"))                        
-                    addLineaComent(deoCodi,"ERR","Sin costo para  prod: "+dtCon1.getInt("pro_codi"));
-                swSinCosto=true;         
-            }
-            s = "UPDATE desorilin set deo_prcost = " + (precioStock == 0 ? "deo_preusu" : precioStock)
-                + " where eje_nume =" + eje_numeE.getValorInt()
-                + " and pro_codi = " + dtCon1.getInt("pro_codi")
-                + " and deo_kilos = "+dtCon1.getDouble("kilos")
-                + " and deo_codi "
-                + (agrupados ? " in (select deo_codi from desporig where eje_nume = " + eje_numeE.getValorInt()
-                    + " and deo_numdes = " + deoCodi + ")"
-                    : " = " + deoCodi);
-            stUp.executeUpdate(s);
-            if (precioStock==0)
-                 impTotCalc += dtCon1.getDouble("costo");
-            else
-                 impTotCalc += dtCon1.getDouble("kilos") * precioStock;
-            impTotAnt += dtCon1.getDouble("costoAnt");
+            recalcEntr(dtCon1.getInt("deo_codi"), dtCon1.getDouble("costo"));//                   
         } while (dtCon1.next());
-        recalcEntr(deoCodi, impTotCalc, impTotAnt);
     }
     
     private  void addLineaComent(int deoCodi,String tipoAviso,String aviso)
@@ -594,17 +626,17 @@ public class RegCosDes extends ventana {
     /**
      * Recalcular costos de entrada (v_despfin)
      * @param deoCodi Numero de despieces o grupo Despiece
-     * @param impTotCalc Importe total a calcular  (Importe Final)
      * @param impTotAnt Importe Total anterior de entrada (Cabecera)
      * @throws SQLException
      */
-    private void recalcEntr(int deoCodi, double impTotCalc, double impTotAnt) throws SQLException
+    private void recalcEntr(int deoCodi, double impTotAnt) throws SQLException
     {
         if (impTotAnt == 0)
         {
             addLineaComent(deoCodi,"ERR","sin valorar Cabecera. Se ignora");
             return;
         }
+        double impTotCalc=impTotAnt;
 //        if ( swSinCosto )
 //         impTotCalc=impTotAnt;
 
@@ -678,14 +710,23 @@ public class RegCosDes extends ventana {
         double totLin=0;
         double totFin=0;
         double totFi1=0;
-        
+        boolean swTodoBloq=true;
+         for(Map.Entry<Integer, ArrayList<Double>> entry : htProd.entrySet()) 
+         {
+             ArrayList<Double> v= entry.getValue();
+             if (v.get(COSBLO)==0)
+             {
+                 swTodoBloq=false;
+                 break;
+             }
+         }
         for(Map.Entry<Integer, ArrayList<Double>> entry : htProd.entrySet()) 
         {
             int proCodi = entry.getKey();
             ArrayList<Double> v= entry.getValue();
             costo=impTotCalc * v.get(COSPOR) / 100;
             costo=costo / v.get(KILOS);
-             if (v.get(COSBLO)!=0)
+             if (v.get(COSBLO)!=0 && !swTodoBloq)
              {
                   swAjus=true;
                   v.set(COSFIN, v.get(COSTO));
@@ -729,7 +770,7 @@ public class RegCosDes extends ventana {
             ArrayList<Double> v= entry.getValue();
                   
             prstUpd.setInt(3, proCodi);
-            prstUpd.setDouble(1, v.get(COSFIN) );
+            prstUpd.setDouble(1, (double) v.get(COSFIN) );
             prstUpd.executeUpdate();
         }  
 
@@ -820,8 +861,8 @@ public class RegCosDes extends ventana {
         cScrollPane1.setPreferredSize(new java.awt.Dimension(402, 77));
         cScrollPane1.setQuery(true);
 
-        textoE.setColumns(20);
         textoE.setEditable(false);
+        textoE.setColumns(20);
         textoE.setRows(5);
         cScrollPane1.setViewportView(textoE);
 

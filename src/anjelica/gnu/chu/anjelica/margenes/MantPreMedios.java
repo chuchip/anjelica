@@ -44,6 +44,9 @@ import java.util.List;
 
 public class MantPreMedios extends ventana
 {   
+  double importeVenta;
+  double importeDesp;
+  double kilosEntra;
    private int TIDE_AUTOCLASI=108; 
    private int TIDE_108A109=401;
    Hashtable<Integer,Double> htBolas = new Hashtable();
@@ -101,7 +104,7 @@ public class MantPreMedios extends ventana
 
     private void jbInit() throws Exception
     { 
-      this.setVersion("2018-03-23" );
+      this.setVersion("2018-03-30" );
       statusBar = new StatusBar(this);
       
       iniciarFrame();
@@ -180,11 +183,75 @@ public class MantPreMedios extends ventana
        {
             @Override
              public void actionPerformed(ActionEvent e) {
+              if (!checkDatos())
+                    return;
+
               calculaDatos();  
             }
        });
+        Brefrescar.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try
+                {
+                    if (!checkDatos())
+                        return;
+                    calculaBolas();
+                    mensajeErr("Calculo de bolas ... refrescado");
+                } catch (SQLException | ParseException k)
+                {
+                    Error("Error al llenar grid bolas", k);
+                }
+            }
+        });
     }
-    
+    boolean checkDatos()
+    {
+        if (tar_feciniE.isNull())
+        {
+            msgBox("Introduzca fecha Inicial tarifa");
+            tar_feciniE.requestFocus();
+            return false;
+        }
+        if (fecStockE.isNull())
+        {
+            msgBox("Introduzca fecha Stock");
+            fecStockE.requestFocus();
+            return false;
+        }
+        if (fecIniComE.isNull())
+        {
+            msgBox("Introduzca fecha Inicio Compra");
+            fecIniComE.requestFocus();
+            return false;
+        }
+        if (fecFinComE.isNull())
+        {
+            msgBox("Introduzca fecha Final Compra");
+            fecFinComE.requestFocus();
+            return false;
+        }
+        if (precioBolaAlemE.getValorDec()==0)
+        {
+            msgBox("Introduzca Precio Bola Alemana");
+            precioBolaAlemE.requestFocus();
+            return false;
+        }
+        if (precioBolaPoloniaE.getValorDec()==0)
+        {
+            msgBox("Introduzca Precio Bola Polaca");
+            precioBolaPoloniaE.requestFocus();
+            return false;
+        }
+        if (precioBolaOtrasE.getValorDec()==0)
+        {
+            msgBox("Introduzca Precio del resto de bolas");
+            precioBolaOtrasE.requestFocus();
+            return false;
+        }
+        return true;
+    }
     void calculaDatos()
     {
         try
@@ -193,7 +260,7 @@ public class MantPreMedios extends ventana
            calculaLomos();
         } catch (SQLException | ParseException k)
         {
-            Error("Error al llenar grid bolas",k);
+            Error("Error al Calcular Datos",k);
         }
     }
     void calculaLomos() throws SQLException, ParseException
@@ -379,30 +446,47 @@ public class MantPreMedios extends ventana
             + " and d.pro_numind = st.pro_numind "            
             +" group  by d.pro_codi, stp_painac"+
             " order by 1,2";
+        importeVenta = 0;
+        importeDesp = 0;
+        kilosEntra = 0;
+
         if (dtCon1.select(s))
         {
 
             int proCodi=dtCon1.getInt("pro_codi");
             String pais=dtCon1.getString("stp_painac",true);
-            double kilVenta=0;
-            double kilDesp=0;
-            double kilEntra=0;            
+            double kilVenta=0,kilVentaA=0;
+            double kilDesp=0,kilDespA=0;
+            double kilEntra=0,kilEntraA=0;            
             do
             {
                 if (proCodi!=dtCon1.getInt("pro_codi") || ! pais.equals(dtCon1.getString("stp_painac",true)))
                 {                 
                     addLineaBola(proCodi,pais,kilVenta,kilEntra,kilDesp);
+                    if (proCodi!=dtCon1.getInt("pro_codi"))
+                    {
+                        if (kilVenta!=kilVentaA || kilDesp!=kilDespA || kilEntra!=kilEntraA)
+                              addLineaBola(proCodi,"**",kilVentaA,kilEntraA,kilDespA);
+                        kilVentaA=0;
+                        kilDespA=0;
+                        kilEntraA=0;
+                        proCodi=dtCon1.getInt("pro_codi");  
+                    }
                     kilVenta=0;
                     kilDesp=0;
-                    kilEntra=0;
-                    proCodi=dtCon1.getInt("pro_codi");                    
+                    kilEntra=0;                                    
                     pais=dtCon1.getString("stp_painac",true);
                 }
                 kilVenta+=dtCon1.getDouble("kilventa");
                 kilEntra+=dtCon1.getDouble("kilentra");
-                kilDesp+=dtCon1.getDouble("kildesp");                               
+                kilDesp+=dtCon1.getDouble("kildesp");
+                kilVentaA+=dtCon1.getDouble("kilventa");
+                kilEntraA+=dtCon1.getDouble("kilentra");
+                kilDespA+=dtCon1.getDouble("kildesp");          
             } while (dtCon1.next());
             addLineaBola(proCodi,pais,kilVenta,kilEntra,kilDesp);
+            if (kilVenta!=kilVentaA || kilDesp!=kilDespA || kilEntra!=kilEntraA)
+                addLineaBola(proCodi,"**",kilVentaA,kilEntraA,kilDespA);
         }
     }
     void addLineaBola(int proCodi,String pais,double kilVenta,double kilEntra,double kilDesp) throws SQLException
@@ -410,18 +494,34 @@ public class MantPreMedios extends ventana
          if (pais==null)
              pais="";
          ArrayList v = new ArrayList();
-         v.add(proCodi);
-         v.add(MantArticulos.getNombProd(proCodi, dtStat));              
+         v.add(pais.equals("**")?"":proCodi);
+         v.add(pais.equals("**")?"TOTAL ARTICULO":MantArticulos.getNombProd(proCodi, dtStat));              
          v.add(kilDesp);
          v.add(kilVenta);
          v.add(kilEntra);         
-          v.add(kilEntra-kilDesp-kilVenta);         
-         double precio = htBolas.get(dtCon1.getInt("pro_codi"));
+         double kilInventario=kilEntra-kilDesp-kilVenta;
+         
+          v.add(kilInventario);   // Kilos invetario       
+         double precio = htBolas.get(proCodi);
          v.add(precio);
-         double importeVenta = kilVenta * precio;
-         double importeDesp = kilDesp  * (pais.equals("DE")?precioBolaAlemE.getValorDec():
-             pais.equals("PO")?precioBolaPoloniaE.getValorDec():precioBolaOtrasE.getValorDec());
-         v.add((importeVenta + importeDesp) / kilEntra);         
+         double impVenta=kilVenta * precio;
+         double impInventario=kilInventario*precio;
+         double impDesp = kilDesp  * (pais.equals("DE")?precioBolaAlemE.getValorDec():
+             pais.equals("PL")?precioBolaPoloniaE.getValorDec():precioBolaOtrasE.getValorDec());
+         if (!pais.equals("**"))
+         {
+              importeVenta +=  impVenta;
+              importeDesp+=impDesp;
+              kilosEntra+=kilEntra;
+              v.add((impVenta + impDesp + impInventario) / kilEntra);         
+         }
+         else
+         {
+            v.add((importeVenta + importeDesp + impInventario) / kilosEntra);         
+            importeVenta=0;
+            importeDesp=0;
+            kilosEntra=0;
+         }
           v.add(pais);
          jtBolas.addLinea(v);
     }
@@ -472,6 +572,7 @@ public class MantPreMedios extends ventana
         precioBolaAlemE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9.999");
         cLabel15 = new gnu.chu.controles.CLabel();
         precioBolaOtrasE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9.999");
+        Brefrescar = new gnu.chu.controles.CButton();
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
         fecStockE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
@@ -524,7 +625,9 @@ public class MantPreMedios extends ventana
         Pprinc.add(PCondi, gridBagConstraints);
 
         jtLomos.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jtLomos.setPreferredSize(new java.awt.Dimension(40, 40));
+        jtLomos.setMaximumSize(new java.awt.Dimension(40, 100));
+        jtLomos.setMinimumSize(new java.awt.Dimension(40, 100));
+        jtLomos.setPreferredSize(new java.awt.Dimension(40, 100));
 
         ArrayList v1=new ArrayList();
         v1.add("Producto"); //0
@@ -560,7 +663,7 @@ public class MantPreMedios extends ventana
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 0, 0, 0);
@@ -569,7 +672,6 @@ public class MantPreMedios extends ventana
         jtBolas.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtBolas.setMaximumSize(new java.awt.Dimension(240, 40));
         jtBolas.setMinimumSize(new java.awt.Dimension(240, 40));
-        jtBolas.setPreferredSize(new java.awt.Dimension(240, 40));
 
         ArrayList v=new ArrayList();
         v.add("Producto");//0
@@ -625,7 +727,6 @@ public class MantPreMedios extends ventana
         PPrecioBola.add(cLabel14);
         cLabel14.setBounds(0, 40, 60, 17);
 
-        precioBolaAlemE.setText("3.0");
         precioBolaAlemE.setValorDec(2.95);
         PPrecioBola.add(precioBolaAlemE);
         precioBolaAlemE.setBounds(70, 40, 35, 20);
@@ -637,6 +738,10 @@ public class MantPreMedios extends ventana
         precioBolaOtrasE.setText("2.9");
         PPrecioBola.add(precioBolaOtrasE);
         precioBolaOtrasE.setBounds(70, 80, 35, 20);
+
+        Brefrescar.setText("Refrescar");
+        PPrecioBola.add(Brefrescar);
+        Brefrescar.setBounds(20, 120, 80, 19);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -700,6 +805,7 @@ public class MantPreMedios extends ventana
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButton BirGrid;
+    private gnu.chu.controles.CButton Brefrescar;
     private gnu.chu.controles.CPanel PCondi;
     private gnu.chu.controles.CPanel PPie;
     private gnu.chu.controles.CPanel PPrecioBola;

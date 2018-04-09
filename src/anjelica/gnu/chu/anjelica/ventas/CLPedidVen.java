@@ -88,19 +88,19 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     String ARG_REPCODI = "";
     String ARG_SBECODI = "";
     
-    private final int JTCAB_EMPPED=0;
-    private final int JTCAB_EJEPED=1;
-    private final int JTCAB_NUMPED=2;
-    private final int JTCAB_CLICOD=3;
-    private final int JTCAB_CLINOMB=4;
-    private final int JTCAB_CLIPOBL=5;
-    private final int JTCAB_FECENT=6;
+    private final int JTCAB_EJEPED=0;
+    private final int JTCAB_NUMPED=1;
+    private final int JTCAB_CLICOD=2;
+    private final int JTCAB_CLINOMB=3;   
+    private final int JTCAB_CLIPOBL=4;
+    private final int JTCAB_FECENT=5;
+    private final int JTCAB_HORENT=6;
     private final int JTCAB_CODREP=7;
     private final int JTCAB_RUTA=10;
-    private final int JTCAB_SERALB=12;
-    private final int JTCAB_NUMALB= 13;   
-    private final int JTCAB_EJEALB=11;
-    private final int JTCAB_NOMCLI=4;
+    private final int JTCAB_SERALB=11;
+    private final int JTCAB_NUMALB= 12;   
+    private final int JTCAB_EJEALB=13;
+    
     private final int JTLIN_CANTI=6;
     private final int JTLIN_PROCOD=1;
     private final int JTLIN_PRONOMB=2;
@@ -180,7 +180,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2018-01-19");
+        this.setVersion("2018-04-09");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -341,7 +341,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
       {
         if (e.getValueIsAdjusting() || ! jtCabPed.isEnabled() || jtCabPed.isVacio() ) // && e.getFirstIndex() == e.getLastIndex())
           return;
-        verDatPed(jtCabPed.getValorInt(JTCAB_EMPPED),jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED),
+        verDatPed(EU.em_cod,jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED),
             jtCabPed.getValorInt(JTCAB_EJEALB),jtCabPed.getValString(JTCAB_SERALB),jtCabPed.getValorInt(JTCAB_NUMALB));
 //      System.out.println(" Row "+getValString(0,5)+ " - "+getValString(1,5));
 
@@ -359,10 +359,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
           return;
         if (padre!=null)
         {
-          empCodiS=jtCabPed.getValorInt(0);
-          ejeNumeS=jtCabPed.getValorInt(1);
-          pvcNumeS=jtCabPed.getValorInt(2);
-          cliCodiS=jtCabPed.getValorInt(3);
+          empCodiS=EU.em_cod;
+          ejeNumeS=jtCabPed.getValorInt(JTCAB_EJEPED);
+          pvcNumeS=jtCabPed.getValorInt(JTCAB_NUMPED);
+          cliCodiS=jtCabPed.getValorInt(JTCAB_CLICOD);
           matar();
         }
         else
@@ -384,6 +384,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     }
     void irAlbaran()
     {         
+        
         ejecutable prog;
         if ((prog=jf.gestor.getProceso(pdalbara.getNombreClase()))==null)
                return;
@@ -407,7 +408,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     } 
     public String getCliNomb()
     {
-        return jtCabPed.getValString(JTCAB_NOMCLI);
+        return jtCabPed.getValString(JTCAB_CLINOMB);
     }
     /**
      * Devuelve la ruta que tiene asignado un pedido.
@@ -649,7 +650,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                   s = "SELECT c.*,ti.usu_nomco,tit_tiempo, cl.cli_nomb,cl.cli_poble"
                        + "  FROM pedvenc as c left join v_tiempospedido as ti on ti.tid_id=c.pvc_id "
                       + " where ,v_cliente as cl "
-                       + " WHERE c.emp_codi =  " + jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED)
+                       + " WHERE c.emp_codi =  " + EU.em_cod
                        + " and C.cli_codi = cl.cli_codi "
                        + " AND C.eje_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED)
                        + " and C.pvc_nume = " + jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED);
@@ -669,7 +670,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                          return false;
                       nLineaDet=0;
                       nLineaSalto++;
-                      verDatPed(jtCabPed.getValorInt(nLineaReport, JTCAB_EMPPED),
+                      verDatPed(EU.em_cod,
                               jtCabPed.getValorInt(nLineaReport, JTCAB_EJEPED),
                               jtCabPed.getValorInt(nLineaReport, JTCAB_NUMPED),
                               jtCabPed.getValorInt(nLineaReport,JTCAB_EJEALB),
@@ -749,12 +750,13 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      if (!cli_codiE.isNull())
          swCliente=true;
      s = "SELECT c.*,av.avc_id,av.avc_impres,av.cli_ruta, cl.cli_nomb,cl.cli_codrut, cl.cli_poble,"
-         + " c.rut_codi, al.rut_nomb FROM pedvenc as c"
+         + " c.rut_codi, al.rut_nomb,prc_fecsal FROM pedvenc as c"
          + " left join v_albavec as av on c.avc_ano = av.avc_ano "
          + " and c.avc_serie= av.avc_serie and c.avc_nume =  av.avc_nume and av.emp_codi = c.emp_codi "
          + " left join tiempostarea as tt on tit_tipdoc='P' and tit_id=c.pvc_id and tt.usu_nomb='"+tit_usunomE.getText()+"'"
+         + " left join v_pedruta as pr on  c.pvc_id=pr.pvc_id "
          + ",clientes as cl,v_rutas as al "       
-        + " WHERE pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
+        + " WHERE c.pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
         " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" +
         " and c.emp_codi = "+EU.em_cod+
         " and cl.cli_codi = c.cli_codi " +
@@ -776,7 +778,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     if (swCliente)
       s += " AND c.cli_codi = " + cli_codiE.getValorInt();
  
-    s += " order by c.rut_codi,c.pvc_fecent,c.cli_codi ";
+    s += " order by prc_fecsal,c.rut_codi,c.pvc_fecent,c.cli_codi ";
 
     jtCabPed.setEnabled(false);
     jtCabPed.removeAllDatos();
@@ -792,13 +794,13 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
   private void confJTCab()
   {
     ArrayList v=new ArrayList();
-    v.add("Em"); // 0
-    v.add("Eje."); // 1
-    v.add("Num.");// 2
-    v.add("Cliente"); // 3
-    v.add("Nombre Cliente"); // 4
-    v.add("Población"); // 5
-    v.add("Fec.Entrega"); // 6
+    v.add("Eje."); // 0
+    v.add("Num.");// 1
+    v.add("Cliente"); // 2
+    v.add("Nombre Cliente"); // 3
+    v.add("Población"); // 4
+    v.add("Fec.Entrega"); // 5
+    v.add("Hora.Entrega"); // 6
     v.add("C.Rep"); // 7
     v.add("Cerr");// 8
     v.add("Dep?"); // 9
@@ -810,8 +812,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     jtCabPed.setMaximumSize(new Dimension(548, 158));
     jtCabPed.setMinimumSize(new Dimension(548, 158));
     jtCabPed.setPreferredSize(new Dimension(548, 158));
-    jtCabPed.setAnchoColumna(new int[]{26,40,49,55,150,100,76,40,40,40,100,40,40,60});
-    jtCabPed.setAlinearColumna(new int[]{2,2,2,2,0,0,1,0,1,1,0,2,1,2});
+    jtCabPed.setAnchoColumna(new int[]{40,49,55,150,100,76,40,40,40,40,100,40,40,60});
+    jtCabPed.setAlinearColumna(new int[]{2,2,2,0,0,1,0,1,1,1,0,2,1,2});
 
     
     jtCabPed.setFormatoColumna(8,"BSN");
@@ -926,13 +928,23 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                     continue;
         }
         ArrayList v=new ArrayList();
-        v.add(dtCon1.getString("emp_codi")); // 0
+
         v.add(dtCon1.getString("eje_nume")); // 1
         v.add(dtCon1.getString("pvc_nume")); // 2
         v.add(dtCon1.getString("cli_codi")); // 3
         v.add(dtCon1.getObject("pvc_clinom")==null?dtCon1.getString("cli_nomb"):dtCon1.getString("pvc_clinom")); // 4
         v.add(dtCon1.getObject("cli_poble")); // 5 
-        v.add(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
+        if (dtCon1.getObject("prc_fecsal")==null)
+        {
+            v.add(dtCon1.getFecha("pvc_fecent","dd-MM-yyyy")); // 5
+            v.add("");
+        }
+        else
+        {
+            v.add(dtCon1.getFecha("prc_fecsal","dd-MM-yyyy")); // 5
+            v.add(dtCon1.getFecha("prc_fecsal","HH:mm"));
+        }
+
         v.add(dtCon1.getString("cli_codrut")); // 6
         v.add(dtCon1.getInt("pvc_cerra")!=0); // 7
         v.add(dtCon1.getString("pvc_depos")); // 8
@@ -951,7 +963,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
       }
       jtCabPed.requestFocusInicio();
       jtCabPed.setEnabled(true);
-      verDatPed(jtCabPed.getValorInt(JTCAB_EMPPED),jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED),
+      verDatPed(EU.em_cod,jtCabPed.getValorInt(JTCAB_EJEPED),jtCabPed.getValorInt(JTCAB_NUMPED),
             jtCabPed.getValorInt(JTCAB_EJEALB),jtCabPed.getValString(JTCAB_SERALB),jtCabPed.getValorInt(JTCAB_NUMALB));
     }
     catch (SQLException | ParseException k)
@@ -1343,7 +1355,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                 case "tit_tiempo":
                     return  tit_tiempoE.getValorInt();
                 case "emp_codi":
-                    return jtCabPed.getValorInt(nLineaReport,JTCAB_EMPPED);
+                    return EU.em_cod;
                 case "eje_nume":
                     return jtCabPed.getValorInt(nLineaReport,JTCAB_EJEPED);
                 case "pvc_nume":

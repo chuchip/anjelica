@@ -735,7 +735,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2018-03-28" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2018-04-09" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -3937,7 +3937,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume )+
          " and a.pro_tiplot='V' "+
-         " and l.avl_canti != 0 " +
+         " and l.avl_canti > 0 " +
          " group by l.pro_codi,pro_tiplot,"+(modPrecio?"avl_prven,":"")+
          " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco " +
          " UNION ALL " +
@@ -3953,7 +3953,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.emp_codi = " + empCodi +
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume )+
-         " and l.avl_canti < 0 " +
+         " and l.avl_canti <= 0 " +
         " and a.pro_tiplot='V' "+
          " group by l.pro_codi,pro_tiplot,"+(modPrecio?"avl_prven,":"")+
           " avl_numpal,tar_preci,a.pro_nomb,l.pro_nomb,a.pro_tipiva,a.pro_indtco " +
@@ -3969,7 +3969,7 @@ public class pdalbara extends ventanaPad  implements PAD
          " and l.emp_codi = " + empCodi +
          " and l.avc_serie = '" + serie + "'" +
          " and l.avc_nume = " + nume )+
-         " and l.avl_canti != 0 " +
+//         " and l.avl_canti != 0 " +
         " and a.pro_tiplot<>'V' "+
          " ORDER BY 3,1,2";
   }
@@ -4066,7 +4066,7 @@ public class pdalbara extends ventanaPad  implements PAD
      
      if (P_ADMIN)
      {
-        s=unificaLineas();
+     s=unificaLineas();
         if (s!=null)
         {
             mensajes.mensajeExplica("Atencion. Albaranes con problemas corregido",s);

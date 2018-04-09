@@ -548,7 +548,7 @@ public class RepEtiqueta extends ventana
         etiq.setNumCopias(1);
         int ETIQINT=etiqueta.getCodigoEtiqInterior(EU);
         utDesp= trazPanel.getUtilDespiece(true);
-         if ( utDesp.getFechaProduccion() != null && Formatear.comparaFechas(utDesp.getFechaCaducidad() , utDesp.getFechaProduccion() )<10)
+        if ( utDesp.getFechaProduccion() != null && Formatear.comparaFechas(utDesp.getFechaCaducidad() , utDesp.getFechaProduccion() )<10)
         {
             msgBox("Fecha caducidad debe ser superior en 10 dias a fecha produccion");
             return;

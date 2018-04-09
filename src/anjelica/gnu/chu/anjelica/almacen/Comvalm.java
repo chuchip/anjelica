@@ -41,6 +41,7 @@ import gnu.chu.anjelica.listados.RepEtiqueta;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.ventas.pdalbara;
 import gnu.chu.camposdb.empPanel;
+import gnu.chu.controles.CTextField;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.*;
 import java.awt.event.*;
@@ -55,7 +56,7 @@ import javax.swing.JCheckBoxMenuItem;
 
 public class Comvalm extends ventana
 {
-  
+  String FORMATOCOSTO="---9.99";
   boolean P_VERPRECIO=false;
   JPopupMenu JpopupMenu = new JPopupMenu("Filtro");
   private MvtosAlma mvtosAlm = new MvtosAlma();
@@ -109,7 +110,7 @@ public class Comvalm extends ventana
     vl = p.getLayeredPane();
     setTitulo("Cons. Mvtos Almacen ");
     ponParametros(ht);
-    eje = false;
+   
 
     try
     {
@@ -163,7 +164,25 @@ public class Comvalm extends ventana
                
            }
        }
-      
+       FORMATOCOSTO= EU.getValorParam("formatocosto", FORMATOCOSTO);
+       int nc_DecMasc=0;
+
+        boolean sw_dec=false;
+        for (int n=0;n<FORMATOCOSTO.length();n++)
+        {
+            if (FORMATOCOSTO.charAt(n) == CTextField.DECIMALSEPARATOR)
+            {
+                sw_dec = true;
+                continue;
+            }
+            if (FORMATOCOSTO.charAt(n) == CTextField.GROUPSEPARATOR)
+                continue;
+
+            if (sw_dec)
+                nc_DecMasc++;            
+        }
+        mvtosAlm.setNumeroDeciamlesCosto(nc_DecMasc);
+        eje = false;
   }
   private void jbInit() throws Exception
   {
@@ -393,26 +412,20 @@ public class Comvalm extends ventana
                   String doc[] = jt.getValString(JT_DOCUM).split("-");
                   if (jt.getValString(JT_TIPO).toUpperCase().startsWith("D"))
                   {
-                      if ((prog = jf.gestor.getProceso(MantDesp.getNombreClase())) == null)
+                      if (!MantDesp.irDespiece(Integer.parseInt(doc[0]),
+                          Integer.parseInt(doc[2]),jf))
+                      {
+                          resetMsgEspere();
                           return;
-                      MantDesp cm = (MantDesp) prog;
-                      if (cm.inTransation())
-                      {
-                          msgBox("Mantenimiento Despieces ocupado. No se puede realizar la busqueda");
-                      }
-                      else
-                      {
-                        cm.PADQuery();
-                        cm.setEjeNume(doc[0]);
-                        cm.setDeoCodi(doc[2]);
-                        cm.ej_query();
-                        jf.gestor.ir(cm);
                       }
                   }
                   if (jt.getValString(JT_TIPO).startsWith("V"))
                   {
                       if ((prog = jf.gestor.getProceso(pdalbara.getNombreClase())) == null)
+                      {
+                          resetMsgEspere();
                           return;
+                      }
                       pdalbara cm = (pdalbara) prog;
                       if (cm.inTransation())
                       {
@@ -453,7 +466,7 @@ public class Comvalm extends ventana
                           MantAlbCom cm = (MantAlbCom) prog;
                           if (cm.inTransation())
                           {
-                              msgBox("Mantenimiento Albaranes de Compras ocupado. No se puede realizar la busqueda");
+                              msgBox("Mantenimiento Albaranes de Compras ocupado. No se puede realizar la busqueda");                              
                           }
                           else
                           {
@@ -470,25 +483,13 @@ public class Comvalm extends ventana
                   }
                   if (jt.getValString(JT_TIPO).startsWith("R"))
                   {
-                      if ((prog = jf.gestor.getProceso(pdregalm.getNombreClase())) == null)
+                      String ret=pdregalm.irRegulurazacion(jf, Integer.parseInt(doc[2]));
+                      if (ret!=null)
                       {
+                          msgBox(ret);
                           resetMsgEspere();
                           return;
-                      }
-                      pdregalm cm = (pdregalm) prog;
-                      if (cm.inTransation())
-                      {
-                          msgBox("Mantenimiento Regularizaciones Almacen ocupado. No se puede realizar la busqueda");
-                      }
-                      else
-                      {
-                        cm.PADQuery();
-                        cm.setNumeroRegula(Integer.parseInt(doc[2]));
-
-                        cm.ej_query();
-                        jf.gestor.ir(cm);
-                      }
-
+                      }                    
                   }
                   resetMsgEspere();
               }
@@ -1004,10 +1005,10 @@ public class Comvalm extends ventana
             jt.setFormatoColumna(0,"dd-MM-yy HH:mm");
             jt.setFormatoColumna(1,"---9.99");
             jt.setFormatoColumna(2,"---9.99");
-            jt.setFormatoColumna(4,"---9.99");
+            jt.setFormatoColumna(4,FORMATOCOSTO);
             jt.setFormatoColumna(5,"----9");
             jt.setFormatoColumna(6,"--,--9.9");
-            jt.setFormatoColumna(7,"--9.99");
+            jt.setFormatoColumna(7,FORMATOCOSTO);
             jt.setFormatoColumna(8,"--,--9.99");
             jt.setFormatoColumna(13,"---9.99");
             jt.setFormatoColumna(JT_FECDOC,"dd-MM-yy");
