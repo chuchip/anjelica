@@ -1983,8 +1983,8 @@ public class ValDespi extends ventana {
     psInv.setDate(2, fechaInv);
     ResultSet rs=psInv.executeQuery();
     rs.next();
-    double kilos=rs.getDouble("kilos");
-    double precioMedio=rs.getDouble("kilos")==0?0:rs.getDouble("importe")/rs.getDouble("kilos");
+    double kgStock=rs.getDouble("kilos");
+    double precioMedioStock=rs.getDouble("kilos")==0?0:rs.getDouble("importe")/rs.getDouble("kilos");
     double importe;
    
     boolean isDocumActual;
@@ -2007,38 +2007,39 @@ public class ValDespi extends ventana {
                 if (rs.getString("mvt_tipdoc").equals(tipoDoc))
                 {
                     kgDocum += rs.getDouble("mvt_canti");
-                    impDocum += rs.getDouble("mvt_canti") * precioMedio ;
+                    impDocum += rs.getDouble("mvt_canti") * precioMedioStock ;
                 }
             }
-          
+            double precioMvto = rs.getDouble("mvt_prec");
             if (rs.getString("mvt_tipo").equals("E"))
             {
-                if (precioMedio>0 && kilos>0)
-                    importe=kilos*precioMedio;
-                else
-                {
-                    kilos=0;
-                    importe=0;
+                boolean swIgn=false;
+                double importeStock=kgStock * precioMedioStock;
+                double kgStockNuevo=  kgStock + rs.getDouble("mvt_canti");
+                if (importeStock + (rs.getDouble("mvt_canti")  * precioMvto)<0.001 || kgStockNuevo< 0.01 )
+                {// Estoy con stock en negativo. Ignoro acumulados de precios medios.
+                    if (kgStock<0.01)
+                         precioMedioStock=precioMvto;  // Si los kilos de stock anteriores son 0 pongo costo de mvto.
+                    kgStock = kgStockNuevo;
+                    swIgn=true;
                 }
-                if (kilos<-0.01)
+                if (importeStock  < 0.001 && !swIgn )
                 {
-                    if (msgError==null)
-                        msgError="Producto : "+proCodi+" Stock negativo en entrada de fecha: "+
-                            Formatear.getFecha(rs.getTimestamp("mvt_time"),"dd-MM-yyyy HH:mm");
-                    kilos=0;
-                    importe=0;
-                    continue;
+                    kgStock = kgStockNuevo;
+                    precioMedioStock=precioMvto;   
+                    swIgn=true;
                 }
-                kilos+=rs.getDouble("mvt_canti");
-                if (rs.getDouble("mvt_prec")!=0 && ! isDocumActual )
-                {                                             
-                        importe+=  rs.getDouble("mvt_canti")* 
-                                rs.getDouble("mvt_prec") ;
-                        precioMedio=kilos==0?0:importe/kilos;
-                }                      
+                if (!swIgn)
+                {
+                    importeStock = kgStock * precioMedioStock;             
+                    kgStock += rs.getDouble("mvt_canti");
+                    importeStock += rs.getDouble("mvt_canti")
+                        * precioMvto;
+                    precioMedioStock = kgStock == 0 ? 0 : importeStock / kgStock;
+                }                   
             }
             else
-                kilos-=rs.getDouble("mvt_canti");
+                kgStock-=rs.getDouble("mvt_canti");
         } while (rs.next());
     }
     if (msgError!=null && !swValGrupo && errorProd.indexOf(proCodi)<0 )
