@@ -86,7 +86,7 @@ create table anjelica.usuarios
 	usu_nomco varchar(100) not null, -- Nombre Completo
 	usu_email varchar(100),
 	usu_puejpa char(1) not null, -- Puede ejecutar Programas s/menu
-	usu_admdb char(1) not null, -- Es administrador de la BD
+	usu_admdb char(1) not null, -- Es administrador de la BD (S/N)
 	usu_activ char(1) not null, -- Activo (S/N)
 	usu_rese1 char(1), 	    -- Reservado 1
 	usu_previ char(1),	    -- Previsualizar Listados (S/N)
@@ -95,6 +95,7 @@ create table anjelica.usuarios
     usu_pass varchar(80),       -- Contraseña Usuario (en SHA-1)
     usu_look varchar(3),        -- Look And Feel Usuario 
 	usu_clanum smallint not null default 0, -- Clave numerica de usuario (sin encriptar)
+	usu_adlock smallint not null default 0, -- Administrador bloqueos.
 	constraint ix_usuarios primary  key (usu_nomb)
 );
 insert into  usuarios VALUES('anjelica',1,2008,'Administrador de BD','anjelica@localhost.com','S','S','S',null,'N','N',1,0);

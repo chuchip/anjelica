@@ -185,7 +185,7 @@ public class CLinkBox
 
   /**
    * Actualiza el combo dependiendo del valor del texto
-   * @param actCombo boolean
+   * @param actCombo  actuaaliza valor combo boolean
    */
   public void actualizaCombo(boolean actCombo)
   {

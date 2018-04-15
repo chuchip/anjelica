@@ -148,7 +148,7 @@ public class pdregalm extends ventanaPad implements PAD
    {
      iniciarFrame();
      this.setSize(new Dimension(583, 562));
-     this.setVersion("2018-04-08 "+(P_ADMIN?"  ADMIN":""));
+     this.setVersion("2018-04-11 "+(P_ADMIN?"  ADMIN":""));
      Pprinc.setDefButton(Baceptar);
      Pprinc.setDefButtonDisable(false);
      Pprinc.setLayout(null);
@@ -468,7 +468,8 @@ public class pdregalm extends ventanaPad implements PAD
    }
  }
 
-    @Override
+    
+ @Override
 public void ej_query()
 {
   try
@@ -792,7 +793,7 @@ public void ej_query()
      pro_codiE1.setEnabled(b);
      rgs_numeE.setEnabled(b);
    }
-   if (nav.modo == navegador.QUERY)
+   if (modo == navegador.QUERY)
      return;
    pRegAlm.setActivo(b);
  }

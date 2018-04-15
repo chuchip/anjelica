@@ -777,7 +777,7 @@ public class ventana extends CInternalFrame implements ejecutable
           "\n El registro se edito el: " +
           dt.getFecha("blo_fecha", "dd-MM-yyyy") + " " +
           dt.getDouble("blo_hora");
-      if ((dt.getString("usu_nomb").equals(EU.usuario) || EU.isAdminDB(dt) || isArgumentoAdmin()) && swCheck)
+      if ((dt.getString("usu_nomb").equals(EU.usuario) || EU.isAdminLock(dt) || isAdmin()) && swCheck)
       {
          int res= mensajes.mensajePreguntar(msgBloqueo+"\n Desbloquear y continuar ");
          if (res==mensajes.YES)

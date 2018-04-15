@@ -498,7 +498,7 @@ public class CLsaldos extends ventana implements JRDataSource
      }
      else
      {
-       feulin = "01-01-" + EU.ejercicio; // Buscamos desde el principio del a�o.
+       feulin = "01-01-" + EU.ejercicio; // Buscamos desde el principio del año
        feulinE.addItem(feulin);
      }
      feulinE.setText(feulin);
@@ -739,8 +739,9 @@ public class CLsaldos extends ventana implements JRDataSource
           }
           if (! opIncRes.isSelected() && Formatear.comparaFechas(fecsalE.getDate(),Formatear.getDateAct())!=0)
           {
-              msgBox("Si fecha saldo no es la del dia, se deben incluir las reservas");
-              return;
+              int ret=mensajes.mensajeYesNo("Si fecha saldo no es la del dia, se deben incluir las reservas. ¿ Continuar seguro ?");
+              if (ret!=mensajes.YES)
+                return;
           }
           
           if (fecsalE.getText().equals(feulinE.getText()) && pro_cosincE.isSelected())

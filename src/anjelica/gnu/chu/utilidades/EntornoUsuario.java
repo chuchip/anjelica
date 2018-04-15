@@ -255,8 +255,21 @@ public class EntornoUsuario implements Serializable
      if (getLikeUsuario()==null && dt!=null)
          setLikeUsuario(gnu.chu.anjelica.pad.pdusua.getVLikeUsuario(usuario,dt));
        
-     return getLikeUsuario().getString("usu_admdb").equals("S");
-    
+     return getLikeUsuario().getString("usu_admdb").equals("S");    
+   }
+    /**
+    * Devuelve si el usuario es administrador de Bloqueos
+    * @param dt DatosTabla usado en caso de que no se haya inicialiado el VLike
+    * @return true si es administrador de bloqueos
+    * @throws SQLException 
+    */
+   public boolean isAdminLock(DatosTabla dt) throws SQLException
+   {
+   
+     if (getLikeUsuario()==null && dt!=null)
+         setLikeUsuario(gnu.chu.anjelica.pad.pdusua.getVLikeUsuario(usuario,dt));
+       
+     return getLikeUsuario().getInt("usu_adlock")!=0;    
    }
    /**
     * Inicializa HashMap con los valores de la tabla parametros

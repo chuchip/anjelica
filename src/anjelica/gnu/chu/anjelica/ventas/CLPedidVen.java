@@ -97,9 +97,9 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     private final int JTCAB_HORENT=6;
     private final int JTCAB_CODREP=7;
     private final int JTCAB_RUTA=10;
-    private final int JTCAB_SERALB=11;
-    private final int JTCAB_NUMALB= 12;   
-    private final int JTCAB_EJEALB=13;
+    private final int JTCAB_SERALB=12;
+    private final int JTCAB_NUMALB= 13;   
+    private final int JTCAB_EJEALB=11;
     
     private final int JTLIN_CANTI=6;
     private final int JTLIN_PROCOD=1;
@@ -180,7 +180,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2018-04-09");
+        this.setVersion("2018-04-10");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -778,7 +778,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     if (swCliente)
       s += " AND c.cli_codi = " + cli_codiE.getValorInt();
  
-    s += " order by prc_fecsal,c.rut_codi,c.pvc_fecent,c.cli_codi ";
+    s += " order by prc_fecsal,c.pvc_fecent,c.rut_codi,c.cli_codi ";
 
     jtCabPed.setEnabled(false);
     jtCabPed.removeAllDatos();

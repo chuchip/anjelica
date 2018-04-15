@@ -112,7 +112,7 @@ private void jbInit() throws Exception
   {
       iniciarFrame();
 
-      this.setVersion("2018-03-31 "+(P_VERPRECIO?"":" NO VER PRECIOS"));
+      this.setVersion("2018-04-10 "+(P_VERPRECIO?"":" NO VER PRECIOS"));
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -460,7 +460,7 @@ private void jbInit() throws Exception
              public void mouseClicked(MouseEvent e) {
                  if (jt.isVacio() || e.getClickCount()<2)
                      return;
-                 String ret=pdregalm.irRegulurazacion(jf, jt.getValorInt(JT_NUMREG));
+                 String ret=pdregalm.irRegulurazacion(jf, jt.getValorInt(jt.getSelectedRowDisab(), JT_NUMREG));
                  if (ret!=null)
                      msgBox(ret);
              }

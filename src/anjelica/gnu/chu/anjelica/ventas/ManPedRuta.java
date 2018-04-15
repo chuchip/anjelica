@@ -149,7 +149,7 @@ public class ManPedRuta extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         
         iniciarFrame();
-        this.setVersion("2017-11-27 "+(ARG_MODSALA?" Modo Sala ":""));
+        this.setVersion("2018-04-12 "+(ARG_MODSALA?" Modo Sala ":""));
         
         strSql = "SELECT * FROM pedrutacab "+
             (ARG_MODSALA?" where usu_nomb ='"+EU.usuario+"'":"")+
@@ -1332,15 +1332,13 @@ public class ManPedRuta extends ventanaPad implements PAD
                         if ((rsPed.getInt("avc_impres") & 1) == 1 )
                             continue; // Impreso
                     }
-//                    if ( pdpeve.getIdPedido(dtCon1,EU.em_cod,eje_numeE.getValorInt(),pvc_numeE.getValorInt())==0)
-    
-//            {
-//                mensajeErr("Pedido NO encontrado");
-//               
-//                return JT_NUMPED;
-//            }
+                    if (checkLineaRepe(dtCon1.getInt("eje_nume"),dtCon1.getInt("pvc_nume"),-1 ))
+                        continue;    
+
                     calculaKilosPedido(dtStat,dtCon1.getInt("eje_nume"),dtCon1.getInt("pvc_nume"));
+                         
                     ArrayList a=new ArrayList();
+                    
                     a.add(dtCon1.getInt("eje_nume"));
                     a.add(dtCon1.getInt("pvc_nume"));
                     a.add(dtCon1.getDate("pvc_fecent"));

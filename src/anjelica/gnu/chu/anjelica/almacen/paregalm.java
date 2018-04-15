@@ -491,12 +491,12 @@ public class paregalm extends CPanel {
                 mvtosAlm.setUsaDocumentos(false);
             }       
             String fecultInv=Formatear.getFecha(ActualStkPart.getDateUltInv(cci_fecconE.getDate() , dtStat),"dd-MM-yyyy");
-            mvtosAlm.iniciarMvtos(fecultInv , dtAdd);
+            mvtosAlm.iniciarMvtos(fecultInv , dtCon1);
             if (mvtosAlm.getCostoRefInFecha(pro_codiE.getValorInt(),
                     new Timestamp(
                     Formatear.getDate(cci_fecconE.getFecha("yyyy-MM-dd")+" "+
                     Formatear.format(cci_horconE.getText(),"99")+":"+
-                    Formatear.format(cci_minconE.getText(),"99"),"yyyy-MM-dd HH:mm").getTime())  , dtAdd, dtStat))
+                    Formatear.format(cci_minconE.getText(),"99"),"yyyy-MM-dd HH:mm").getTime())  , dtCon1, dtStat))
             {
                 rgs_prreguE.setValorDec(mvtosAlm.getPrecioStock());
             }
@@ -578,7 +578,7 @@ public class paregalm extends CPanel {
                 : rgsRecprv == paregalm.PENDREC ? "No Recl" : "Rechaz";
     }
 
-    void verCliPrv() throws SQLException {
+    void verCliPrv() throws SQLException {        
         String s = "SELECT * FROM V_motregu WHERE tir_codi = " + tir_codiE.getValorInt();
         if (!dtStat.select(s)) {
             return;

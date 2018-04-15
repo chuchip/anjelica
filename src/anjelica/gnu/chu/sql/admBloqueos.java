@@ -75,7 +75,7 @@ public class admBloqueos extends ventana
 
       EU=eu;
       vl=p.getLayeredPane();
-      setTitulo("Administrar Bloqueos (20040804)");
+      setTitulo("Administrar Bloqueos (20180411)");
       eje=false;
       jf=null;
       try  {
@@ -158,6 +158,7 @@ public class admBloqueos extends ventana
     Pdatcon.add(blo_ttyE, null);
   }
 
+  @Override
   public void iniciarVentana() throws Exception
   {
     Pdatcon.setDefButton(Baceptar);
@@ -167,9 +168,9 @@ public class admBloqueos extends ventana
     usu_nombE.setQuery(true);
     blo_tablaE.setColumnaAlias("blo_tabla");
     blo_ttyE.setColumnaAlias("blo_tty");
-    s="SELECT usu_admdb from usuarios WHERE usu_nomb = '"+EU.usuario+"'";
+    s="SELECT usu_adlock from usuarios WHERE usu_nomb = '"+EU.usuario+"'";
     if (dtStat.select(s))
-      dbAdmin=dtStat.getString("usu_admdb").equals("S");
+      dbAdmin=dtStat.getInt("usu_adlock")!=0;
     s="SELECT usu_nomb,usu_nomb FROM usuarios ORDER BY usu_nomb";
     dtStat.select(s);
     usu_nombE.addDatos(dtStat);

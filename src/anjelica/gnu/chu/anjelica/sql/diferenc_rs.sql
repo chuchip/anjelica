@@ -1,3 +1,5 @@
+ALTER TABLE USUARIOS ADD usu_adlock smallint not null default 0;
+
 insert into parametros values('*','formatocosto','Formato para campos costo','---9.99'); 
 --
 --

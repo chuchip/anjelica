@@ -645,7 +645,17 @@ public class pdalmace extends ventanaPad implements PAD
    {
      return ALMACENPRINCIPAL;
    }
-   
+     /**
+     * Devuelve la fecha de ultimo inventario 
+     * 
+     * @param dt Datostabla
+     * @return Fecha Inventario. Puede ser null
+     * @throws SQLException Si no encuentra la configuracion o hay un erro de DB 
+     */
+ public static java.sql.Date getFechaInventario(DatosTabla dt) throws SQLException
+ {
+    return getFechaInventario(ALMACENPRINCIPAL,dt);
+ }
     /**
      * Devuelve la fecha de ultimo inventario para una empresa
      * @param almCodi Empresa de la q buscar la fecha inventario. 0 para todas. 

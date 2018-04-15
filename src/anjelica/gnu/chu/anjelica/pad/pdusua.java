@@ -61,6 +61,8 @@ public class pdusua extends ventanaPad   implements PAD
   CLabel cLabel1 = new CLabel();
   CComboBox usu_puejpaE = new CComboBox();
   CLabel cLabel2 = new CLabel();
+  CComboBox usu_adlockE = new CComboBox();
+  CLabel usu_admdbL = new CLabel("Administrador");
   CComboBox usu_admdbE = new CComboBox();
   CLabel cLabel3 = new CLabel();
   CComboBox usu_activE = new CComboBox();
@@ -139,7 +141,7 @@ public class pdusua extends ventanaPad   implements PAD
     iniciarFrame();
     this.setSize(new Dimension(497, 334));
 
-    this.setVersion("2015-12-27"+(modConsulta ? "SOLO LECTURA" : ""));
+    this.setVersion("2018-04-11"+(modConsulta ? "SOLO LECTURA" : ""));
     strSql = "SELECT * FROM usuarios  ORDER BY usu_nomb ";
 
     statusBar = new StatusBar(this);
@@ -187,7 +189,9 @@ public class pdusua extends ventanaPad   implements PAD
     usu_emailE.setBounds(new Rectangle(56, 86, 420, 17));
     eje_numeE.setBounds(new Rectangle(56, 109, 54, 18));
     usu_puejpaE.setBounds(new Rectangle(432, 109, 45, 18));
-    usu_admdbE.setBounds(new Rectangle(141, 133, 45, 18));
+    usu_adlockE.setBounds(new Rectangle(141, 133, 45, 18));
+    usu_admdbL.setBounds(new Rectangle(195, 133, 98, 18));
+    usu_admdbE.setBounds(new Rectangle(295, 133, 45, 18));
     cLabel3.setText("Activo");
     cLabel3.setBounds(new Rectangle(376, 133, 45, 16));
     usu_activE.setBounds(new Rectangle(432, 133, 45, 18));
@@ -239,7 +243,9 @@ public class pdusua extends ventanaPad   implements PAD
     Pprinc.add(cLabel5, null);
     Pprinc.add(cLabel8, null);
     Pprinc.add(eje_numeE, null);
+    Pprinc.add(usu_adlockE, null);
     Pprinc.add(usu_admdbE, null);
+    Pprinc.add(usu_admdbL, null);
     Pprinc.add(cLabel2, null);
     Pprinc.add(usu_puejpaE, null);
     Pprinc.add(cLabel1, null);
@@ -281,9 +287,12 @@ public class pdusua extends ventanaPad   implements PAD
     eje_numeE.setColumnaAlias("eje_nume");
     usu_emailE.setColumnaAlias("usu_email");
     usu_puejpaE.setColumnaAlias("usu_puejpa");
+    usu_adlockE.setColumnaAlias("usu_adlock");
     usu_admdbE.setColumnaAlias("usu_admdb");
     usu_activE.setColumnaAlias("usu_activ");
 
+    usu_adlockE.addItem("Si", "1");
+    usu_adlockE.addItem("No", "0");
     usu_admdbE.addItem("Si", "S");
     usu_admdbE.addItem("No", "N");
     usu_puejpaE.addItem("Si", "S");
@@ -360,6 +369,7 @@ public class pdusua extends ventanaPad   implements PAD
       usu_nomcoE.setText(dtCon1.getString("usu_nomco"));
       usu_emailE.setText(dtCon1.getString("usu_email"));
       usu_puejpaE.setValor(dtCon1.getString("usu_puejpa"));
+      usu_adlockE.setValor(dtCon1.getString("usu_adlock"));
       usu_admdbE.setValor(dtCon1.getString("usu_admdb"));
       usu_activE.setValor(dtCon1.getString("usu_activ"));
       usu_rese1E.setSelected(dtCon1.getString("usu_rese1").equals("S"));
@@ -393,6 +403,7 @@ public class pdusua extends ventanaPad   implements PAD
     usu_emailE.setEnabled(act);
     usu_puejpaE.setEnabled(act);
     usu_activE.setEnabled(act);
+    usu_adlockE.setEnabled(act);
     usu_admdbE.setEnabled(act);
     usu_rese1E.setEnabled(act);
     usu_previE.setEnabled(act);
@@ -448,7 +459,8 @@ public class pdusua extends ventanaPad   implements PAD
     v.add(usu_emailE.getStrQuery());
     v.add(emp_codiE.getStrQuery());
     v.add(usu_puejpaE.getStrQuery());
-    v.add(usu_admdbE.getStrQuery());
+    v.add(usu_adlockE.getStrQuery());
+     v.add(usu_admdbE.getStrQuery());
     v.add(usu_activE.getStrQuery());
     v.add(sbe_codiE.getStrQuery());
     s = "SELECT * FROM usuarios ";
@@ -598,6 +610,7 @@ public class pdusua extends ventanaPad   implements PAD
     activar(true);
     usuClanum=usu_clanumE.getValorInt();
     usu_puejpaE.setValor("N");
+    usu_adlockE.setValor("0");
     usu_admdbE.setValor("N");
     usu_activE.setValor("S");
     usu_rese1E.setSelected(false);
@@ -719,6 +732,7 @@ public class pdusua extends ventanaPad   implements PAD
     dt.setDato("usu_email", usu_emailE.getText());
     dt.setDato("emp_codi", emp_codiE.getValorInt());
     dt.setDato("usu_puejpa", usu_puejpaE.getValor());
+    dt.setDato("usu_adlock", usu_adlockE.getValor());
     dt.setDato("usu_admdb", usu_admdbE.getValor());
     dt.setDato("usu_activ", usu_activE.getValor());
     dt.setDato("usu_rese1", usu_rese1E.isSelected()?"S":"N");
@@ -727,6 +741,7 @@ public class pdusua extends ventanaPad   implements PAD
     dt.setDato("sbe_codi", sbe_codiE.getValorInt());
     dt.setDato("usu_pass",EU.encryptAES(usu_passE.getTextSuper()));
   }
+  @Override
   public void canc_addnew()
   {
     mensaje("");
