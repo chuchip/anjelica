@@ -47,7 +47,8 @@ import javax.swing.event.ListSelectionListener;
 
 
 public class ValDespi extends ventana {
-    ArrayList<Integer> errorProd=new ArrayList();
+   utildesp utDesp;
+   ArrayList<Integer> errorProd=new ArrayList();
    int TARIFA_MAYOR;
    double DTO_TARIFA_MAYOR;
    private int swCostoOrig=0;
@@ -60,8 +61,7 @@ public class ValDespi extends ventana {
    String msgError;
    double impDocum=0;
    double kgDocum=0;
-   PreparedStatement psMvt;
-   PreparedStatement psInv;
+  
    private ArrayList<Integer> htAvi=new ArrayList();
    private java.util.Date fecIniSem,fecFinSem;
    private String rangoSemana;
@@ -168,7 +168,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2018-02-28" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2018-04-20" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -188,6 +188,7 @@ public class ValDespi extends ventana {
    @Override
    public void iniciarVentana() throws Exception
    {
+     utDesp=new utildesp();
      tid_codfinE.iniciar(dtStat, this, vl, EU);
      tid_codiniE.iniciar(dtStat, this, vl, EU);
      proOrigenE.iniciar(dtStat, this, vl, EU);
@@ -218,7 +219,7 @@ public class ValDespi extends ventana {
      jtCab.setDefButton(Baceptar);
      jtLin.setDefButton(Baceptar);
      fecinfE.setDate(Formatear.sumaDiasDate(Formatear.getDateAct(),-15));
-     preparaStatements();
+  
      activarEventos();
    }
    
@@ -1796,22 +1797,7 @@ public class ValDespi extends ventana {
          " order by f.pro_codi ";
  }
  
- void preparaStatements() throws SQLException
- {     
-    s= "SELECT mvt_time,mvt_tipo,mvt_tipdoc, mvt_canti,mvt_prec,mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,mvt_numdoc "+
-             " from mvtosalm  "+
-             " where pro_codi =  ?" +
-             " AND mvt_time::date >= ?  "+           
-             " and mvt_time <= ? "+
-             " and not (mvt_tipdoc = 'V' and mvt_serdoc='X') "+ // Ignorar traspaso entre Almacenes
-             " order by mvt_time,mvt_tipo";             
-    psMvt=dtCon1.getPreparedStatement(s);
-    s= "SELECT sum(rgs_kilos) as kilos, sum(rgs_kilos*rgs_prregu) as importe "+
-             " from v_inventar  "+
-             " where pro_codi =  ?" +
-             " AND rgs_fecha::date = ?  ";
-    psInv=dtCon1.getPreparedStatement(s);
- }
+ 
  /**
   * Devuelve el precio medio de despiece para un producto 
   * @param proCodi Producto
@@ -1959,96 +1945,10 @@ public class ValDespi extends ventana {
      fecInv = ActualStkPart.getDateUltInv(fecha, dtCon1);
      if (fecInv==null)
          return 0;
-     return getPrecioMedioEntrada(proCodi, new java.sql.Date(fecInv.getTime()),
+     return utDesp.getPrecioMedioEntrada(dtCon1,proCodi, new java.sql.Date(fecInv.getTime()),
                dtStat.getTimeStamp("maxTiempo"),EU.em_cod,ejerc,"D",deoCodi,tipoDoc );
  }
- /**
-  * 
-  * @param proCodi
-  * @param fechaInv
-  * @param timeSupMvt
-  * @param empCodi
-  * @param ejerc
-  * @param serie
-  * @param deoCodi
-  * @param tipoDoc
-  * @return
-  * @throws SQLException 
-  */
- double getPrecioMedioEntrada(int proCodi,java.sql.Date fechaInv,java.sql.Timestamp timeSupMvt,int empCodi,
-     int ejerc,String serie,int deoCodi, String tipoDoc) throws SQLException
- {
-    msgError=null;
-    psInv.setInt(1, proCodi);
-    psInv.setDate(2, fechaInv);
-    ResultSet rs=psInv.executeQuery();
-    rs.next();
-    double kgStock=rs.getDouble("kilos");
-    double precioMedioStock=rs.getDouble("kilos")==0?0:rs.getDouble("importe")/rs.getDouble("kilos");
-    double importe;
-   
-    boolean isDocumActual;
-    psMvt.setInt(1, proCodi);
-    psMvt.setDate(2, fechaInv);
-    psMvt.setTimestamp(3, timeSupMvt);
-    rs=psMvt.executeQuery();
-    if (rs.next())
-    {
-        do
-        {
-            isDocumActual=false;
-          
-            if (rs.getInt("mvt_empcod") == empCodi
-                && rs.getInt("mvt_ejedoc") == ejerc
-                && rs.getString("mvt_serdoc").equals(serie)
-                && rs.getInt("mvt_numdoc") == deoCodi)
-            { // Despiece a Valorar.
-                isDocumActual = true;
-                if (rs.getString("mvt_tipdoc").equals(tipoDoc))
-                {
-                    kgDocum += rs.getDouble("mvt_canti");
-                    impDocum += rs.getDouble("mvt_canti") * precioMedioStock ;
-                }
-            }
-            double precioMvto = rs.getDouble("mvt_prec");
-            if (rs.getString("mvt_tipo").equals("E"))
-            {
-                boolean swIgn=false;
-                double importeStock=kgStock * precioMedioStock;
-                double kgStockNuevo=  kgStock + rs.getDouble("mvt_canti");
-                if (importeStock + (rs.getDouble("mvt_canti")  * precioMvto)<0.001 || kgStockNuevo< 0.01 )
-                {// Estoy con stock en negativo. Ignoro acumulados de precios medios.
-                    if (kgStock<0.01)
-                         precioMedioStock=precioMvto;  // Si los kilos de stock anteriores son 0 pongo costo de mvto.
-                    kgStock = kgStockNuevo;
-                    swIgn=true;
-                }
-                if (importeStock  < 0.001 && !swIgn )
-                {
-                    kgStock = kgStockNuevo;
-                    precioMedioStock=precioMvto;   
-                    swIgn=true;
-                }
-                if (!swIgn)
-                {
-                    importeStock = kgStock * precioMedioStock;             
-                    kgStock += rs.getDouble("mvt_canti");
-                    importeStock += rs.getDouble("mvt_canti")
-                        * precioMvto;
-                    precioMedioStock = kgStock == 0 ? 0 : importeStock / kgStock;
-                }                   
-            }
-            else
-                kgStock-=rs.getDouble("mvt_canti");
-        } while (rs.next());
-    }
-    if (msgError!=null && !swValGrupo && errorProd.indexOf(proCodi)<0 )
-    {
-        errorProd.add(proCodi);
-        msgBox(msgError);
-    }
-    return kgDocum==0?0:impDocum/kgDocum;
- }
+ 
  /**
   * Ver Lineas v_despfin (entrada a almacen)
   * @param sql

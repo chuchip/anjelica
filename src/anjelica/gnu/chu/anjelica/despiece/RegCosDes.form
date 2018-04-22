@@ -130,6 +130,16 @@
                 </Constraint>
               </Constraints>
             </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="opDebug">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Debug"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="350" y="0" width="70" height="20"/>
+                </Constraint>
+              </Constraints>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="gnu.chu.controles.CScrollPane" name="cScrollPane1">

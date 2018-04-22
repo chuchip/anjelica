@@ -6,7 +6,7 @@ package gnu.chu.anjelica.despiece;
  * <p>Descripcion: Serie de Funciones con Utilidades para mant. de Despiece
  * Localiza datos de trazabilidad de  un individuo en particular.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Publica General de GNU según es publicada por
@@ -30,12 +30,15 @@ import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.DatIndivBase;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.listados.etiqueta;
+import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.anjelica.pad.pdempresa;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.CodigoBarras;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -44,6 +47,9 @@ import org.apache.log4j.Logger;
 
 public class utildesp
 {
+  private boolean debug=false;
+  PreparedStatement psMvt;
+  PreparedStatement psInv;
   private boolean swForzaTraza=false;
   DatIndivBase datInd=new DatIndivBase();
   private String tipoProduc="N";
@@ -230,6 +236,7 @@ public class utildesp
             datInd.getSerie(), datInd.getLote(), datInd.getNumind(),datInd.getAlmCodi(),true))
             return false;
         dtAdd.edit();
+        dtAdd.setDato("prv_codi",getPrvCodi());
         dtAdd.setDato("stp_feccad",getFechaCaducidad());
         dtAdd.setDato("stp_fecpro",getFechaProduccion());
         dtAdd.setDato("stp_nucrot",getNumeroCrotal());
@@ -907,7 +914,130 @@ public class utildesp
 //    if (actStkPart==null)
 //      actStkPart=new ActualStkPart(dtAdd,EU.em_cod);
   }
-  
+  void preparaStatements(DatosTabla dt) throws SQLException
+ {     
+    String s= "SELECT mvt_time,mvt_tipo,mvt_tipdoc, mvt_canti,mvt_prec,mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,mvt_numdoc "+
+             " from mvtosalm  "+
+             " where pro_codi =  ?" +
+             " AND mvt_time::date >= ?  "+           
+             " and mvt_time <= ? "+
+             " and not (mvt_tipdoc = 'V' and mvt_serdoc='X') "+ // Ignorar traspaso entre Almacenes
+             " order by mvt_time,mvt_tipo";             
+    psMvt=dt.getPreparedStatement(s);
+    s= "SELECT sum(rgs_kilos) as kilos, sum(rgs_kilos*rgs_prregu) as importe "+
+             " from v_inventar  "+
+             " where pro_codi =  ?" +
+             " AND rgs_fecha::date = ?  ";
+    psInv=dt.getPreparedStatement(s);
+ }
+  public void setDebug(boolean swDebug)
+  {
+      debug=swDebug;
+  }
+  /**
+  * Devuelve el precio medio de entrada para un producto en un despiece.
+  * @param proCodi
+  * @param fechaInv
+  * @param timeSupMvt
+  * @param empCodi
+  * @param ejerc
+  * @param serie
+  * @param deoCodi
+  * @param tipoDoc. Tipo Documento. d: Entrada a almacen de Despiece, D: Salida de almacen Despiece. I: Mvto unico
+  * @return Precio medio en la fecha dada
+  * @throws SQLException 
+  */
+ double getPrecioMedioEntrada(DatosTabla dt,int proCodi,java.sql.Date fechaInv,java.sql.Timestamp timeSupMvt,int empCodi,
+     int ejerc,String serie,int deoCodi, String tipoDoc) throws SQLException
+ {
+    if (psInv==null)
+        preparaStatements(dt);
+    
+    double impDocum=0;
+    double kgDocum=0;
+    psInv.setInt(1, proCodi);
+    psInv.setDate(2, fechaInv);
+    ResultSet rs=psInv.executeQuery();
+    rs.next();
+    double kgStock=rs.getDouble("kilos");
+    double precioMedioStock=rs.getDouble("kilos")==0?0:rs.getDouble("importe")/rs.getDouble("kilos");
+    double importe;
+   
+    boolean isDocumActual;
+    psMvt.setInt(1, proCodi);
+    psMvt.setDate(2, fechaInv);
+    psMvt.setTimestamp(3, timeSupMvt);
+    rs=psMvt.executeQuery();
+    if (rs.next())
+    {
+        do
+        {
+            isDocumActual=false;
+          
+            if (rs.getInt("mvt_empcod") == empCodi
+                && rs.getInt("mvt_ejedoc") == ejerc
+                && rs.getString("mvt_serdoc").equals(serie)
+                && rs.getInt("mvt_numdoc") == deoCodi)
+            { // Despiece a Valorar.               
+                isDocumActual = true;
+                if (rs.getString("mvt_tipdoc").equals(tipoDoc))
+                {
+                    kgDocum += rs.getDouble("mvt_canti");
+                    impDocum += rs.getDouble("mvt_canti") * precioMedioStock ;
+                }
+            }
+            double precioMvto = rs.getDouble("mvt_prec");
+            if (rs.getString("mvt_tipo").equals("E"))
+            {
+                boolean swIgn=false;
+                double importeStock=kgStock * precioMedioStock;
+                double kgStockNuevo=  kgStock + rs.getDouble("mvt_canti");
+                if (importeStock + (rs.getDouble("mvt_canti")  * precioMvto)<0.001 || kgStockNuevo< 0.01 )
+                {                    
+                    // Estoy con stock en negativo . Ignoro acumulados de precios medios.
+                    if (kgStock<0.01)
+                         precioMedioStock=precioMvto;  // Si los kilos de stock anteriores son 0 pongo costo de mvto.
+                    kgStock = kgStockNuevo;
+                    swIgn=true;
+                }
+                if (importeStock  < 0.001 && !swIgn )
+                {
+                    kgStock = kgStockNuevo;
+                    precioMedioStock=precioMvto;   
+                    swIgn=true;
+                }
+                if ((precioMvto==0 && rs.getString("mvt_tipdoc").equals("d")) || isDocumActual)
+                { /// Ignoro despieces sin valorar.
+                        swIgn=true;
+                }
+
+                    
+                if (!swIgn)
+                {
+                    importeStock = kgStock * precioMedioStock;             
+                    kgStock += rs.getDouble("mvt_canti");
+                   
+                    importeStock += rs.getDouble("mvt_canti")
+                          * precioMvto;
+                    precioMedioStock = kgStock == 0 ? 0 : importeStock / kgStock;
+                }                   
+            }
+            else
+                kgStock-=rs.getDouble("mvt_canti");
+            if (debug)
+            {
+                System.out.println(" Producto : "+ proCodi+" en fecha: "+Formatear.getFecha(rs.getTimestamp("mvt_time"),"dd-MM-yyyy HH:mm")+
+                     "Tipo: "+ rs.getString("mvt_tipdoc")+
+                    " kilos: "+rs.getDouble("mvt_canti")+
+                    " Precio: "+rs.getDouble("mvt_prec")+
+                    " Stock: "+kgStock+" Precio: "+precioMedioStock);
+            }
+        } while (rs.next());
+    }
+     if (tipoDoc.equals("I"))
+          return precioMedioStock;
+    return kgDocum==0?0:impDocum/kgDocum;
+ }
   public void setGrupoDesp(int grdNume)
   {
     this.grdNume=grdNume;
@@ -1274,7 +1404,7 @@ public class utildesp
             TIPOETIQ==etiquetaInterior?0:kilos,
             grupoLote);
         
-        
+        etiq.setCongelado(MantArticulos.isCongelado(proCodi, dtStat));
         etiq.iniciar(TIPOETIQ !=etiquetaInterior?codBarras.getCodBarra():codBarras.getLote(false),
             codBarras.getLote(TIPOETIQ!=etiquetaInterior)  ,
                 "" + proCodi, nombArt,

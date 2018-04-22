@@ -483,8 +483,8 @@ public class MvtosAlma
            (serieLote==null?"":" and r.pro_serie = '"+serieLote+"'")+
            (proLote==0?"":" and r.pro_nupar  = "+proLote)+
            (proNumind==0?"":" and r.pro_numind = "+proNumind)+
-           (empCodi==0?"":" and r.emp_codi = "+empCodi)+
-           (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
+//           (empCodi==0?"":" and r.emp_codi = "+empCodi)+
+//           (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
            (proCodi==0?"":" AND r.pro_codi = " + (proCodi==-1?"?":proCodi))  +
             (swSoloInv?" AND r.ind_fecha = TO_DATE('" + fecIni + "','dd-MM-yyyy') ":
             " AND r.ind_fecha >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +
@@ -513,8 +513,8 @@ public class MvtosAlma
            (serieLote==null?"":" and r.pro_serie = '"+serieLote+"'")+
            (proLote==0?"":" and r.pro_nupar  = "+proLote)+
            (proNumind==0?"":" and r.pro_numind = "+proNumind)+
-           (empCodi==0?"":" and r.emp_codi = "+empCodi)+
-           (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
+//           (empCodi==0?"":" and r.emp_codi = "+empCodi)+
+//           (accesoEmp==null || empCodi!=0?"":" and r.emp_codi in ("+accesoEmp+")")+
            (proCodi==0?"":" AND r.pro_codi = " + (proCodi==-1?"?":proCodi))  +
             (swSoloInv?" AND r.rgs_fecha::date = TO_DATE('" + fecIni + "','dd-MM-yyyy') ":
             " AND r.rgs_fecha::date >= TO_DATE('" + fecIni + "','dd-MM-yyyy') " +

@@ -1,6 +1,9 @@
+--
+CREATE INDEX ix_mvtalm4 on anjelica.mvtosalm(mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,MVT_NUMDOC);
+--
 ALTER TABLE USUARIOS ADD usu_adlock smallint not null default 0;
 
-insert into parametros values('*','formatocosto','Formato para campos costo','---9.99'); 
+insert into parametros values('cpuente','formatocosto','Formato para campos costo','---9.9999'); 
 --
 --
 create view anjelica.v_tiporegu 

@@ -1,3 +1,6 @@
+--
+CREATE INDEX ix_mvtalm4 on anjelica.mvtosalm(mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,MVT_NUMDOC);
+--
 create view anjelica.v_tiporegu 
 select dis_codi as tir_tipo,dis_nomb as tir_nomb  from v_discrim
 where dis_tipo='Or';

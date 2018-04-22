@@ -313,7 +313,7 @@ public class EntornoUsuario implements Serializable
        return usu_nomb;
    }
    /**
-    * Devuelve un valor buscado en la tabal parametros
+    * Devuelve un valor buscado en la tabla parametros
     * @param param Parametro a buscar
     * @param paramDef Valor a devolver si no encuentra el parametro
     * @return 

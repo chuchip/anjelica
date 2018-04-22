@@ -1620,7 +1620,10 @@ create table anjelica.grufamvis
     agr_codi int not null,  -- Grupo
     gfv_padre int not null  -- Padre de la familia. 0=Raiz
 );
-
+--
+-- Cabecera de despiece. Tiene datos del despiece en si, no de los productos.
+-- ver desorilin, v_despfin v_desporig y v_despsal
+--
 create table anjelica.desporig
 (
 eje_nume int not null,   -- Ejercicio de Despiece
@@ -4230,6 +4233,7 @@ create table anjelica.mvtosalm
 CREATE INDEX ix_mvtalm1 on anjelica.mvtosalm(mvt_tipdoc,mvt_fecdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc);
 CREATE INDEX ix_mvtalm2 on anjelica.mvtosalm(pro_codi,pro_ejelot,pro_serlot,pro_numlot,pro_indlot,mvt_time);
 CREATE INDEX ix_mvtalm3 on anjelica.mvtosalm(pro_codi,mvt_time);
+CREATE INDEX ix_mvtalm4 on anjelica.mvtosalm(mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,MVT_NUMDOC);
 
 drop table anjelica.ajustedb;
 create table anjelica.ajustedb

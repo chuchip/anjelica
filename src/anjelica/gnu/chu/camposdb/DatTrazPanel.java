@@ -249,6 +249,7 @@ public class DatTrazPanel extends CPanel {
     {
         if (!actual)
             return utDesp;
+        utDesp.setPrvCodi(prv_codiE.getValorInt());
         utDesp.setPaisNacimiento(acp_painacE.getText());        
         utDesp.setPaisEngorde(acp_engpaiE.getText());
         utDesp.setPaisSalaDespiece(acp_paisdeE.getText());

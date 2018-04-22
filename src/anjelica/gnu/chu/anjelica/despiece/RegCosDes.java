@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -51,13 +52,15 @@ import java.util.logging.Logger;
 */
 
 public class RegCosDes extends ventana {
-    boolean debug=false;
+//    boolean debug=false;
+    utildesp utDesp;
     private boolean swSinCosto=false;
     private boolean swRegenerar;
     private String condWhereOrig;
 //    DatosTabla dtAdd;
     final static int MAXPERM=1;
     PreparedStatement prstFin,prstFin1,prstFinCuantos,prstUpd1,prstUpd,prstDesp;
+    PreparedStatement psUpdOri;
     ResultSet rsFin,rsFin1,rsDesp;
     MvtosAlma mvtosAlm;
     private final int NUMDEC_COSTO=4;
@@ -116,6 +119,14 @@ public class RegCosDes extends ventana {
 
     @Override
     public void iniciarVentana() throws Exception {
+        utDesp=new utildesp();
+        if (System.getProperty("debug") != null)
+        {
+            opDebug.setVisible(Boolean.parseBoolean(System.getProperty("debug")));
+        }
+        else
+            opDebug.setVisible(false);
+         
         dtAdd = new DatosTabla(dtCon1.getConexion());
         String feulin; // actStkPart.getFechaUltInv(EU.em_cod, 0, dtStat);
         String s = "select distinct(rgs_fecha) as cci_feccon from v_regstock as r "
@@ -146,6 +157,7 @@ public class RegCosDes extends ventana {
        
         feciniE.addFocusListener(new FocusAdapter()
         {
+            @Override
             public void focusLost(FocusEvent e) {
                 try
                 {
@@ -385,7 +397,15 @@ public class RegCosDes extends ventana {
     {
         try {
           
-            String s;            
+            String s;   
+            psUpdOri = ctUp.prepareStatement("update desorilin set deo_prcost= ? "
+                    + " where eje_nume= ? "
+                    + " and deo_codi= ? "
+                    + " and pro_codi =  ? "
+                    + " and deo_ejelot = ? "
+                    + " and deo_serlot = ? "
+                    + " and pro_lote =  ? "
+                    + " and pro_numind =  ? ");
             setLabelMsgEspere("Regenerando Costos");
             popEspere_BCancelarSetEnabled(true);
             if (mvtosAlm == null) {
@@ -414,12 +434,16 @@ public class RegCosDes extends ventana {
                      condWhereOrig+" )";
              nRegAf = stUp.executeUpdate(s);             
              textoE.setText(textoE.getText() + "\nAVISO: Puesto precio usuario a precio costo a " + nRegAf + " lineas de desp. Entrada");
-         
+           // Pongo las fechas de entrada de despiece siempre antes que el despiece salida
+           s="select deo_codi from v_despori as orig "+
+                     " where orig.deo_codi = desorilin.deo_codi "+
+                     " and orig.eje_nume=desorilin.eje_nume "+
+                     condWhereOrig+" )";
            for (int n=1;n<6;n++)
            {
              if ( getPopEspere().isBCancelarEnabled() )
                 buscoDesp(n);
-             if (debug)
+             if (opDebug.isSelected() )
                  break;
            }
 //       
@@ -435,100 +459,69 @@ public class RegCosDes extends ventana {
      * @param agrupados
      * @throws Exception 
      */
-    void buscoDesp(int n) throws Exception {
-        String s = "select * from mvtosalm "
-            + " where mvt_time between to_date('" + feciniE.getText() + "','dd-MM-yyyy')"
+    void buscoDesp(int n) throws Exception 
+    {
+       Date fecInv=fecinvE.getDate();
+       String s = "select * from mvtosalm "
+            + " where mvt_time::date between to_date('" + feciniE.getText() + "','dd-MM-yyyy')"
             + " and to_date('" + fecfinE.getText() + "','dd-MM-yyyy')"
-            + " and NOT (mvt_tipdoc='V' and mvt_serdoc='X') " // Excluir mvtos de traspasos entre almacenes
-            +(debug? " and pro_codi = 10994 ":"")
-            + " order by pro_codi,mvt_time,mvt_tipo";
+            + (opDebug.isSelected()? " and pro_codi = 10902 ":"")
+            + " and mvt_tipdoc='D' " // Solo Salidas de almacen
+            + " order by mvt_time";
         if (!dtCon1.select(s, true))
         {
-            msgBox("No encontrado mvtos entre estas fechas");
+            msgBox("No encontrado mvtos despieces entre estas fechas");
             return;
         }
-        s = "SELECT sum(rgs_kilos) as kilos, sum(rgs_kilos*rgs_prregu) as importe "
-            + " from v_inventar  "
-            + " where pro_codi =  ?"
-            + " AND rgs_fecha::date = to_date('" + fecinvE.getValor() + "','dd-MM-yyyy')";
-        psInv = dtCon1.getPreparedStatement(s);
-
-        int proCodi = -1;
-        double kgstock = 0;
-        double importeStock;
-        double precioMvto;
-        double precioMedioStock = 0;
+        s = "select count(*) as cuantos from mvtosalm "
+            + " where mvt_time::date between to_date('" + feciniE.getText() + "','dd-MM-yyyy')"
+            + " and to_date('" + fecfinE.getText() + "','dd-MM-yyyy')"
+            + " and mvt_tipdoc='d' "; // Solo origenes 
+            
+        dtStat.select(s);
+        int totalRows=dtStat.getInt("cuantos");
+        double precio;
+        int nRows = 1;
         do
         {
-            if (proCodi != dtCon1.getInt("pro_codi"))
+            if (!getPopEspere().isBCancelarEnabled())
             {
-                setMensajePopEspere("Regenerando costos. Vuelta "+n+ " de 5\n"
-                    + "Recalculando Costos mvtos de articulo  " + proCodi, false);
-                proCodi = dtCon1.getInt("pro_codi");
-                psInv.setInt(1, proCodi);
-                ResultSet rs = psInv.executeQuery();
-                rs.next();
-                kgstock = rs.getDouble("kilos");
-//                   importe=rs.getDouble("importe");
-                precioMedioStock = rs.getDouble("kilos") == 0 ? 0 : rs.getDouble("importe") / rs.getDouble("kilos");
+                ctUp.rollback();
+                msgBox("Cancelada actualizacion costos");
+                return;
             }
-            precioMvto = dtCon1.getDouble("mvt_prec");
-            if (dtCon1.getString("mvt_tipdoc").equals("D"))
+            if ( nRows % 50 ==  0)
             {
-                dtAdd.executeUpdate("update desorilin set deo_prcost= " + precioMedioStock
-                    + " where eje_nume=" + dtCon1.getInt("mvt_ejedoc")
-                    + " and deo_codi=" + dtCon1.getInt("mvt_numdoc")
-                    + " and pro_codi = " + dtCon1.getInt("pro_codi")
-                    + " and deo_ejelot = " + dtCon1.getInt("pro_ejelot")
-                    + " and deo_serlot = '" + dtCon1.getString("pro_serlot") + "'"
-                    + " and pro_lote = " + dtCon1.getInt("pro_numlot")
-                    + " and pro_numind = " + dtCon1.getInt("pro_indlot"));
-                precioMvto = precioMedioStock;
+              setMensajePopEspere("Regenerando costos de mvtos. Vuelta "+n+ " de 5\n"+
+                  "Recalculando despiece. Procesando  " + nRows + " de " + totalRows, false);
             }
-            
-       
-//                if (dtCon1.getString("mvt_tipdoc").equals("R"))
-//                {
-//                    System.out.println("Reg. "+dtCon1.getDouble("mvt_canti"));  
-//                }
-            if (dtCon1.getString("mvt_tipo").equals("E"))
-            {
-                boolean swIgn=false;
-                importeStock=kgstock * precioMedioStock;
-                double kgStockNuevo=  kgstock + dtCon1.getDouble("mvt_canti");
-                if (importeStock + (dtCon1.getDouble("mvt_canti")  * precioMvto)<0.001 || kgStockNuevo< 0.01 )
-                {// Estoy con stock en negativo. Ignoro acumulados de precios medios.
-                    if (kgstock<0.01)
-                         precioMedioStock=precioMvto;  // Si los kilos de stock anteriores son 0 pongo costo de mvto.
-                    kgstock = kgStockNuevo;
-                    swIgn=true;
-                }
-                if (importeStock  < 0.001 && !swIgn )
-                {
-                    kgstock = kgStockNuevo;
-                    precioMedioStock=precioMvto;   
-                    swIgn=true;
-                }
-                if (!swIgn)
-                {
-                    importeStock = kgstock * precioMedioStock;             
-                    kgstock += dtCon1.getDouble("mvt_canti");
-                    importeStock += dtCon1.getDouble("mvt_canti")
-                        * precioMvto;
-                    precioMedioStock = kgstock == 0 ? 0 : importeStock / kgstock;
-                }
-            } else
-                kgstock -= dtCon1.getDouble("mvt_canti");
-             if (debug)
-             {
-                System.out.println("fecha: "+Formatear.getFecha(dtCon1.getTimeStamp("mvt_time"),"dd-MM-yyyy HH:mm")+
-                "Tipo: "+ dtCon1.getString("mvt_tipdoc")+
-                    " kilos: "+dtCon1.getDouble("mvt_canti")+
-                    " Precio: "+dtCon1.getDouble("mvt_prec")+
-                    " Stock: "+kgstock+" Precio: "+precioMedioStock);
-             }
+            nRows++;
+           precio=utDesp.getPrecioMedioEntrada(dtCon1,dtCon1.getInt("pro_codi"), new java.sql.Date(fecInv.getTime()),
+               dtCon1.getTimeStamp("mvt_time"),EU.em_cod,dtCon1.getInt("mvt_ejedoc") ,dtCon1.getString("mvt_serdoc"),
+               dtCon1.getInt("mvt_numdoc"),"I" );
+           if (precio>0)
+           {
+//               "update desorilin set deo_prcost= ? "
+//                    + " where eje_nume= ? "
+//                    + " and deo_codi= ? "
+//                    + " and pro_codi =  ? " //4
+//                    + " and deo_ejelot = ? " // 5 
+//                    + " and deo_serlot = ? " // 6
+//                    + " and pro_lote =  ? " //7 
+//                    + " and pro_numind =  ? ") //8
+              psUpdOri.setDouble(1, precio);
+              psUpdOri.setInt(2, dtCon1.getInt("mvt_ejedoc"));
+              psUpdOri.setInt(3, dtCon1.getInt("mvt_numdoc"));
+              psUpdOri.setInt(4, dtCon1.getInt("pro_codi"));
+              psUpdOri.setInt(5, dtCon1.getInt("pro_ejelot"));
+              psUpdOri.setString(6, dtCon1.getString("pro_serlot"));
+              psUpdOri.setInt(7, dtCon1.getInt("pro_numlot"));
+              psUpdOri.setInt(8, dtCon1.getInt("pro_indlot"));
+              psUpdOri.executeUpdate();
+           }
         } while (dtCon1.next());
-        if (debug)
+        
+        if (opDebug.isSelected() )
         {
             dtAdd.commit();
             msgBox("Registro de log, generado");
@@ -572,10 +565,10 @@ public class RegCosDes extends ventana {
         swSinCosto = false;
         double impTotAnt = 0;
         int deoCodi = dtCon1.getInt("deo_codi");
-        int nRows = 1;
+        nRows = 1;
         s = "select count (distinct deo_codi) as cuantos from v_despori as orig  WHERE 1=1  " + condWhereOrig;
         dtStat.select(s);
-        int totalRows = dtStat.getInt("cuantos");
+        totalRows = dtStat.getInt("cuantos");
         do
         {
             if (!getPopEspere().isBCancelarEnabled())
@@ -777,6 +770,7 @@ public class RegCosDes extends ventana {
         cLabel5 = new gnu.chu.controles.CLabel();
         fecinvE = new gnu.chu.controles.CComboBox();
         Baceptar = new gnu.chu.controles.CButtonMenu(Iconos.getImageIcon("check"));
+        opDebug = new gnu.chu.controles.CCheckBox();
         cScrollPane1 = new gnu.chu.controles.CScrollPane();
         textoE = new gnu.chu.controles.CTextArea();
         jt = new gnu.chu.controles.Cgrid(4);
@@ -814,6 +808,10 @@ public class RegCosDes extends ventana {
         Baceptar.setText("Aceptar");
         Pcondic.add(Baceptar);
         Baceptar.setBounds(260, 20, 150, 24);
+
+        opDebug.setText("Debug");
+        Pcondic.add(opDebug);
+        opDebug.setBounds(350, 0, 70, 20);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -878,6 +876,7 @@ public class RegCosDes extends ventana {
     private gnu.chu.controles.CTextField feciniE;
     private gnu.chu.controles.CComboBox fecinvE;
     private gnu.chu.controles.Cgrid jt;
+    private gnu.chu.controles.CCheckBox opDebug;
     private gnu.chu.controles.CTextArea textoE;
     // End of variables declaration//GEN-END:variables
 

@@ -4016,9 +4016,12 @@ public class pdalbara extends ventanaPad  implements PAD
             {
                s+="\nEn linea: "+dtCon1.getInt("avl_numlin")+" Producto de Lineas: "+dtCon1.getInt("prodLin")+
                    " Prod. Desglose: "+dtCon1.getInt("prodDesg");
-               dtAdd.executeUpdate("update v_albavel set pro_codi="+dtCon1.getInt("prodDesg")+" where emp_codi="+emp_codiE.getValorInt()+
+               if (dtCon1.getInt("prodDesg")>0)                   
+               {
+                dtAdd.executeUpdate("update v_albavel set pro_codi="+dtCon1.getInt("prodDesg")+" where emp_codi="+emp_codiE.getValorInt()+
                    " and avc_ano="+avc_anoE.getValorInt()+" and avc_serie='"+avc_seriE.getText()+"'"+
                    " and avc_nume ="+avc_numeE.getValorInt()+" and avl_numlin="+dtCon1.getInt("avl_numlin"));
+                }
             } while (dtCon1.next());
             dtAdd.commit();
             return s;

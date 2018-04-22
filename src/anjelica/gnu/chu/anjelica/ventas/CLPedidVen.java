@@ -437,7 +437,8 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
      try
      {
        s="SELECT p.*,cl.cli_pobl,tit_tiempo,usu_nomco FROM v_pedven as p"
-           + " left join v_tiempospedido as tt on  tit_id=p.pvc_id and tt.usu_nomb='"+tit_usunomE.getText()+"' "
+           + " left join v_tiempospedido as tt on  tit_id=p.pvc_id "
+           + (tit_usunomE.isNull()?"": " and tt.usu_nomb='"+tit_usunomE.getText()+"' ")
            + ",v_cliente as cl "+
            " WHERE p.emp_codi =  "+empCodi+
            " and p.cli_codi = cl.cli_codi "+ 

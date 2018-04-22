@@ -48,7 +48,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   int nInd;
   int rowGrid;
   Locale lengua = Locale.getDefault();
-  
+  boolean swCongelado=false;
   final private int L_PROCOD=0;
   final private int L_PRONOMB=1;
   final private int L_AVPNUMIND=2;
@@ -123,6 +123,10 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
   {
     iniciar(codbarras,lote,codArti,articulo,nacido,cebado,despiezado,ntraza,pesoNumero,
             conservar,sacrificado,fecrecep,null,null,fecSacr);
+  }
+  public void setCongelado(boolean swCongelado)
+  {
+      this.swCongelado=swCongelado;
   }
   public void iniciar(String codbarras, String lote,String codArti,
                       String articulo,String nacido,String cebado,
@@ -253,7 +257,7 @@ public class etiqueta  extends JRDefaultScriptlet implements  JRDataSource
     mp.put("fecprod",fecprod);
     mp.put("feccadu",feccadu);
     mp.put("fecSacr",fecSacr);
-    
+    mp.put("congelado",swCongelado);
     if (diremp!=null)
       mp.put("diremp",diremp);
     if (datmat!=null)

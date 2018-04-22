@@ -560,6 +560,7 @@ public class RepEtiqueta extends ventana
         }
         if (opGuardar.isSelected() && trazPanel.hasCambio())
             utDesp.actualTrazabilidad(dtAdd);
+        etiq.setCongelado(pro_codiE.isCongelado());
         etiq.iniciar(tipoEtiq!=ETIQINT?codBarras.getCodBarra():codBarras.getLote(false),
             codBarras.getLote(tipoEtiq!=ETIQINT),
             pro_codiE.getText(),pro_codiE.getTextNomb(),utDesp.getPaisNacimientoNombre(),utDesp.getPaisEngordeNombre(),

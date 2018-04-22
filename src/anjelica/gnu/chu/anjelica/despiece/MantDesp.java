@@ -385,6 +385,8 @@ public class MantDesp extends ventanaPad implements PAD
 
 //    jtLin.tableView.getColumnModel().getColumn(n).setIdentifier(null);
 //    emp_codiE.setColumnaAlias("emp_codi");
+        deo_almdesE.setColumnaAlias("deo_almdes");
+        deo_almoriE.setColumnaAlias("deo_almori");
         deo_incvalE.setColumnaAlias("deo_incval");
         eje_numeE.setColumnaAlias("eje_nume");
         deo_fechaE.setColumnaAlias("deo_fecha");
@@ -1533,6 +1535,8 @@ public class MantDesp extends ventanaPad implements PAD
     public void PADQuery() {
         mensajeErr("");
         Pcabe.setEnabled(true);
+        deo_almoriE.setEnabled(true);
+        deo_almdesE.setEnabled(true);
         POtros.setEnabled(true);
         Plotgen.setEnabled(true);
 //    Ptotal.setEnabled(true);
@@ -1601,6 +1605,8 @@ public class MantDesp extends ventanaPad implements PAD
 
         ArrayList v = new ArrayList();
 //        v.add(emp_codiE.getStrQuery());
+        v.add(deo_almdesE.getStrQuery());
+        v.add(deo_almoriE.getStrQuery());
         v.add(eje_numeE.getStrQuery());
         v.add(deo_fechaE.getStrQuery());
         v.add(deo_codiE.getStrQuery());
@@ -3733,6 +3739,7 @@ public class MantDesp extends ventanaPad implements PAD
             {
                 msgBox(utdesp.getMsgAviso());
             }
+          
             utdesp.imprEtiq(tipoEtiqueta, 
                 dtStat, pro_codlE.getValorInt(), nombArt,
                 "D",
@@ -3780,6 +3787,7 @@ public class MantDesp extends ventanaPad implements PAD
                 deo_nulogeE.getValorInt(),proCodi,0,0,deo_numdesE.getValorInt()); 
             
 //            java.util.Date fecCong=utildesp.getDateCongelado(proCodi, deo_fecproE.getDate(), dtStat);    
+            etiq.setCongelado(MantArticulos.isCongelado(proCodi, dtStat));
             etiq.iniciar(codBarras.getLote(),
                codBarras.getLote(),
                 ""+proCodi, proNomb, MantPaises.getNombrePais(utdesp.getPaisNacimiento(),dtStat),
