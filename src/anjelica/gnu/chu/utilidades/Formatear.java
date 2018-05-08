@@ -113,9 +113,18 @@ public class  Formatear
    * @deprecated usar redondea(String numero, int numero decimales)
    */
   public static double Redondea(String numero, int numeroDecimales) {
+    return redondea(numero, numeroDecimales);
+  }
+   /**
+   * Redondea un numero a los decimales mandados
+   * @param numero
+   * @param numeroDecimales
+   * @return Numero redondeado
+   * 
+   */
+  public static double redondea(String numero, int numeroDecimales) {
     return redondea(strToDouble(numero), numeroDecimales);
   }
-
   public static String format(int Num,String Formatear)
   {
     return format(Num,Formatear,false);
@@ -1979,7 +1988,7 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
     * Compara dos fechas
     * @param comp1 Fecha inicial
     * @param comp2 Fecha Final
-    * @return Diferencia en dias entre esas dos fechas
+    * @return Diferencia en dias entre esas dos fechas (Resta a la fecha Inicial, la fecha Final)
     */
    public static long comparaFechas(Date comp1, Date comp2)
    {

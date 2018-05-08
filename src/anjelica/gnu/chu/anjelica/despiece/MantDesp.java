@@ -50,7 +50,6 @@ import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.compras.MantAlbCom;
 import gnu.chu.anjelica.compras.MantAlbComCarne;
 import gnu.chu.anjelica.compras.MantAlbComPlanta;
-
 import gnu.chu.anjelica.listados.etiqueta;
 import gnu.chu.anjelica.menu;
 import gnu.chu.anjelica.pad.MantArticulos;
@@ -266,7 +265,7 @@ public class MantDesp extends ventanaPad implements PAD
     private void jbInit() throws Exception {
         if (isAdmin() )
             MODPRECIO=true; 
-        setVersion("2018-04-08" + (MODPRECIO ? " (VER PRECIOS)" : "") + (isArgumentoAdmin() ? " ADMINISTRADOR" : ""));
+        setVersion("2018-04-29" + (MODPRECIO ? " (VER PRECIOS)" : "") + (isArgumentoAdmin() ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -1547,6 +1546,7 @@ public class MantDesp extends ventanaPad implements PAD
         tid_codiE.setEnabled(true);
         cli_codiE.setEnabled(true);
         Pcabe.setQuery(true);
+        deo_incvalE.setQuery(true);
         Plotgen.setQuery(true);
         tid_codiE.setQuery(true);
         deo_numdesE.setEnabled(true);
@@ -1627,6 +1627,7 @@ public class MantDesp extends ventanaPad implements PAD
         Pcabe.setQuery(false);
         Plotgen.setQuery(false);
         tid_codiE.setQuery(false);
+        deo_incvalE.setQuery(false);
 //       Ptotal.setQuery(false);
         try
         {
@@ -2203,13 +2204,14 @@ public class MantDesp extends ventanaPad implements PAD
                          jtCab.setEnabled(false);
                          jtCab.requestFocusFinal();
                          ArrayList v = new ArrayList();
+                         double kgDif=kgDifE.getValorDec()*-1;
                          v.add("99");
                          v.add(pro_codiE.getNombArt(99));
                          v.add(0);
                          v.add("A");
                          v.add(0);
                          v.add(0);
-                         v.add(kgDifE.getValorDec()*-1);
+                         v.add(kgDif);
                          v.add(0);
                          v.add(0);
                          v.add(0);
@@ -2220,7 +2222,7 @@ public class MantDesp extends ventanaPad implements PAD
                          jtCab.ponValores(jtCab.getSelectedRow());
                          cambiaLineajtCab(jtCab.getSelectedRow());
                          jtLin.setEnabled(false);
-                         msgBox("Introducido "+kgDifE.getValorDec()*-1+" KG en entrada para cuadrar despiece");
+                         msgBox("Introducido "+kgDif+" KG en entrada para cuadrar despiece");
                     }
                     else
                     {
@@ -2233,10 +2235,11 @@ public class MantDesp extends ventanaPad implements PAD
                     jtLin.resetCambio();
                     jtLin.setEnabled(false);
                     jtLin.requestFocusFinal();
+                    double kgDif=kgDifE.getValorDec() ;
                     ArrayList v = new ArrayList();
                     v.add(tid_codiE.isAutoMer()?ART_MER:ART_MERMA);
                     v.add(pro_codiE.getNombArt(tid_codiE.isAutoMer()?ART_MER:ART_MERMA));
-                    v.add(kgDifE.getValorDec());
+                    v.add(kgDif);
                     v.add(1);            
                     v.add("");
                     v.add( "");
@@ -2251,7 +2254,7 @@ public class MantDesp extends ventanaPad implements PAD
                     jtLin.ponValores(jtLin.getSelectedRow());
                     cambiaLineajtLin(jtLin.getSelectedRow());
                     jtCab.setEnabled(false);
-                    msgBox("Introducido "+kgDifE.getValorDec()+" KG en salida para cuadrar despiece!");
+                    msgBox("Introducido "+kgDif+" KG en salida para cuadrar despiece!");
             }
             
             if (kgDifE.getValorDec() <= kgOrigE.getValorDec() * MantDesp.LIMDIF)
@@ -3485,12 +3488,15 @@ public class MantDesp extends ventanaPad implements PAD
                 msgBox("Fecha Caducidad NO valida");
                 return JTLIN_FECCAD;
             }
+            boolean swAvisoCad=false;
             if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<=0 && pro_codlE.getDiasCaducidad()>0)
             {
-                msgBox("Fecha Caducidad  debe ser superior a la del despiece");
-                return JTLIN_FECCAD;
+                int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior a la del despiece. Continuar?");
+                if (ret!=mensajes.YES)
+                    return JTLIN_FECCAD;
+                swAvisoCad=true;
             }
-            if (Formatear.comparaFechas(def_feccadE.getDate(),deo_fechaE.getDate() )<0 && pro_codlE.getDiasCaducidad()>0)
+            if (!swAvisoCad && Formatear.comparaFechas(def_feccadE.getDate(),deo_fechaE.getDate() )<0 && pro_codlE.getDiasCaducidad()>0)
             {
                 int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior a la del Despiece. ¿Continuar?");
                 if (ret!=mensajes.YES)
@@ -3498,9 +3504,9 @@ public class MantDesp extends ventanaPad implements PAD
             }
             else
             {
-                if (Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<= MIN_DIAS_CAD && pro_codlE.getDiasCaducidad()>0)
+                if (! swAvisoCad && Formatear.comparaFechas(def_feccadE.getDate(), deo_fechaE.getDate())<= MIN_DIAS_CAD && pro_codlE.getDiasCaducidad()>0)
                 {
-                    int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en 10 dias a la del despiece. Continuar?");
+                    int ret=mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en "+MIN_DIAS_CAD+ " dias a la del despiece. Continuar?");
                     if (ret!=mensajes.YES)
                          return JTLIN_FECCAD;
                 }

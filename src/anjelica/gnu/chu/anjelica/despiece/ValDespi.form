@@ -385,7 +385,7 @@
             </Component>
             <Component class="gnu.chu.controles.CComboBox" name="deo_lotmomE">
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="deo_lotmomE.addItem(&quot;Mayor&quot;, &quot;&gt;&quot;);&#xa;deo_lotmomE.addItem(&quot;Menor&quot;, &quot;&lt;&quot;);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="deo_lotmomE.addItem(&quot;Mayor&quot;, &quot;&gt;&quot;);&#xa;deo_lotmomE.addItem(&quot;Menor&quot;, &quot;&lt;&quot;);&#xa;deo_lotmomE.addItem(&quot;Igual&quot;, &quot;=&quot;);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

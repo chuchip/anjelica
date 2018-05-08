@@ -161,6 +161,13 @@ public class conexion  implements Connection
     conectaOracle();
     driverType=OTRO;
   }
+  /**
+   * Conecta a una base de datos SQL SERVER (microsoft)
+   * @throws SQLException
+   * @throws ClassNotFoundException
+   * @throws IllegalAccessException
+   * @throws InstantiationException 
+   */
   public void conectaMsql() throws SQLException, ClassNotFoundException,IllegalAccessException,InstantiationException
   {
     Properties p = new Properties();

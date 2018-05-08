@@ -7,7 +7,7 @@ package gnu.chu.anjelica.facturacion;
 *  Tambien tiene una opcion (deshabilitada)
 *  para volver a  generar los recibos para giros, esta opcion solo genera un giro por factura, lo
 *  cual significa que las formas de pago con mas de un vto. no funcionan correctamente.
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -25,9 +25,12 @@ package gnu.chu.anjelica.facturacion;
 */
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.listados.Listados;
+import gnu.chu.anjelica.pad.pdempresa;
 import gnu.chu.anjelica.riesgos.clFactCob;
 import gnu.chu.controles.StatusBar;
 import gnu.chu.interfaces.ejecutable;
+import gnu.chu.mail.IFMail;
+import gnu.chu.mail.MailHtml;
 import gnu.chu.print.util;
 import gnu.chu.sql.conexion;
 import gnu.chu.utilidades.*;
@@ -46,13 +49,20 @@ import java.util.Locale;
 import net.sf.jasperreports.engine.*;
 
 
-public class Clrelfact extends ventana implements JRDataSource {
+public class Clrelfact extends ventana implements JRDataSource 
+{
+  final static String PCORREORELFRA="correorelfra"; 
+  String subject;
+  String emailCC;
+  String asunto,toEmail;
+  IFMail ifMail=new IFMail();
   Locale lengua=ejecutable.local;
   boolean swCreateTable=false;
   String TABLA_TMP="lirelfac_tmp1";
-  final  static  int LISTADO=1;
-  final  static  int EXCEL=2;
-  final static int CONSULTA=3;
+  final  static  String LISTADO="L";
+  final  static  String EXCEL="E";
+  final static String CONSULTA="C";
+  final static String CORREO="M";
   JasperReport jr;
   int nLin=0;
   int maxN=0;
@@ -60,28 +70,29 @@ public class Clrelfact extends ventana implements JRDataSource {
   double imp[];
   int nfras[];
 
-  int accion;
+  String accion;
    ResultSet rs;
   String s;
-    /** Creates new form Clrelfact */
+    
     public Clrelfact(EntornoUsuario eu, Principal p) {
-    EU=eu;
-    vl=p.panel1;
-    jf=p;
-    eje=true;
+        EU = eu;
+        vl = p.panel1;
+        jf = p;
+        eje = true;
 
-    setTitulo("Cons/List. Relacion de Facturas");
+        setTitulo("Cons/List. Relacion de Facturas");
 
-    try  {
-      if(jf.gestor.apuntar(this))
-          jbInit();
-      else
-        setErrorInit(true);
-    }
-    catch (Exception e) {
-      ErrorInit(e);
-      setErrorInit(true);
-    }
+        try
+        {
+            if (jf.gestor.apuntar(this))
+                jbInit();
+            else
+                setErrorInit(true);
+        } catch (Exception e)
+        {
+            ErrorInit(e);
+            setErrorInit(true);
+        }
   }
 
   public Clrelfact(gnu.chu.anjelica.menu p,EntornoUsuario eu) {
@@ -97,7 +108,6 @@ public class Clrelfact extends ventana implements JRDataSource {
     }
     catch (Exception e) {
       ErrorInit(e);
-      setErrorInit(true);
     }
   }
 
@@ -105,7 +115,7 @@ public class Clrelfact extends ventana implements JRDataSource {
   {
     iniciarFrame();
 
-    this.setVersion("2013-03-09");
+    this.setVersion("2018-05-04");
     statusBar = new StatusBar(this);
     this.getContentPane().add(statusBar, BorderLayout.SOUTH);
     conecta();
@@ -118,7 +128,12 @@ public class Clrelfact extends ventana implements JRDataSource {
   {
     imp=new double[maxL];
     nfras=new int[maxL];
-
+    ifMail.setVisible(false);
+    ifMail.setIconifiable(false);
+    ifMail.iniciar(this);
+    ifMail.setEmail(EU.getValorParam(PCORREORELFRA, "",dtCon1));
+    ifMail.setLocation(this.getLocation().x+30,this.getLocation().x+30);
+    vl.add(ifMail,new Integer(1));
     intfechaE.setValorInt(30);
    
 //    if (ct.getDriverType()==ct.MSQL)
@@ -137,8 +152,7 @@ public class Clrelfact extends ventana implements JRDataSource {
     Baceptar.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 
-        Baceptar_actionPerformed(e.getActionCommand().equals("Imprimir")?LISTADO:
-            e.getActionCommand().equals("Exportar")?EXCEL:CONSULTA);
+        Baceptar_actionPerformed(Baceptar.getValor(e.getActionCommand()));
       }
     });
 //    Bgengiros.addActionListener(new ActionListener()
@@ -217,36 +231,57 @@ public class Clrelfact extends ventana implements JRDataSource {
     }
   }
 
-  void Baceptar_actionPerformed(int accion)
+  void Baceptar_actionPerformed(String accion)
   {
-    this.accion=accion;
-    try
-    {
-      if (!PcondBus.checkCampos())
-        return;
-      if (accion==CONSULTA && !tip_listadE.getValor().equals("R") )
+      this.accion = accion;
+      try
       {
-          mensajeErr("La consulta solo se permite sobre Relacion de Facturas");
-          return;
-      }
-      if (accion==EXCEL && !tip_listadE.getValor().equals("C") && !tip_listadE.getValor().equals("R"))
-      {
-          mensajeErr("Exportar  solo se permite sobre Agrupado por Cliente");
-          return;
-      }
-    }  catch (Exception k)
-    {
-      Error("Error al Comprobar condiciones de consulta",k);
-      return;
-    }
+          if (!PcondBus.checkCampos())
+              return;
+          if (accion.equals(CONSULTA) && !tip_listadE.getValor().equals("R"))
+          {
+              msgBox("La consulta solo se permite sobre Relacion de Facturas");
+              return;
+          }
+          if (accion.equals(EXCEL) && !tip_listadE.getValor().equals("C") && !tip_listadE.getValor().equals("R"))
+          {
+              msgBox("Exportar  solo se permite sobre Agrupado por Cliente");
+              return;
+          }
 
-    new miThread("")
-    {
-      public void run()
+          if (accion.equals(CORREO))
+          {
+              if (accion.equals(CORREO))
+              {
+                  ifMail.setVisible(true);
+                  ifMail.setSelected(true);
+                  ifMail.setLiRelFact(this);
+                  
+                  ifMail.setAsunto("Relacion Facuras de: " + PcondBus.getFechaInicio() + "  a: " + PcondBus.getFechaFinal());
+                  ifMail.setText("Estimado Señor,\n\nAdjunto le enviamos la relacion de facturas "
+                      + "  de fecha: " + PcondBus.getFechaInicio()+" a fecha: "+PcondBus.getFechaFinal()
+                      + "\n\nAtentamente\n\n" + pdempresa.getNombreEmpresa(dtStat, EU.em_cod));
+                  ifMail.setDatosDoc("R", "", true);
+                  return;
+              }
+          }
+         
+      } catch (Exception k)
       {
-        listFactur();
+          Error("Error al Comprobar condiciones de consulta", k);
+          return;
       }
-    };
+      new miThread("")
+      {
+          @Override
+          public void run() {               
+              msgEspere("Buscando facturas");
+              jt.tableView.setVisible(false);
+              listFactur();
+              jt.tableView.setVisible(true);
+              resetMsgEspere();
+          }
+      };
   }
 
   void listFactur()
@@ -267,7 +302,7 @@ public class Clrelfact extends ventana implements JRDataSource {
       if (!rs.next())
       {
         this.setEnabled(true);
-        mensajeErr("No ENCONTRADAS FACTURAS CON ESTOS CRITERIOS");
+        msgBox("No ENCONTRADAS FACTURAS CON ESTOS CRITERIOS");
         mensaje("");
         return;
       }
@@ -278,9 +313,9 @@ public class Clrelfact extends ventana implements JRDataSource {
         listar();
         return;
       }
-      if (accion == LISTADO)
+      if (accion.equals(LISTADO))
         listar();
-      else if (accion == EXCEL)
+      else if (accion.equals( EXCEL))
       {
         if (tip_listadE.getValor().equals("R"))
             exportarRelFras();
@@ -313,15 +348,15 @@ public class Clrelfact extends ventana implements JRDataSource {
          s=rs.getInt("emp_codi")+";"+rs.getString("fvc_serie")+";"+Formatear.format( rs.getInt("fvc_nume"),"99999")+";"+
           Formatear.getFecha(rs.getDate("fvc_fecfra"),"dd-MM-yyyy")+";"+
           rs.getString("cli_nomb")+";"+
-          (""+Formatear.Redondea(rs.getString("fvc_sumlin"),2)).replace('.',',')+";"+
+          (""+Formatear.redondea(rs.getString("fvc_sumlin"),2)).replace('.',',')+";"+
           (""+((rs.getDouble("fvc_dtopp")+rs.getDouble("fvc_dtocom")+
                   rs.getDouble("fvc_dtootr"))* rs.getDouble("fvc_sumlin")/100)).replace('.',',')+";"+
-           (""+Formatear.Redondea(rs.getString("fvc_basimp"),2)).replace('.',',')+";"+
-           (""+Formatear.Redondea(rs.getString("fvc_poriva"),2)).replace('.',',')+";"+
-          (""+Formatear.Redondea(rs.getString("fvc_impiva"),2)).replace('.',',')+";"+
-           (""+Formatear.Redondea(rs.getString("fvc_porreq"),2)).replace('.',',')+";"+
-           (""+Formatear.Redondea(rs.getString("fvc_imprec"),2)).replace('.',',')+";"+
-           (""+Formatear.Redondea(rs.getString("fvc_sumtot"),2)).replace('.',',');
+           (""+Formatear.redondea(rs.getString("fvc_basimp"),2)).replace('.',',')+";"+
+           (""+Formatear.redondea(rs.getString("fvc_poriva"),2)).replace('.',',')+";"+
+          (""+Formatear.redondea(rs.getString("fvc_impiva"),2)).replace('.',',')+";"+
+           (""+Formatear.redondea(rs.getString("fvc_porreq"),2)).replace('.',',')+";"+
+           (""+Formatear.redondea(rs.getString("fvc_imprec"),2)).replace('.',',')+";"+
+           (""+Formatear.redondea(rs.getString("fvc_sumtot"),2)).replace('.',',');
          util.print(s,true,out);
       } while (rs.next());
       out.close();
@@ -332,6 +367,7 @@ public class Clrelfact extends ventana implements JRDataSource {
   }
   void consultar() throws Exception
   {
+     
       jt.removeAllDatos();
 
       double impBruT=0,impTot=0,impDto=0,impBI=0,impDtoT=0,impIvaT=0,kilTot=0;
@@ -380,6 +416,7 @@ public class Clrelfact extends ventana implements JRDataSource {
           impBI+=rs.getDouble("fvc_basimp");
           impTot+=rs.getDouble("fvc_sumtot");
       } while (rs.next());
+      
       jt.requestFocusInicio();
       numfrasE.setValorDec(nFras);
       impbruE.setValorDec(impBruT);
@@ -536,12 +573,94 @@ public class Clrelfact extends ventana implements JRDataSource {
       mensajes.mensajeAviso("Generado Fichero EXCEL EN: "+f.getAbsolutePath());
       this.setEnabled(true);
     }
-
+   public void setSubject(String subject)
+   {
+       this.subject=subject;
+   }
+   public void setEmailCC(String emailCC)
+   {
+       this.emailCC=emailCC;
+   }
+  
+   public void setAsunto(String asunto)
+   {
+       this.asunto=asunto;
+   }
+   
+   public void setToEmail(String toEmail)
+   {
+       this.toEmail=toEmail;
+   }
+    @Override
+  public void matar(boolean cerrarConexion)
+  {
+    if (muerto)
+      return;
+    if (ifMail!=null)
+    {
+      ifMail.setVisible(false);
+      ifMail.dispose();
+    }
+   super.matar(cerrarConexion);
+  }
+   public void enviaEmail()
+   {     
+       try
+       {
+           EU.setValorParam(PCORREORELFRA, toEmail,"Correo Relacion Fras.Ventas",EU.usuario,dtAdd);
+           dtAdd.commit();
+           s = "SELECT c.*,cl.*,fp.fpa_dia1,fp.fpa_dia2,fp.fpa_dia3,fp.fpa_nomb "
+            + " FROM v_facvec as c,clientes as cl,v_forpago as fp "
+            + " WHERE  c.cli_codi = cl.cli_codi "
+            + " and fp.fpa_codi = cl.fpa_codi "
+            + PcondBus.getCondWhere()
+            + " ORDER BY " + (tip_listadE.getValor().equals("C") ? "c.cli_codi," : "")
+            + "c.emp_codi, fvc_ano,fvc_nume";
+           rs = ct.createStatement().executeQuery(dtCon1.getStrSelect(s));
+           if (!rs.next())
+           {
+               this.setEnabled(true);
+               msgBox("No ENCONTRADAS FACTURAS CON ESTOS CRITERIOS");
+               mensaje("");
+               return;
+           }
+           if (tip_listadE.getValor().startsWith("F"))
+           {
+               if (!calcVtos())
+               {
+                   this.setEnabled(true);
+                   return;
+               }
+           }
+       } catch (Exception k)
+       {
+           Error("Error al enviar relacion por email", k);
+           return;
+       }
+       new miThread("")
+       {
+           @Override
+           public void run() {
+               msgEspere("Buscando facturas");
+               jt.tableView.setVisible(false);
+               try
+               {
+                   listar();
+               } catch (Exception k)
+               {
+                   Error("Error al enviar relacion por email", k);
+                   return;
+               }
+               jt.tableView.setVisible(true);
+               resetMsgEspere();
+           }
+       };       
+   }
     void listar() throws Exception
     {
+     
       if (tip_listadE.getValor().equals("F"))
       {
-
         s = "SELECT dp.fpa_dias,c.*,cl.*,fp.fpa_dia1,fp.fpa_dia2,fp.fpa_dia3,fp.fpa_nomb " +
             " FROM v_facvec as c,clientes as cl,v_forpago as fp, " +
             TABLA_TMP+" as dp"+
@@ -557,14 +676,22 @@ public class Clrelfact extends ventana implements JRDataSource {
 //        debug(s);
       }
       rs=ct.createStatement().executeQuery(dtCon1.getStrSelect(s));
-      if (tip_listadE.getValor().equals("R"))
-        jr = Listados.getJasperReport(EU, "relfacven");
-      else if (tip_listadE.getValor().equals("F"))
-         jr =Listados.getJasperReport(EU, "relfavefp");
-       else if (tip_listadE.getValor().equals("FP"))
-         jr =Listados.getJasperReport(EU, "relfavecp");
-      else // Relacion de Facturas por cliente
-        jr =Listados.getJasperReport(EU, "relfavecl");
+      switch (tip_listadE.getValor())
+      {
+          case "R":
+              jr = Listados.getJasperReport(EU, "relfacven");
+              break;
+          case "F":
+              jr =Listados.getJasperReport(EU, "relfavefp");
+              break;
+          case "FP":
+              jr =Listados.getJasperReport(EU, "relfavecp");
+              break;
+          default:
+              // Relacion de Facturas por cliente
+              jr =Listados.getJasperReport(EU, "relfavecl");
+              break;
+      }
       java.util.HashMap mp = Listados.getHashMapDefault();
       mp.put("feciniE", PcondBus.feciniE.getText());
       mp.put("fecfinE", PcondBus.fecfinE.getText());
@@ -580,12 +707,25 @@ public class Clrelfact extends ventana implements JRDataSource {
       }
       else
         jp= JasperFillManager.fillReport(jr, mp, new JRResultSetDataSource(rs));
-      gnu.chu.print.util.printJasper(jp, EU);
+      if (accion.equals(CORREO))
+      {
+         File fichPDF=util.getFile("clrelfact",EU, "pdf",true) ;
+         FileOutputStream outStr=new FileOutputStream(fichPDF);
+         JasperExportManager.exportReportToPdfStream(jp,outStr);
+         outStr.close();  
+         MailHtml correo=new MailHtml(EU.usu_nomb,EU.email);
+         correo.setEmailCC(emailCC);
+         correo.enviarFichero(toEmail,asunto,subject,
+             fichPDF,"relacion_facturas.pdf");       
+      }
+      else
+        gnu.chu.print.util.printJasper(jp, EU);
       this.setEnabled(true);
       mensaje("");
       mensajeErr("Listado de Facturas .. TERMINADO");
 
   }
+  @Override
   public boolean next() throws JRException
   {
     nLin++;
@@ -683,9 +823,10 @@ public class Clrelfact extends ventana implements JRDataSource {
         Pcondic.add(opInclusive);
         opInclusive.setBounds(480, 150, 90, 18);
 
-        Baceptar.addMenu("Imprimir");
-        Baceptar.addMenu("Consultar");
-        Baceptar.addMenu("Exportar");
+        Baceptar.addMenu("Imprimir",LISTADO);
+        Baceptar.addMenu("Consultar",CONSULTA);
+        Baceptar.addMenu("Correo",CORREO);
+        Baceptar.addMenu("Exportar",EXCEL);
         Pcondic.add(Baceptar);
         Baceptar.setBounds(590, 150, 80, 26);
         Pcondic.add(PcondBus);

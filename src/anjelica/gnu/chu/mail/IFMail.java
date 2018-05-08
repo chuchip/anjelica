@@ -3,6 +3,7 @@ package gnu.chu.mail;
 
 import gnu.chu.Menu.Principal;
 import gnu.chu.anjelica.despiece.listraza;
+import gnu.chu.anjelica.facturacion.Clrelfact;
 import gnu.chu.anjelica.facturacion.lisfactu;
 import gnu.chu.anjelica.ventas.lialbven;
 import gnu.chu.utilidades.Iconos;
@@ -42,6 +43,7 @@ public class IFMail extends ventana {
     lialbven liAlb = null;
     lisfactu liFra = null;
     listraza liTra = null;
+    Clrelfact relFra = null;
     String tipoDoc;
 //    String docSerie;
 //    int empCodi,docAno,docNume;
@@ -188,6 +190,10 @@ public class IFMail extends ventana {
     {
         this.liFra=liFra;
     }
+    public void setLiRelFact(Clrelfact relFra)
+    {
+        this.relFra=relFra;
+    }
     public void setCliCodi(String cliCodi)
     {
         if (!cli_codiE.getText().equals(cliCodi))
@@ -233,7 +239,12 @@ public class IFMail extends ventana {
         return cli_codiE;
     }
    
-    
+    /**
+     * Establece los datos del documento a enviar por email.
+     * @param tipoDoc
+     * @param sqlDoc
+     * @param opValora 
+     */
     public void setDatosDoc( String tipoDoc,
          String sqlDoc,
          boolean opValora)
@@ -290,6 +301,9 @@ public class IFMail extends ventana {
           case "T":
             enviaEmailTra();
             break;
+          case "R":
+            enviaEmailRelFra();
+            break;
           default:
            enviarEmailFra();
       }
@@ -316,6 +330,14 @@ public class IFMail extends ventana {
           Error("Error al enviar Albaran por Email por usuario: "+EU.usuario, k);
         }
     }
+    /**
+     * Establece direccion email.
+     * @param email 
+     */
+    public void setEmail(String email)
+    {
+        toEmailE.setText(email);
+    }
     public void setAsunto(String subject)
     {
         asuntoE.setText(subject);
@@ -324,7 +346,16 @@ public class IFMail extends ventana {
     {
         respuestE.setText(subject);
     }    
-    
+    void enviaEmailRelFra()
+    {
+         relFra.setSubject(asuntoE.getText());
+         relFra.setToEmail(toEmailE.getText());
+         relFra.setEmailCC(opCopia.isSelected()? EU.email:null);
+         relFra.setAsunto(respuestE.getText());
+         relFra.enviaEmail();
+         cancelEmail();
+         padre.mensajeErr("Email ..... Enviado");
+    }
     void enviaEmailTra()
     {
        try

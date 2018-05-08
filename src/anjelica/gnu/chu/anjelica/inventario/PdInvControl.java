@@ -8,7 +8,7 @@ package gnu.chu.anjelica.inventario;
  * con el mismo individuo,lote y peso. Por defecto, lo permite. </p>
  * <p> <em>admin=true</em> Permitira meter Generar inventario a  partir de otro.
  * Por defecto esta deshabilitada esa caracteristica. </p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -67,9 +67,18 @@ import net.sf.jasperreports.engine.JasperReport;
 public class PdInvControl extends ventanaPad implements PAD
 {
 
- private String condLineas="";
-  private  final int JT_NUMPAL=11;
-  private  final int JT_NUMCAJ=10;
+  private String condLineas="";
+  private  final int JT_NUMLIN=0;
+  private  final int JT_NUMCAJ=1;
+  private  final int JT_PROCOD=2;  
+  private  final int JT_EJERC=3;
+  private  final int JT_SERIE=4;
+  private  final int JT_LOTE=5;
+  private  final int JT_INDIV=6;
+  private  final int  JT_KILOS=7;
+  private  final int JT_NUMPAL=8;  
+  private  final int JT_PRONOM=9;
+  private  final int JT_UNID=10;
   private String condWhere;
   boolean swKilos0 = false;
   DatosTabla dtCab;
@@ -148,7 +157,7 @@ public class PdInvControl extends ventanaPad implements PAD
         nav = new navegador(this, dtCons, false, navegador.NORMAL);
         setSonidoAlarma(true);
         iniciarFrame();
-        this.setVersion("2017-08-19 "+(swAdmin?"Administrador":""));
+        this.setVersion("2018-05-01 "+(swAdmin?"Administrador":""));
         condWhere=" where emp_codi =  "+EU.em_cod;
         strSql = "SELECT * FROM coninvcab "+condWhere+
          "order by cci_feccon,cam_codi,alm_codi";
@@ -191,6 +200,7 @@ public class PdInvControl extends ventanaPad implements PAD
     alm_codiE.setFormato(true);
     alm_codiE.setFormato(Types.DECIMAL, "#9", 2);
     pdalmace.llenaLinkBox(alm_codiE, dtStat,'*');
+    jt.setColNueva(JT_PROCOD);
 //    s = "SELECT alm_codi,alm_nomb FROM v_almacen " +
 //        " ORDER BY alm_codi";
 //    dtStat.select(s);
@@ -226,6 +236,7 @@ public class PdInvControl extends ventanaPad implements PAD
   {
     Bimpri.addActionListener(new ActionListener()
     {
+        @Override
         public void actionPerformed(ActionEvent e)
         {
             Bimpri_actionPerformed();
@@ -356,7 +367,7 @@ public class PdInvControl extends ventanaPad implements PAD
       {
         prp_pesoE.setValorDec(dtCon1.getDouble("stp_kilact", true));
         prp_numpieE.setValorInt(dtCon1.getInt("stp_unact", true));
-        jt.setValor(dtCon1.getString("stp_unact"), 9);
+        jt.setValor(dtCon1.getString("stp_unact"), JT_UNID);
       }
       if (buscaC.isSelected())
       {
@@ -473,8 +484,6 @@ public class PdInvControl extends ventanaPad implements PAD
   
     try
     {
-      jt.setDefaultValor(4, ""+EU.em_cod);
-      jt.setValor(EU.em_cod,0,4);
       if (nav.pulsado == navegador.ADDNEW)
       {
         s = "SELECT * FROM coninvcab WHERE cci_feccon = TO_DATE('" + cci_fecconE.getText() + "','dd-MM-yyyy') " +
@@ -547,20 +556,20 @@ public class PdInvControl extends ventanaPad implements PAD
     
       do
       {
-       
+    
         ArrayList v = new ArrayList();
         v.add(dtCon1.getString("lci_nume")); // 0
+        v.add(dtCon1.getInt("lci_numcaj",true));        
         v.add(dtCon1.getString("pro_codi")); // 1
-        v.add(dtCon1.getString("pro_nomb")); // 2 
         v.add(dtCon1.getString("prp_ano")); // 3
-        v.add(dtCon1.getString("prp_empcod")); // 4
         v.add(dtCon1.getString("prp_seri")); // 5  
         v.add(dtCon1.getString("prp_part")); // 6 
         v.add(dtCon1.getString("prp_indi")); // 7
         v.add(dtCon1.getString("lci_peso")); // 8
-        v.add(dtCon1.getString("lci_numind")); // 9
-        v.add(dtCon1.getInt("lci_numcaj",true));
-        v.add(dtCon1.getString("lci_numpal"));
+       v.add(dtCon1.getString("lci_numpal"));        
+        v.add(dtCon1.getString("pro_nomb")); // 2 
+         v.add(dtCon1.getString("lci_numind")); // 9
+        
         jt.addLinea(v);
         n++;
       }
@@ -691,7 +700,7 @@ public class PdInvControl extends ventanaPad implements PAD
       {
           mensajeErr("Refrescando registro para edicion");
           s="SELECT count(*) as cuantos FROM v_coninvent where cci_codi = "+cci_codiE.getValorInt()+
-             " and lci_nume<"+   jt.getValorInt(jt.getSelectedRowDisab(),0)+
+             " and lci_nume<"+   jt.getValorInt(jt.getSelectedRowDisab(),JT_NUMLIN)+
              " and lci_regaut = 0" ; // Solo registros no automaticos
              
           dtStat.select(s);
@@ -727,9 +736,9 @@ public class PdInvControl extends ventanaPad implements PAD
         jt.mueveSigLinea();
     }
     else
-        jt.requestFocus(linEdit, 1);
+        jt.requestFocus(linEdit, JT_PROCOD);
     
-//    Bcancelar.setEnabled(false);
+    Bcancelar.setEnabled(false);
     numpesE1.setText("0");
     kiltotE1.setValorDec(0);
     swSal = false;
@@ -887,19 +896,21 @@ public class PdInvControl extends ventanaPad implements PAD
       if (!pro_codiE.controla(false))
       {
         msgBox(pro_codiE.getMsgError());
+        jt.setValor(pro_codiE.getMsgError(),row,JT_PRONOM);
         return 1;
       }
+      jt.setValor(pro_nombE.getText(),row,JT_PRONOM);
       if (prp_anoE.getValorInt() == 0)
       {
         msgBox("Introduzca el Ejercicio del Lote");
         return 3;
       }
 
-      if (jt.getValorInt(row,0) != 0 && prp_pesoE.getValorDec() == 0)
+      if (jt.getValorInt(row,JT_NUMLIN) != 0 && prp_pesoE.getValorDec() == 0)
         swKilos0=true;
       if (!swKilos0)
       {
-        if (prp_serieE.getText().trim().equals(""))
+        if (prp_serieE.isNull(true) )
         {
           msgBox("Introduzca la Serie del Lote");
           return 4;
@@ -934,17 +945,17 @@ public class PdInvControl extends ventanaPad implements PAD
       {
         if (n == row)
           continue;
-        if (jt.getValString(n, 1).trim().equals("0"))
+        if (jt.getValString(n, JT_PROCOD).trim().equals("0"))
           continue;
-        if (jt.getValorInt(n, 7) == 0)
+        if (jt.getValorInt(n, JT_INDIV) == 0)
           continue; // Sin individuo. -- Permitimos todos los que quiera.
-        if (jt.getValorInt(n, 1) == pro_codiE.getValorInt() &&
-            jt.getValorInt(n, 3) == prp_anoE.getValorInt() &&
+        if (jt.getValorInt(n, JT_PROCOD) == pro_codiE.getValorInt() &&
+            jt.getValorInt(n, JT_EJERC) == prp_anoE.getValorInt() &&
 //            jt.getValInt(n, 4) == prp_empcodE.getValorInt() &&
-            jt.getValString(n, 5).equals(prp_serieE.getText()) &&
-            jt.getValorInt(n, 6) == prp_partE.getValorInt() &&
-            jt.getValorInt(n, 7) == prp_indiE.getValorInt() &&
-            Formatear.redondea(jt.getValorDec(n, 8), 2) == Formatear.redondea(prp_pesoE.getValorDec(), 2))
+            jt.getValString(n, JT_SERIE).equals(prp_serieE.getText()) &&
+            jt.getValorInt(n, JT_LOTE) == prp_partE.getValorInt() &&
+            jt.getValorInt(n, JT_INDIV) == prp_indiE.getValorInt() &&
+            Formatear.redondea(jt.getValorDec(n, JT_KILOS), 2) == Formatear.redondea(prp_pesoE.getValorDec(), 2))
         {
           if (swRepLineas)
           {
@@ -957,7 +968,7 @@ public class PdInvControl extends ventanaPad implements PAD
           }
         }
       }
-      jt.setValor(""+ insLineaInv(jt.getValorInt(row,0)),row,0);
+      jt.setValor(""+ insLineaInv(jt.getValorInt(row,0)),row,JT_NUMLIN);
       kiltotE.setValorDec(kiltotE.getValorDec() - kgAnt + prp_pesoE.getValorDec());
       kiltotE1.setValorDec(kiltotE1.getValorDec() - kgAnt + prp_pesoE.getValorDec());
     }
@@ -1167,10 +1178,10 @@ public class PdInvControl extends ventanaPad implements PAD
 
       for (int n = 0; n < rw; n++)
       {
-        if (jt.getValString(n, 1).trim().equals("0"))
+        if (jt.getValString(n, JT_PROCOD).trim().equals("0"))
           continue;
         nLin++;
-        kg += jt.getValorDec(n, 8);
+        kg += jt.getValorDec(n, JT_KILOS);
       }
       numpesE.setValorDec(nLin);
       kiltotE.setValorDec(kg);
@@ -1304,17 +1315,16 @@ public class PdInvControl extends ventanaPad implements PAD
                 
                 lciNume=insLineaInv(0);
                 v.add(lciNume); // 0
+                v.add(lciNume); // Nº Caja
                 v.add(dtCon1.getString("pro_codi")); // 1
-                v.add(dtCon1.getString("pro_nomb")); // 2 
                 v.add(dtCon1.getString("prp_ano")); // 3
-                v.add(EU.em_cod); // 4
                 v.add(dtCon1.getString("prp_seri")); // 5  
                 v.add(dtCon1.getString("prp_part")); // 6 
                 v.add(dtCon1.getString("prp_indi")); // 7
-                v.add(dtCon1.getString("prp_peso")); // 8
-                v.add(1); // 9
-                v.add(0);
-                v.add("IP");
+                v.add(dtCon1.getString("prp_peso")); // 8                                
+                v.add("0"); // Palet
+                v.add(dtCon1.getString("pro_nomb")); // 2 
+                v.add(1); // Unidades
                 jt.addLinea(v);
             } while (dtCon1.next());
             jt.setEnabled(true);
@@ -1657,17 +1667,17 @@ public class PdInvControl extends ventanaPad implements PAD
     {
       if (jt.getSelectedRow() > 0)
       {
-        pro_codiE.setText(jt.getValString(jt.getSelectedRow() - 1, 1));
-        pro_nombE.setText(jt.getValString(jt.getSelectedRow() - 1, 2));
-        prp_anoE.setText(jt.getValString(jt.getSelectedRow() - 1, 3));
-        prp_serieE.setText(jt.getValString(jt.getSelectedRow() - 1, 5));
-        prp_partE.setText(jt.getValString(jt.getSelectedRow() - 1, 6));
+        pro_codiE.setText(jt.getValString(jt.getSelectedRow() - 1, JT_PROCOD));
+        pro_nombE.setText(jt.getValString(jt.getSelectedRow() - 1, JT_PRONOM));
+        prp_anoE.setText(jt.getValString(jt.getSelectedRow() - 1, JT_EJERC));
+        prp_serieE.setText(jt.getValString(jt.getSelectedRow() - 1, JT_SERIE));
+        prp_partE.setText(jt.getValString(jt.getSelectedRow() - 1, JT_LOTE));
         jt.salirGrid();
         javax.swing.SwingUtilities.invokeLater(new Thread()
         {
           public void run()
           {
-            jt.requestFocus(jt.getSelectedRow(), 7);
+            jt.requestFocus(jt.getSelectedRow(), JT_KILOS);
 
           }
         });
@@ -1732,11 +1742,11 @@ public class PdInvControl extends ventanaPad implements PAD
      */
     void borraLinea(int row)
     {
-      if (jt.getValorInt(row,0)==0 )
+      if (jt.getValorInt(row,JT_NUMLIN)==0 )
         return;
       try {
         s = "delete from coninvlin where cci_codi = " + cci_codiE.getValorInt() +
-            " and lci_nume = " + jt.getValorInt(row, 0);
+            " and lci_nume = " + jt.getValorInt(row, JT_NUMLIN);
         int nLinAf = 0;
 
         nLinAf = stUp.executeUpdate(s);
@@ -1829,7 +1839,7 @@ public class PdInvControl extends ventanaPad implements PAD
     {
       swKilos0=true;
       prp_pesoE.setValorDec(0);
-      jt.setValor("0",8);
+      jt.setValor("0",JT_KILOS);
       jt.mueveSigLinea();
     }
 
@@ -1877,6 +1887,12 @@ public class PdInvControl extends ventanaPad implements PAD
         java.awt.GridBagConstraints gridBagConstraints;
 
         pro_codiE = new gnu.chu.camposdb.proPanel(){
+
+            public void afterFocusLost(boolean correcto)
+            {
+                jt.setValor(correcto?pro_nombE.getText():"",JT_PRONOM);
+
+            }
             @Override
             protected void despuesLlenaCampos()
             {
@@ -1888,7 +1904,7 @@ public class PdInvControl extends ventanaPad implements PAD
                         if (buscaPeso())
                         {
                             prp_numpieE.setValorInt(dtCon1.getInt("stp_unact"));
-                            jt.setValor(dtCon1.getString("stp_unact"), 9);
+                            jt.setValor(dtCon1.getString("stp_unact"), JT_UNID);
                         }
                         if (buscaC.isSelected())
                         {
@@ -1907,7 +1923,6 @@ public class PdInvControl extends ventanaPad implements PAD
         };
         pro_nombE = new gnu.chu.controles.CTextField(Types.CHAR,"X",35);
         prp_anoE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
-        prp_empcodE = new gnu.chu.controles.CTextField(Types.DECIMAL, "#9");
         prp_serieE = new gnu.chu.controles.CTextField(Types.CHAR, "X", 1);
         prp_partE = new gnu.chu.controles.CTextField(Types.DECIMAL, "#9999");
         prp_indiE = new gnu.chu.controles.CTextField(Types.DECIMAL, "#999");
@@ -1934,7 +1949,8 @@ public class PdInvControl extends ventanaPad implements PAD
         cci_fecoriE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
         cLabel12 = new gnu.chu.controles.CLabel();
         Bcopia = new gnu.chu.controles.CButtonMenu();
-        jt = new gnu.chu.controles.CGridEditable(12) {
+        jt = new gnu.chu.controles.CGridEditable(11) {
+
             @Override
             public void afterCambiaLinea()
             {
@@ -2005,8 +2021,6 @@ public class PdInvControl extends ventanaPad implements PAD
             Bkilos0 = new gnu.chu.controles.CButton("F6",Iconos.getImageIcon("stock_insert"));
             cLabel11 = new gnu.chu.controles.CLabel();
             nlinE = new gnu.chu.controles.CTextField(Types.DECIMAL, "###9");
-
-            prp_empcodE.setToolTipText("");
 
             prp_partE.setText("cTextField1");
 
@@ -2128,10 +2142,10 @@ public class PdInvControl extends ventanaPad implements PAD
                 pro_codiE.setCamposLote(prp_anoE, prp_serieE, prp_partE,
                     prp_indiE, prp_pesoE);
                 pro_codiE.setProNomb(pro_nombE);
-                prp_empcodE.setEnabled(false);
+
                 lci_numpalE.setMayusc(true);
                 prp_anoE.setText("" + EU.ejercicio);
-                prp_empcodE.setText("" + EU.em_cod);
+
                 prp_serieE.setText("A");
                 prp_numpieE.setValorInt(1);
                 lci_numpalE.setText("");
@@ -2139,40 +2153,40 @@ public class PdInvControl extends ventanaPad implements PAD
                 cci_codiE.setEnabled(false);
                 prp_serieE.setMayusc(true);
                 ArrayList v = new ArrayList();
+
                 v.add("NL"); // 0
-                v.add("Producto"); // 1
-                v.add("Descripcion"); // 2
+                v.add("Caja"); // 1
+                v.add("Producto"); // 2
                 v.add("Eje"); // 3
-                v.add("Emp"); // 4
-                v.add("Ser"); // 5
-                v.add("Part"); // 6
-                v.add("Ind."); // 7
-                v.add("Cantidad"); // 8
-                v.add("N.Pzas"); // 9
-                v.add("Caja"); // 10
-                v.add("Palet"); // 10
+                v.add("Ser"); // 4
+                v.add("Part"); // 5
+                v.add("Ind."); // 6
+                v.add("Kilos"); // 7
+                v.add("Palet"); // 8
+                v.add("Descripcion"); // 9
+                v.add("N.Pzas"); // 10
+
                 jt.setCabecera(v);
-                Vector v1 = new Vector();
+                ArrayList v1 = new ArrayList();
 
                 v1.add(lci_numeE); // 0
-                v1.add(pro_codiE.getFieldProCodi()); // 1
-                v1.add(pro_nombE); // 2
+                v1.add(lci_numcajE); // 1  Nº Caja
+                v1.add(pro_codiE.getFieldProCodi()); // 2
                 v1.add(prp_anoE); // 3
-                v1.add(prp_empcodE); // 4
-                v1.add(prp_serieE); // 5
-                v1.add(prp_partE); // 6
-                v1.add(prp_indiE); // 7
-                v1.add(prp_pesoE); //8
-                v1.add(prp_numpieE); // 9 Numero de Piezas
-                v1.add(lci_numcajE); // 10  Palet
-                v1.add(lci_numpalE); // 10  Palet
+                v1.add(prp_serieE); // 4
+                v1.add(prp_partE); // 5
+                v1.add(prp_indiE); // 6
+                v1.add(prp_pesoE); //7
+                v1.add(lci_numpalE); // 8 Palet
+                v1.add(pro_nombE); // 9
+                v1.add(prp_numpieE); // 10 Numero de Piezas
                 jt.setCampos(v1);
                 jt.setAjustarGrid(true);
                 jt.setAjustarColumnas(false);
                 jt.setAnchoColumna(new int[]
-                    {45, 80, 200, 40,30, 20, 40, 40, 60, 40,30,40});
+                    {45, 30,70, 40,30, 50, 40, 50, 50, 200,30});
                 jt.setAlinearColumna(new int[]
-                    {2, 2, 0, 2,2, 0, 2, 2, 2, 2,2,0});
+                    {2, 2,2,2, 1, 2,2, 2, 2, 0,2});
                 jt.setFormatoCampos();
             } catch (Exception k) {
                 Error ("Error al configurar grid",k);
@@ -2324,7 +2338,6 @@ public class PdInvControl extends ventanaPad implements PAD
     private gnu.chu.camposdb.proPanel pro_codiE;
     private gnu.chu.controles.CTextField pro_nombE;
     private gnu.chu.controles.CTextField prp_anoE;
-    private gnu.chu.controles.CTextField prp_empcodE;
     private gnu.chu.controles.CTextField prp_indiE;
     private gnu.chu.controles.CTextField prp_numpieE;
     private gnu.chu.controles.CTextField prp_partE;

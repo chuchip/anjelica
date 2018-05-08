@@ -47,6 +47,8 @@ import org.apache.log4j.Logger;
 
 public class utildesp
 {
+  
+  double kgDocum,impDocum;
   private boolean debug=false;
   PreparedStatement psMvt;
   PreparedStatement psInv;
@@ -934,6 +936,15 @@ public class utildesp
   {
       debug=swDebug;
   }
+  public double getKilosDocumento()
+  {
+      return kgDocum;
+  }
+   public double getImporteDocumento()
+  {
+      return impDocum;
+  }
+
   /**
   * Devuelve el precio medio de entrada para un producto en un despiece.
   * @param proCodi
@@ -953,8 +964,8 @@ public class utildesp
     if (psInv==null)
         preparaStatements(dt);
     
-    double impDocum=0;
-    double kgDocum=0;
+    impDocum=0;
+    kgDocum=0;
     psInv.setInt(1, proCodi);
     psInv.setDate(2, fechaInv);
     ResultSet rs=psInv.executeQuery();

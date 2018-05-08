@@ -732,6 +732,17 @@ public class prvPanel extends CPanel
         super.setEnabled(enab);
     prv_nombL.setEnabled(enab);
   }
+  @Override
+  public void setEnabled(boolean enab)
+  {   
+      prv_codiE.setEnabled(enab);
+      if (prv_nombL!=null)
+        prv_nombL.setEnabled(enab);
+      if (Bcons!=null)
+        Bcons.setEnabled(enab);
+      if (Binserta!=null)
+          Binserta.setEnabled(enab);
+  }
   public boolean isEnabledNombre()
   {
     return prv_nombL.isEnabled();

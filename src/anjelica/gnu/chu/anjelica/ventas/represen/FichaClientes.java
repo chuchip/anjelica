@@ -369,7 +369,7 @@ public class FichaClientes extends ventana implements PAD
   {
     iniciarFrame();
     this.setSize(732, 535);
-    this.setVersion("2017-08-08");
+    this.setVersion("2018-05-02");
     if (CONBD)
     {
       conecta();
@@ -382,11 +382,20 @@ public class FichaClientes extends ventana implements PAD
       dtBlo= new  DatosTabla(ct);
       if (! EU.getValorParam("jdbc_url_cont", "").equals(""))
       {  //Esta definida la conexion a bd contabilidad       
-        conexion ctCont=new conexion(EU.getValorParam("jdbc_usu_cont", "sa")
-          ,EU.getValorParam("jdbc_pass_cont", "as")
-          ,EU.getValorParam("jdbc_driver_cont", "com.microsoft.sqlserver.jdbc.SQLServerDriver")
-          ,EU.getValorParam("jdbc_url_cont", ""));
-        dtCont= new DatosTabla(ctCont);
+        try {
+            conexion ctCont=new conexion(EU.getValorParam("jdbc_usu_cont", "sa")
+              ,EU.getValorParam("jdbc_pass_cont", "as")
+              ,EU.getValorParam("jdbc_driver_cont", "com.microsoft.sqlserver.jdbc.SQLServerDriver")
+              ,EU.getValorParam("jdbc_url_cont", ""));
+            dtCont= new DatosTabla(ctCont);
+        } catch (SQLException k1)
+        {
+           msgBox("Error al conectar a base datos contabilidad");
+           k1.printStackTrace();
+           System.out.println("jdbc_url_cont: "+EU.getValorParam("jdbc_url_cont", ""));
+               
+           dtCont=null;            
+        }
       }
     }
 

@@ -26,16 +26,12 @@ import gnu.chu.eventos.CambioEvent;
 import gnu.chu.eventos.CambioListener;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.ventana;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.Hashtable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PTransVenta extends CPanel
 {
@@ -149,16 +145,18 @@ public class PTransVenta extends CPanel
      */
     public void verUltimosValores(int cliCodi,int traCodi) throws SQLException
     {
+      boolean swCli=true;
       String s="select  ht.* from v_albavec as a,albvenht as ht where cli_codi="+   cliCodi+
           (traCodi==0?"":" and tra_codi="+traCodi)+
           " and ht.avc_id = a.avc_id"
           + " order by ht.avc_id desc";
       if (!dt.select(s))
-      {
+      { 
+          swCli=false;
           if (traCodi==0) 
             return;
-          s="select  ht.* from albvenht as ht where  tra_codi="+traCodi+
-            "  order by ht.avc_id desc";
+          s="select  * from albvenht as ht where  tra_codi="+traCodi+
+            "  order by ht.avc_id,avt_condni desc";
           if (!dt.select(s))
               return;
       }
@@ -174,6 +172,17 @@ public class PTransVenta extends CPanel
       avt_connomE.removeAllItems();
       avt_matri1E.removeAllItems();
       avt_matri2E.removeAllItems();
+      if (swCli)
+      {
+          s="select  avt_connom,avt_matri2,avt_matri1 from v_albavec as a,albvenht as ht where cli_codi="+   cliCodi+
+          (traCodi==0?"":" and tra_codi="+traCodi)+
+            " and ht.avc_id = a.avc_id"+
+              " group by avt_connom,avt_matri2,avt_matri1";
+      }
+      else
+          s="select  avt_connom,avt_matri2,avt_matri1  from albvenht as ht where  tra_codi="+traCodi+
+               " group by avt_connom,avt_matri2,avt_matri1";
+      dt.select(s);
       do
       {
         avt_connomE.addItem(dt.getString("avt_connom"));

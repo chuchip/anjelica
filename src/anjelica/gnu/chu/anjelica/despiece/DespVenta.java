@@ -961,6 +961,7 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
              def_feccadE.setDate(utdesp.getFechaCaducidad());
              return JT_FECCAD;
          }
+         boolean swAvisoCad=false;
          if (pro_codsalE.getDiasCaducidad() > 0 && !saliendo)
          {
                if (Formatear.comparaFechas(def_feccadE.getDate(), Formatear.getDateAct()) <= 0)
@@ -971,12 +972,13 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
                        def_feccadE.setDate(utdesp.getFechaCaducidad());
                        return JT_FECCAD;
                     }
+                   swAvisoCad=true;
                }
                else
                {
-                    if (Formatear.comparaFechas(def_feccadE.getDate(), Formatear.getDateAct()) <= 10)
+                    if (!swAvisoCad && Formatear.comparaFechas(def_feccadE.getDate(), Formatear.getDateAct()) <= MantDesp.MIN_DIAS_CAD)
                     {
-                        int ret = mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en diez dias a la actual. Continuar?");
+                        int ret = mensajes.mensajeYesNo("Fecha Caducidad  deberia ser superior en "+ MantDesp.MIN_DIAS_CAD +" dias a la actual. Continuar?");
                         if (ret != mensajes.YES)
                             return JT_FECCAD;
                     }

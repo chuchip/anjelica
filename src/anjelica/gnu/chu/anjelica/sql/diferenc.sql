@@ -1,3 +1,10 @@
+alter table tarifa alter tar_preci type float;
+--
+insert into parametros values('*','fl','Fecha Larga','');
+insert into parametros values('*','flp','Clave Larga','ll55Bien');
+insert into parametros values('*','fld','Dias Cad','7');
+insert into parametros values('*','fle','Numero Paso','0');
+
 --
 CREATE INDEX ix_mvtalm4 on anjelica.mvtosalm(mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,MVT_NUMDOC);
 --

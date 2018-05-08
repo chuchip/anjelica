@@ -10,10 +10,10 @@ import java.sql.Types;
 /**
  *
  * <p>Titulo: pstockAct </p>
- * <p>Descripción: Panel Stock Actual. Muestra el stock actual y previsible de los productos
- * en un almacen o en todos. Permite ver el total de kilos por producto y desglosandolo por
- * proveedor y fecha caducidad </p>
-* <p>Copyright: Copyright (c) 2005-2016
+ * <p>Descripción: Panel Auxiliar para Mantenimiento Albaran ventas. 
+ * Muestra cantidad preparada de un pedido,
+ * comentarios de porque se ha  preparadao esa cantidad y el usuario que hace la anotacion</p>
+* <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU seg�n es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia

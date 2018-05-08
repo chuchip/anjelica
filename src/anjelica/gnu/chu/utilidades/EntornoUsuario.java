@@ -346,11 +346,68 @@ public class EntornoUsuario implements Serializable
            return paramDef;
        }
    }
-   public String getValorParam(String param,String paramDef)
+   /**
+    * Devuelve un valor de la tabla parametros
+    * Busca en variable que se lee SOLO cuando se inicia anjelica, a no ser que sea llamada la funcion
+    * iniciarParametros(DatosTabla dt)
+    * @param param Parametro a buscar
+    * @param valorDef Valor devuelto en caso de que el parametro no este definido
+    * @return 
+    */
+   public String getValorParam(String param,String valorDef)
    {
        if (htParam.get(param)==null)
-           return paramDef;
+           return valorDef;
        return htParam.get(param);       
+   }
+   /**
+    * Devuelve un valor de la tabla parametros
+    * Busca en la base de datos directamente.
+    * @param param Parametro a buscar
+    * @param valorDef Valor devuelto en caso de que el parametro no este definido
+    * @param dt Conexion a base de datos.
+    * @return Valor en la base de datos
+    * @throws java.sql.SQLException 
+    */
+   public String getValorParam(String param,String valorDef,DatosTabla dt) throws SQLException
+   { 
+       String s="select par_nomb,par_valor from parametros where usu_nomb ='"+usuario+"'"+
+           " and par_nomb='"+param+"'";
+       if (dt.select(s))
+           return dt.getString("par_valor");
+       s="select par_nomb,par_valor from parametros where usu_nomb = '*' and par_nomb='"+param+"'";
+       if (dt.select(s))
+           return dt.getString("par_valor");
+       return valorDef;
+   }
+   /**
+    * Establece el valor del parametro en la tabla parametros
+    * @param param
+    * @param valor
+    * @param descrip
+    * @param usuario
+    * @param dt
+    * @throws SQLException 
+    */
+   public void setValorParam(String param,String valor,String descrip,
+       String usuario,DatosTabla dt) throws SQLException
+   {
+       String s="select * from parametros where usu_nomb ='"+usuario+"'"+
+           " and par_nomb='"+param+"'";
+       if (!dt.select(s,true))
+       {
+           dt.addNew();
+           dt.setDato("usu_nomb",usuario);
+           dt.setDato("par_nomb",param);
+           dt.setDato("par_desc",descrip);
+       }
+       else
+       {
+           dt.edit();
+       }
+       dt.setDato("par_valor",valor);   
+       dt.update();
+       htParam.put(param, valor);
    }
    public void setParametrosConfiguracion(java.util.ResourceBundle paramConfig)
    {
@@ -369,7 +426,7 @@ public class EntornoUsuario implements Serializable
         this.pathReportAlt = pathReportAlt;
     }
     /**
-     * Devuelve un parametro del entorno de Anjelica (anjelica.confifg)
+     * Devuelve un parametro del entorno de Anjelica (anjelica.config)
      * @param key Parametro
      * @param valor Valor a devolver si no lo encuentra
      * @return Valor del parametro

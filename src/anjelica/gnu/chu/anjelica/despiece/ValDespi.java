@@ -46,7 +46,10 @@ import javax.swing.event.ListSelectionListener;
 
 
 
-public class ValDespi extends ventana {
+public class ValDespi extends ventana 
+{
+    // Parametro valde_nuevogrupautoo en talba parametros
+   boolean VALDE_NUEVOGRUPOAUTO=true; // Limpiar grupo  al darle al boton agrupar.
    utildesp utDesp;
    ArrayList<Integer> errorProd=new ArrayList();
    int TARIFA_MAYOR;
@@ -168,7 +171,7 @@ public class ValDespi extends ventana {
    private void jbInit() throws Exception {
         statusBar = new StatusBar(this);    
         iniciarFrame();
-        this.setVersion("2018-04-20" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
+        this.setVersion("2018-04-29" + (ARG_ADMIN ? "(ADMINISTRADOR)" : ""));
        
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -189,6 +192,7 @@ public class ValDespi extends ventana {
    public void iniciarVentana() throws Exception
    {
      utDesp=new utildesp();
+     VALDE_NUEVOGRUPOAUTO=EU.getValorParam("valde_nuevogrupauto", VALDE_NUEVOGRUPOAUTO);
      tid_codfinE.iniciar(dtStat, this, vl, EU);
      tid_codiniE.iniciar(dtStat, this, vl, EU);
      proOrigenE.iniciar(dtStat, this, vl, EU);
@@ -228,6 +232,15 @@ public class ValDespi extends ventana {
             @Override
             public void actionPerformed(ActionEvent e) {
                grd_numeE.setEnabled(agrupaC.getValor().equals("A"));
+               if (agrupaC.getValor().equals("A") && VALDE_NUEVOGRUPOAUTO) 
+               {
+                   try {
+                    grd_numeE.setValorInt(utildesp.buscaMaxGrp(dtCon1,eje_numeE.getValorInt(),
+                        EU.em_cod, 0));
+                   } catch (SQLException ex) {
+                    Error("Error al poner siguiente numero de grupo",ex);
+                   } 
+               }
             }
        });
        grd_numeE.addFocusListener(new FocusAdapter() {
@@ -776,23 +789,7 @@ public class ValDespi extends ventana {
         if (kilosCabE.getValorDec()!=kilosFinE.getValorDec())
             msgBox("Atencion kilos difieren entre entrada y salida");
         rowEdit = row;
-//        if (jtDesp.getValString(rowEdit,JTDES_TIPO).equals("D"))
-//        { // Si el despiece esta metido en un grupo No permito valorarlo
-//            try {
-//                s="select * from v_despori where eje_nume= "+jtDesp.getValorInt(rowEdit,JTDES_EJER)+
-//                    " and deo_codi = "+jtDesp.getValorInt(rowEdit,JTDES_NUMDES);
-//                dtStat.select(s);
-//                if (dtStat.getInt("deo_numdes")!=0)
-//                {
-//                    msgBox("Este despiece pertenece al grupo: "+dtStat.getInt("deo_numdes")+" Imposible valorar fuera del grupo");
-//                    jtDesp.requestFocusLater(rowEdit,jtDesp.getSelectedColumn());
-//                    return;
-//                }
-//            } catch (SQLException k)
-//            {
-//                Error("Error al comprobar grupo de Despiece",k);
-//            }
-//        }
+
         jtDesp.setEnabled(false);
         jtCab.initTransation();
         jtLin.initTransation();
@@ -1077,6 +1074,7 @@ public class ValDespi extends ventana {
    void valorarDespSel() 
    {
         try {
+            
             cancelaBuscaDesp=false;
             HashMap<Integer,Double>  htPro=new HashMap();
             HashMap<Integer,Double>  htFin=new HashMap();
@@ -1100,9 +1098,11 @@ public class ValDespi extends ventana {
                 
                 msgEspere("Espere, por favor. Valorando despiece: " + jtDesp.getValorInt(n, JTDES_NUMDES));
                 isGrupo=jtDesp.getValString(n, JTDES_TIPO).startsWith("G");
-                s= "SELECT distinct(pro_codi) FROM v_despori o" +
+                s= "SELECT o.pro_codi, sum(deo_kilos) as deo_kilos FROM v_despori o,v_articulo as a " +
                     " WHERE o.eje_nume = " + jtDesp.getValorInt(n,JTDES_EJER) +
-                    " AND "+ (isGrupo?"o.deo_numdes = ":"o.deo_codi = ") + jtDesp.getValorInt(n,JTDES_NUMDES);
+                    " and o.pro_codi = a.pro_codi and pro_tiplot='V'"+ // incluir solo articulos vendibles.
+                    " AND "+ (isGrupo?"o.deo_numdes = ":"o.deo_codi = ") + jtDesp.getValorInt(n,JTDES_NUMDES)+
+                    " group by o.pro_codi ";
               
                 if (!dtDesp.select(s))
                 {
@@ -1117,19 +1117,28 @@ public class ValDespi extends ventana {
                 htFin.clear();
                 do
                 {
-                    precAcu=getPrecioMedioDesp(dtDesp.getInt("pro_codi"), isGrupo,jtDesp.getValorInt(n,JTDES_EJER) ,
-                        jtDesp.getValorInt(n,JTDES_NUMDES), "D");
-                    if (msgError!=null)
-                    {                        
-                        if (msgs.indexOf(msgError)<0)
-                            msgs.add(msgError);
+                    calcFechaCostos( jtDesp.getValDate(n,JTDES_FECDES));               
+                    precAcu= pdprvades.getPrecioOrigen(dtStat,dtDesp.getInt("pro_codi"), fecIniSem);
+                    if (precAcu<=0)
+                    {
+                        precAcu=getPrecioMedioDesp(dtDesp.getInt("pro_codi"), isGrupo,jtDesp.getValorInt(n,JTDES_EJER) ,
+                            jtDesp.getValorInt(n,JTDES_NUMDES), "D");
+                        if (msgError!=null)
+                        {                        
+                            if (msgs.indexOf(msgError)<0)
+                                msgs.add(msgError);
+                        }
+                        impEnt+=impDocum;
                     }
+                    else
+                        impEnt+=precAcu*dtDesp.getDouble("deo_kilos");
                     htPro.put(dtDesp.getInt("pro_codi"),Formatear.redondea( precAcu,NUMDEC_COSTO));
-                    impEnt+=impDocum;
+                    
                     if (precAcu==0)
                     {
                           msgAviso += "\n Valor de Costo NO encontrado en origen para Producto: "
                                 + dtDesp.getInt("pro_codi");
+                          swErr=true;
                     }
                 } while (dtDesp.next());
                 if (swErr)
@@ -1143,9 +1152,11 @@ public class ValDespi extends ventana {
                     msgAviso += "\nDespiece: " + jtDesp.getValorInt(n, JTDES_NUMDES)+" DIFERENCIA KILOS";
                     continue;
                 }
-                s= "SELECT distinct(pro_codi) FROM v_despsal " +
-                    " WHERE eje_nume = " + jtDesp.getValorInt(n,JTDES_EJER) +
-                    " AND "+ (isGrupo?" deo_numdes = ":" deo_codi = ") + jtDesp.getValorInt(n,JTDES_NUMDES);
+                s= "SELECT d.pro_codi,sum(def_kilos) as def_kilos FROM v_despsal as d,v_articulo as a  " +
+                    " WHERE d.eje_nume = " + jtDesp.getValorInt(n,JTDES_EJER) +
+                     " and d.pro_codi = a.pro_codi and pro_tiplot='V'"+ // incluir solo articulos vendibles.
+                    " AND "+ (isGrupo?" deo_numdes = ":" deo_codi = ") + jtDesp.getValorInt(n,JTDES_NUMDES)+
+                    " group by d.pro_codi";
               
                 if (!dtDesp.select(s))
                 {
@@ -1162,14 +1173,22 @@ public class ValDespi extends ventana {
                         htFin.put(dtDesp.getInt("pro_codi"),(double)0);
                         continue;
                     }
-                    precAcu=getPrecioMedioDesp(dtDesp.getInt("pro_codi"), isGrupo,jtDesp.getValorInt(n,JTDES_EJER) ,
-                        jtDesp.getValorInt(n,JTDES_NUMDES), "d");
-                    if (msgError!=null)
-                    {                        
-                        if (msgs.indexOf(msgError)<0)
-                            msgs.add(msgError);
+                    calcFechaCostos( jtDesp.getValDate(n,JTDES_FECDES));
+                    precAcu=getPrecioFinal(dtStat,dtDesp.getInt("pro_codi"), fecIniSem);
+                    if (precAcu==0)
+                    {
+                        precAcu=getPrecioMedioDesp(dtDesp.getInt("pro_codi"), isGrupo,jtDesp.getValorInt(n,JTDES_EJER) ,
+                            jtDesp.getValorInt(n,JTDES_NUMDES), "d");
+                        if (msgError!=null)
+                        {                        
+                            if (msgs.indexOf(msgError)<0)
+                                msgs.add(msgError);
+                            swErr=true;
+                        }
+                        impCostLin+=impDocum;
                     }
-                    impCostLin+=impDocum;
+                    else
+                        impCostLin+=precAcu*dtDesp.getDouble("def_kilos");
                     htFin.put(dtDesp.getInt("pro_codi"),Formatear.redondea( precAcu,NUMDEC_COSTO));
                     if (precAcu==0)
                     {
@@ -1196,7 +1215,7 @@ public class ValDespi extends ventana {
                   dtAdd.executeUpdate(s);    
                 } while (dtDesp.next());
                 s=getStrSqlFin(eje_numeE.getValorInt(),true,  
-                        jtDesp.getValorInt(n,JTDES_NUMDES),isGrupo);
+                        jtDesp.getValorInt(n,JTDES_NUMDES),isGrupo,true);
                 if (!dtDesp.select(s))
                     msgBox("Articulo "+ dtDesp.getInt("pro_codi",true)+" no encontrados en despiece: "+
                         jtDesp.getValorInt(n,JTDES_NUMDES) );
@@ -1213,9 +1232,22 @@ public class ValDespi extends ventana {
                         precAcu = htFin.get(dtDesp.getInt("pro_codi",true));
                         if (precAcu > 0)
                         {
-                            porc = dtDesp.getDouble("def_kilos") * precAcu / impCostLin;
+                            if (impCostLin<=0)
+                            {
+                                 mensajeErr("Costo Importe Linea es erroneo: "+ impCostLin+ " en articulo "+dtDesp.getInt("pro_codi",true)+
+                                 " de despiece: "+jtDesp.getValorInt(n,JTDES_NUMDES));
+                                 continue;
+                            }
+                            porc =  dtDesp.getDouble("def_kilos") * precAcu / impCostLin;
                             precAcu = impEnt * porc;
+                            if (dtDesp.getDouble("def_kilos")==0 && precAcu == 0)
+                            {
+                                 msgBox("ERROR en Kilos de salida : "+ dtDesp.getDouble("def_kilos")+ " ,  en articulo "+dtDesp.getInt("pro_codi",true)+
+                                 " de despiece: "+jtDesp.getValorInt(n,JTDES_NUMDES));
+                                 continue;
+                            }
                             precAcu = precAcu / dtDesp.getDouble("def_kilos");
+                            
                             precAcu = Formatear.redondea(precAcu, NUMDEC_COSTO);
                         }
                         s = "UPDATE v_despfin SET def_prcost = " + precAcu
@@ -1450,17 +1482,18 @@ public class ValDespi extends ventana {
  */
   String calcCostoLin() throws Exception
   {
-      actualizaMsg("Calculando costos Linea",false);
+      setMensajePopEspere("Calculando costos Linea",false);
       // Valoro costos de Productos.
       int nRow = jtLin.getRowCount();
 //      double totCosto = 0;
       String entSinValor="";
       double costo;
       int proCodi;
+      int nLinLibre=0;
       for (int n = 0; n < nRow; n++)
-      {    
+      {           
         proCodi=jtLin.getValorInt(n, JTLIN_PROCODI);
-        actualizaMsg("Calculando costos Linea\nProducto: "+proCodi,false);
+        setMensajePopEspere("Calculando costos Linea\nProducto: "+proCodi,false);
         pro_codiE.getNombArt( proCodi);
         if (! pro_codiE.isVendible())
         {
@@ -1471,6 +1504,7 @@ public class ValDespi extends ventana {
 //        String strError="";
         if (pro_codiE.getMantenerCosto())
         { // Busco costo en la semana.
+            nLinLibre++;
             s="select def_prcost from v_despsal where pro_codi = "+proCodi
                     + " and def_prcost > 0"
                     + " and deo_fecha "+ rangoSemana +" order by deo_fecha desc";
@@ -1493,9 +1527,12 @@ public class ValDespi extends ventana {
         {
             jtLin.setValor(costo, n,JTLIN_COSTO);
             jtLin.setValor(swCostoOrig==COSTO_PRFIDE, n,JTLIN_COSBLO);
+            if (swCostoOrig!=COSTO_PRFIDE)
+                nLinLibre++;
             jtLin.setValor(costoOrig[swCostoOrig],n,JTLIN_COSBLO+2);
             continue;
         }
+        nLinLibre++;
         precAcu=getPrecioMedioDesp(proCodi,
                     jtDesp.getValString(JTDES_TIPO).equals("G"),
                     jtDesp.getValorInt(JTDES_EJER),
@@ -1510,6 +1547,14 @@ public class ValDespi extends ventana {
           entSinValor+=s;
           jtLin.setValor(0,n,JTLIN_COSTO);
         }
+      }
+      if (nLinLibre==0)
+      {
+          msgBox("ERROR. Todos los articulos bloqueados. Se desbloquean todos");
+          for (int n = 0; n < nRow; n++)
+          {
+            jtLin.setValor(false, n,JTLIN_COSBLO);    
+          }
       }
       recalcCostoLin();
       return entSinValor;
@@ -1781,15 +1826,18 @@ public class ValDespi extends ventana {
  void verDatLin(int ejeNume,int numDesp,int numLin,boolean agrupa) throws SQLException
  {
      boolean isGrupo=jtDesp.getValString(numLin,JTDES_TIPO).startsWith("G");
-     verDatLi1(getStrSqlFin(ejeNume,agrupa,numDesp,isGrupo));
+     verDatLi1(getStrSqlFin(ejeNume,agrupa,numDesp,isGrupo,false));
  }
- String getStrSqlFin(int ejeNume,boolean agrupa, int numDesp,boolean isGrupo)
+ 
+ String getStrSqlFin(int ejeNume,boolean agrupa, int numDesp,boolean isGrupo,boolean swSoloVend)
  {
       return " select f.pro_codi as pro_codi,def_blkcos, sum(f.def_unicaj) as def_unicaj, " +
          " sum(f.def_kilos) as def_kilos ,sum(f.def_prcost*f.def_kilos) as def_prcost, " +
          " avg(def_preusu) as def_preusu "+
-         " from v_despfin as f "+
+         " from v_despfin as f,v_articulo as a "+
          " where  f.def_kilos <> 0 " +
+         " and a.pro_codi = f.pro_codi "
+         + (swSoloVend?" and a.pro_tiplot='V' ":"")+
          " and eje_nume = " + ejeNume +
          " AND "+(! agrupa? "f.deo_codi = "+numDesp:
              (isGrupo?" f.def_numdes = " + numDesp: "f.deo_codi = "+numDesp)) +
@@ -1818,8 +1866,9 @@ public class ValDespi extends ventana {
    if (isGrupo)
    {
          
-        s="select deo_codi from desporig where eje_nume= "+ejerc+
-            " and deo_numdes ="+deoCodi;
+        s="select distinct(deo_codi) from v_despori where eje_nume= "+ejerc+
+            " and deo_numdes ="+deoCodi+
+            " and pro_codi = "+proCodi;
         if (!dtCon1.select(s))
             return 0;
         ArrayList<Integer> grupos=new ArrayList();
@@ -1832,11 +1881,18 @@ public class ValDespi extends ventana {
         errorProd.clear();
         for (int n=0;n<nEle;n++)
         {
-           getPrecioMedioDesp(proCodi,ejerc,grupos.get(n), tipoDoc);
+           if (getPrecioMedioDesp(proCodi,ejerc,grupos.get(n), tipoDoc)>0)
+           {
+                kgDocum+=utDesp.getKilosDocumento();
+                impDocum+=utDesp.getImporteDocumento();
+           }
         }  
         return kgDocum==0?0:impDocum/kgDocum;
    }
-   return getPrecioMedioDesp(proCodi,ejerc,deoCodi, tipoDoc);
+   double valor=getPrecioMedioDesp(proCodi,ejerc,deoCodi, tipoDoc);
+   kgDocum=utDesp.getKilosDocumento();
+   impDocum=utDesp.getImporteDocumento();
+   return valor;
  }
  
  /**
@@ -1945,8 +2001,12 @@ public class ValDespi extends ventana {
      fecInv = ActualStkPart.getDateUltInv(fecha, dtCon1);
      if (fecInv==null)
          return 0;
-     return utDesp.getPrecioMedioEntrada(dtCon1,proCodi, new java.sql.Date(fecInv.getTime()),
+    
+     double valor= utDesp.getPrecioMedioEntrada(dtCon1,proCodi, new java.sql.Date(fecInv.getTime()),
                dtStat.getTimeStamp("maxTiempo"),EU.em_cod,ejerc,"D",deoCodi,tipoDoc );
+     if (valor<0)
+         msgError="Error al buscar precio Medio entrada de Producto: "+proCodi+ " En despiece: "+deoCodi;
+     return valor;
  }
  
  /**
@@ -2413,7 +2473,6 @@ public class ValDespi extends ventana {
         Pcond.add(eje_numeE);
         eje_numeE.setBounds(70, 2, 32, 17);
 
-        deo_codiE.setFocusTraversalPolicy(null);
         deo_codiE.setFocusTraversalPolicyProvider(true);
         Pcond.add(deo_codiE);
         deo_codiE.setBounds(360, 20, 51, 17);
@@ -2520,10 +2579,10 @@ public class ValDespi extends ventana {
 
         deo_lotmomE.addItem("Mayor", ">");
         deo_lotmomE.addItem("Menor", "<");
+        deo_lotmomE.addItem("Igual", "=");
         Pcond.add(deo_lotmomE);
         deo_lotmomE.setBounds(400, 80, 60, 20);
 
-        deo_lotoriE.setFocusTraversalPolicy(null);
         deo_lotoriE.setFocusTraversalPolicyProvider(true);
         Pcond.add(deo_lotoriE);
         deo_lotoriE.setBounds(460, 80, 51, 17);

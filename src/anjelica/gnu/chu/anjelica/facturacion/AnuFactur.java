@@ -5,7 +5,7 @@ package gnu.chu.anjelica.facturacion;
  * <p>Título: Anulación de Facturas</p>
  * <p>Descripción: Anulacion  de Facturas de Ventas
  *  de ventas</p> 
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -435,8 +435,8 @@ public class AnuFactur extends ventana
             PadFactur.deleteFra(jtFra.getValorInt(n, 1), jtFra.getValorInt(n, 0),fvcSerie,
                  fvcNume, dtAdd);
             dtAdd.commit();
-            jtFra.setValor(new Boolean(true),n,9);
-            jtFra.setValor(new Boolean(false),n,8);
+            jtFra.setValor(true,n,9);
+            jtFra.setValor(false,n,8);
             nFras++;
           }
           else

@@ -183,6 +183,23 @@ public class condBusFra extends CPanel
     PcondCli.add(cLabel17, null);
     this.add(Pprinc, null);
   }
+  /**
+   * Devuelve la fecha inicio
+   * @return String con al fecha inicio (Formato: dd-MM-yyyy)
+   */
+  public String getFechaInicio()
+  {
+      return feciniE.getText();
+  }
+  /**
+   * Devuelve la fecha Final
+   * @return String con al fecha Final (Formato: dd-MM-yyyy)
+   */
+  public String getFechaFinal()
+  {
+      return fecfinE.getText();
+  }
+
   public void iniciar(DatosTabla dt,ventana papa,JLayeredPane layPan,EntornoUsuario eu) throws Exception
   {
 

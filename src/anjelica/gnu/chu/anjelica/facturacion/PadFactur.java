@@ -1677,7 +1677,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     nav.pulsado = navegador.NINGUNO;
   }
   public static void deleteFra(int empCodi,int fvcAno, String fvcSerie,int fvcNume,DatosTabla dt) throws SQLException
-{      // Borro la cabecera de la factura
+  {      // Borro la cabecera de la factura
        dt.delete();
       // Quito la referencia en la cabecera de Albaran
       String albSerie="";
@@ -1724,6 +1724,7 @@ public class PadFactur extends ventanaPad   implements PAD {
           " AND fvc_nume = "+fvcNume;
       dt.executeUpdate(s);
   }
+  @Override
   public void canc_delete(){
     activaTodo();
     verDatos(dtCons);

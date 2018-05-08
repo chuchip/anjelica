@@ -2,7 +2,7 @@ package gnu.chu.anjelica.facturacion;
 /*
  *  * <p>Titulo: GenFactur.java </p>
  * <p>Descripción: Generacion de Facturas sobre alb. de ventas</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -40,6 +40,7 @@ import gnu.chu.utilidades.Fecha;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
 import gnu.chu.utilidades.SystemOut;
+import gnu.chu.utilidades.mensajes;
 import gnu.chu.utilidades.miThread;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
@@ -110,8 +111,7 @@ public class GenFactur extends ventana {
         setErrorInit(true);
     }
     catch (Exception e) {
-      logger.fatal("Error al iniciar Generacion facturas",e);
-      setErrorInit(true);
+      ErrorInit(e);
     }
   }
 
@@ -126,8 +126,7 @@ public class GenFactur extends ventana {
       jbInit();
     }
     catch (Exception e) {
-      logger.fatal("Error al iniciar Generacion facturas",e);
-      setErrorInit(true);
+      ErrorInit(e);      
     }
   }
 
@@ -135,7 +134,7 @@ public class GenFactur extends ventana {
   {
     iniciarFrame();
     this.setSize(new Dimension(534, 543));
-    setVersion("2016-01-19");
+    setVersion("2018-05-04");
    
     statusBar= new StatusBar(this);
     this.getContentPane().add(statusBar,BorderLayout.SOUTH);
@@ -1013,13 +1012,27 @@ public void iniciarVentana() throws Exception
   }
   private void generaRecibos(int fpaCodi,double impFra) throws Exception
   {
+     s="select * from v_recibo where eje_nume="+eje_numeE.getValorInt()+
+         " and emp_codi = "+emp_codiE.getValorInt()+
+         " and fvc_nume = "+fvcNumfra+
+         " and fvc_serie = '"+fvcSerie+"'";
+     if (dtAdd.select(s,true))
+     { // Encontrado recibos sobre esta fra. ¿lo borro?
+         int ret=mensajes.mensajeYesNo("¡Error!","Encontrado Recibo sobre Fra: "+emp_codiE.getValorInt()+" "+
+             eje_numeE.getValorInt()+fvcSerie+fvcNumfra+"\n  Borrar recibo ?",  this);
+         if (ret!=mensajes.YES)
+             throw new SQLException("Ya existe un recibo sobre la fra: "+emp_codiE.getValorInt()+" "+
+                eje_numeE.getValorInt()+fvcSerie+fvcNumfra);
+         dtAdd.delete();
+     }
     s="SELECT * from v_forpago WHERE fpa_codi = "+fpaCodi;
    if (! dtStat.select(s))
      throw new Exception("Forma de PAGO: " + fpaCodi + " NO ENCONTRADA");
    int nVtos = clFactCob.calDiasVto(dtStat, cliDipa1,cliDipa2, 0, fvcFecfra);
-   double impGiros=Formatear.Redondea(impFra/nVtos,numDec);
+   double impGiros=Formatear.redondea(impFra/nVtos,numDec);
    for (int n = 0; n < nVtos; n++)
    {
+   
      dtAdd.addNew("v_recibo");
      dtAdd.setDato("eje_nume",  eje_numeE.getValorInt());
      dtAdd.setDato("emp_codi",  emp_codiE.getValorInt());

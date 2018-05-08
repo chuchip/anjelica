@@ -2,11 +2,9 @@ package gnu.chu.camposdb;
 
 import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.controles.CButton;
-import gnu.chu.controles.CGridEditable;
 import gnu.chu.controles.CInternalFrame;
 import gnu.chu.controles.CPanel;
 import gnu.chu.controles.CTextField;
-import gnu.chu.controles.estatic;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.sql.vlike;
 import gnu.chu.utilidades.CodigoBarras;
@@ -21,10 +19,8 @@ import java.beans.PropertyVetoException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractButton;
 import javax.swing.JLayeredPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
@@ -1071,7 +1067,27 @@ public class proPanel extends CPanel
     else
       return lkPrd.getString("pro_nomb");
   }
-  
+  /**
+   * Devuelve el nombre de un articulo. Si el articulo esta definido en la tabla
+   * v_cliart devuelve el nombre del articulo para ese cliente.
+   * @param proCodi
+   * @param cliCodi
+   * @param dt Datostabla con la select de articulo
+   * @return Nombre articulo. Null si no existe.
+   * @throws SQLException 
+   */
+  public  static String getNombreArtCli(int proCodi,int cliCodi,DatosTabla dt) throws SQLException
+  {
+    String s,proNomb=null;
+    s="SELECT * FROM v_cliart WHERE cli_codi = "+cliCodi+
+        " and pro_codi = "+proCodi;
+    if (dt.select(s))
+        proNomb=dt.getString("pro_nomb");
+    s = "SELECT * FROM v_articulo WHERE pro_codi= " + proCodi;
+    if (!dt.select(s))
+        return null;
+    return proNomb==null?dt.getString("pro_nomb"):proNomb;    
+  }
   public String getNombArt() throws SQLException
   {
     return getNombArt(pro_codiE.getText(),eu.em_cod);

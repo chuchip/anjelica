@@ -70,6 +70,8 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
   boolean swInicio=false;
   boolean swVerArtic=false;
   final static int JT_COMREP=4;
+  int NUMDECPRECIO=2; // Numero de decimales
+  String FORMDECPRECIO=".99";
   
   public MantTarifa(EntornoUsuario eu, Principal p)
   {
@@ -165,6 +167,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     @Override
     public void iniciarVentana() throws Exception
     {
+    
       pro_codiE.iniciar(dtStat, this, vl, EU);
       pro_codiE.setUsaCodigoVenta(true);
       pro_codiE.setColumnaAlias("pro_codart");
@@ -893,6 +896,17 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
     loc_codiE.setDatos(MantIdiomas.getDatos(dtAdd));
     loc_codiE.setValor(MantPaises.getLocalePais(pdempresa.getPais(dtStat, EU.em_cod), dtCon1));
     pro_codartE.setProNomb(null);
+      if (pdconfig.getConfiguracion(EU.em_cod, dtStat))
+      {
+            NUMDECPRECIO = dtStat.getInt("cfg_numdec", true);
+            FORMDECPRECIO = ".";
+            for (int n = 0; n < NUMDECPRECIO; n++)
+            {
+                FORMDECPRECIO += "9";
+            }
+      }
+      tar_preciE.setFormato(tar_preciE.getFormato()+FORMDECPRECIO);      
+      jt.setFormatoCampos();
   }
   public static double getPrecTar(DatosTabla dt,int proCodi,int cliCodi, int tarCodi,java.util.Date fecAlb) throws SQLException
   {
@@ -1063,7 +1077,7 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
 
         pro_nombE = new gnu.chu.controles.CTextField();
         tar_comenG = new gnu.chu.controles.CTextField(Types.CHAR,"X",150);
-        tar_preciE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9.99");
+        tar_preciE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         pro_codartE = new gnu.chu.camposdb.proPanel();
         tar_comrepE = new gnu.chu.controles.CTextField(Types.DECIMAL,"#9.99");
         Pprinc = new gnu.chu.controles.CPanel();
@@ -1166,7 +1180,6 @@ public class MantTarifa extends ventanaPad implements PAD, JRDataSource
         {
             Error("Error al iniciar el grid",k);
         }
-        jt.setFormatoCampos();
         jtArt = new gnu.chu.controles.Cgrid(2);
         Ppie = new gnu.chu.controles.CPanel();
         Baceptar = new gnu.chu.controles.CButton();

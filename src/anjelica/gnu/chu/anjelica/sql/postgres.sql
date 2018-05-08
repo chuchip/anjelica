@@ -3424,7 +3424,7 @@ create table anjelica.parametros
     usu_nomb varchar(15) not null default '*', -- Si * aplica a todos los usuarios
     par_nomb varchar(30) not null,    -- Nombre parametro
     par_desc varchar(50) not null,    -- Descripción Parametro
-    par_valor varchar(100) not null,           -- Char (0: False,-1: True)
+    par_valor varchar(256) not null,           -- Char (0: False,-1: True)
     constraint ix_parametros primary key (usu_nomb,par_nomb)
 );
 insert into parametros values('*','inchojatrans','Incluir Hoja transportista', 0);
@@ -3454,6 +3454,7 @@ INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',1); -- C
  insert into parametros values('*','errordiascad','Error si hay menos de n dias de cad.',-1); 
  insert into parametros values('*','solsinstock','Solucionar productos sin stock',0); 
  insert into parametros values('*','formatocosto','Formato para campos costo','---9.99'); 
+ insert into parametros values('*','valde_nuevogrupauto','Nuevo grupo automatico Automatico',1); 
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --
@@ -4472,8 +4473,10 @@ create table tiempostarea
 	usu_nomb varchar(15) not null,	    -- Usuario
 	tit_tipdoc char(1) not null,		-- "Pedido","D" Despiece
 	tit_id int not null,				-- Identificador documento
+	cam_codi varchar(2) not null,		-- Camara
+	tit_tipo varhar(1) not null default 'B', 		-- Tipo: Alta, Media, Baja
 	tit_tiempo int not null, 			-- Tiempo Identificador	
-	constraint ix_tiempostarea primary  key (usu_nomb,tit_tipdoc,tit_id)
+	constraint ix_tiempostarea primary  key (usu_nomb,tit_tipdoc,tit_id);
 );
 grant all on anjelica.tiempostarea to public;
 create view v_tiempospedido as
