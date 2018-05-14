@@ -517,7 +517,7 @@ public class paregalm extends CPanel {
                     deo_ejelotE.getValorInt(),
                     pro_loteE.getValorInt(), pro_numindE.getValorInt(), dtCon1, dtStat, EU);
             if (utDesp.prvCompra == 0) {
-                mensajes.mensajeAviso("Datos de Compra NO encontrados");
+                papa.mensajeErr("Datos de Compra NO encontrados");
             } else {
                 prv_codiE.setText("" + utDesp.prvCompra);
                 prv_codiE.controla(false);
@@ -528,7 +528,7 @@ public class paregalm extends CPanel {
                     deo_ejelotE.getValorInt(),
                     pro_loteE.getValorInt(), pro_numindE.getValorInt(), dtStat, null);
             if (cliCodi == 0) {
-                mensajes.mensajeAviso("Datos de Venta NO encontrados");
+                papa.mensajeErr("Datos de Venta NO encontrados");
             } else {
                 cli_codiE.setText("" + cliCodi);
                 cli_codiE.controlar();

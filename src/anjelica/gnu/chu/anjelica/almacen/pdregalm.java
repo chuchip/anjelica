@@ -4,7 +4,7 @@ package gnu.chu.anjelica.almacen;
  *
  * <p>Título: pdregalm</p>
  * <p>Descripcion: Mantenimientos de Regularizaciones en almacén (Actualiza la tabla v_regstock) </p>
- * <p>Copyright: Copyright (c) 2005-2017
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -117,7 +117,7 @@ public class pdregalm extends ventanaPad implements PAD
          setErrorInit(true);
      }
      catch (Exception e) {
-       setErrorInit(true);
+         ErrorInit(e);
      }
    }
     public pdregalm(gnu.chu.anjelica.menu p,EntornoUsuario eu) {

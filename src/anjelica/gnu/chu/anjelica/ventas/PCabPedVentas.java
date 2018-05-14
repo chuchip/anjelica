@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class PCabPedVentas extends CPanel
 {
+    private String pvcComrep;
     ventana padre;
     String titUsunom;
     DatosTabla dtCon1,dtStat;
@@ -62,6 +63,7 @@ public class PCabPedVentas extends CPanel
         prv_codiE.resetTexto();
         pvc_fecpedE.resetTexto();    
         pvc_impresE.resetTexto();
+        pvc_fecpreE.resetTexto();
     }
     public void setVerPrecio(boolean swVerPrecio )
     {
@@ -103,7 +105,9 @@ public class PCabPedVentas extends CPanel
         cLabel27 = new gnu.chu.controles.CLabel();
         prv_codiE = new gnu.chu.camposdb.prvPanel();
         cLabel28 = new gnu.chu.controles.CLabel();
-        pvc_fecpedE1 = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        pvc_feccadE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel29 = new gnu.chu.controles.CLabel();
+        pvc_fecpreE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yy");
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -111,7 +115,6 @@ public class PCabPedVentas extends CPanel
         jtLinPed.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtLinPed.setMaximumSize(new java.awt.Dimension(682, 102));
         jtLinPed.setMinimumSize(new java.awt.Dimension(682, 102));
-        jtLinPed.setPreferredSize(new java.awt.Dimension(682, 102));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -128,10 +131,10 @@ public class PCabPedVentas extends CPanel
         PPie.setPreferredSize(new java.awt.Dimension(682, 62));
         PPie.setLayout(null);
 
-        cLabel17.setText("Tiempos");
+        cLabel17.setText("Tiempo");
         cLabel17.setPreferredSize(new java.awt.Dimension(60, 18));
         PPie.add(cLabel17);
-        cLabel17.setBounds(570, 2, 60, 18);
+        cLabel17.setBounds(500, 2, 50, 18);
 
         nPedT.setEnabled(false);
         PPie.add(nPedT);
@@ -153,7 +156,7 @@ public class PCabPedVentas extends CPanel
         pvc_impresE.setEnabled(false);
         pvc_impresE.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         PPie.add(pvc_impresE);
-        pvc_impresE.setBounds(570, 22, 70, 17);
+        pvc_impresE.setBounds(610, 2, 70, 17);
 
         pvc_comenE.setColumns(20);
         pvc_comenE.setRows(5);
@@ -193,18 +196,18 @@ public class PCabPedVentas extends CPanel
 
         tit_tiempoE.setEnabled(false);
         PPie.add(tit_tiempoE);
-        tit_tiempoE.setBounds(630, 2, 40, 18);
+        tit_tiempoE.setBounds(560, 2, 40, 18);
 
         usu_nomcoE.setEnabled(false);
         PPie.add(usu_nomcoE);
-        usu_nomcoE.setBounds(400, 2, 170, 18);
+        usu_nomcoE.setBounds(400, 2, 90, 18);
 
         cLabel26.setText("Prov.");
         cLabel26.setPreferredSize(new java.awt.Dimension(60, 18));
         PPie.add(cLabel26);
         cLabel26.setBounds(220, 42, 40, 17);
 
-        cLabel27.setText("Fec.Cad");
+        cLabel27.setText("Fec.Cad.");
         cLabel27.setPreferredSize(new java.awt.Dimension(60, 18));
         PPie.add(cLabel27);
         cLabel27.setBounds(555, 40, 50, 18);
@@ -219,10 +222,19 @@ public class PCabPedVentas extends CPanel
         PPie.add(cLabel28);
         cLabel28.setBounds(220, 22, 80, 18);
 
-        pvc_fecpedE1.setToolTipText("");
-        pvc_fecpedE1.setEnabled(false);
-        PPie.add(pvc_fecpedE1);
-        pvc_fecpedE1.setBounds(610, 40, 60, 18);
+        pvc_feccadE.setToolTipText("");
+        pvc_feccadE.setEnabled(false);
+        PPie.add(pvc_feccadE);
+        pvc_feccadE.setBounds(610, 40, 60, 18);
+
+        cLabel29.setText("Fec. Prep.");
+        cLabel29.setPreferredSize(new java.awt.Dimension(60, 18));
+        PPie.add(cLabel29);
+        cLabel29.setBounds(560, 20, 60, 18);
+
+        pvc_fecpreE.setEnabled(false);
+        PPie.add(pvc_fecpreE);
+        pvc_fecpreE.setBounds(620, 20, 60, 18);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -288,6 +300,10 @@ public class PCabPedVentas extends CPanel
    {
        return pvc_comenE.getText();
    }
+   public String getComentarioRuta()
+   {
+       return pvcComrep;
+   }
    public Cgrid getGrid()
    {
        return jtLinPed;
@@ -329,7 +345,7 @@ public class PCabPedVentas extends CPanel
            jtLinPed.setEnabled(enabJT);
            return false; 
        }
-       String s="SELECT p.*,cl.cli_pobl,tit_tiempo,usu_nomco FROM v_pedven as p"
+       String s="SELECT p.*,cl.cli_pobl,tit_tiempo,usu_nomco,tt.usu_nomb as usu_pedido FROM v_pedven as p"
            + " left join v_tiempospedido as tt on  tit_id=p.pvc_id "
            + (titUsunom==null?"": " and tt.usu_nomb='"+titUsunom+"' ")
            + ",v_cliente as cl "+
@@ -348,16 +364,17 @@ public class PCabPedVentas extends CPanel
        }
        pvcDepos=dtCon1.getString("pvc_depos");
        int cliCodi=dtCon1.getInt("cli_codi");
-       usu_nomcoE.setText(dtCon1.getString("usu_nomco",true));
+       usu_nomcoE.setText(dtCon1.getString("usu_pedido",true));
        tit_tiempoE.setText(dtCon1.getString("tit_tiempo",true));
        String pvc_comen=dtCon1.getString("pvc_comen");
        usu_nombE.setText(dtCon1.getString("usu_nomb"));
        pvc_fecpedE.setText(dtCon1.getFecha("pvc_fecped"));
        pvc_horpedE.setText(dtCon1.getFecha("pvc_fecped","HH.mm"));
+       pvc_fecpreE.setText(dtCon1.getFecha("pvc_fecpre","dd-MM-yy"));
        pvc_comenE.setText(pvc_comen);
        pvc_comenE.setCaretPosition(0);
        pvc_impresE.setSelecion(dtCon1.getString("pvc_impres"));
-       
+       pvcComrep=dtCon1.getString("pvc_comrep");
     
        do
        {
@@ -509,14 +526,16 @@ public class PCabPedVentas extends CPanel
     private gnu.chu.controles.CLabel cLabel26;
     private gnu.chu.controles.CLabel cLabel27;
     private gnu.chu.controles.CLabel cLabel28;
+    private gnu.chu.controles.CLabel cLabel29;
     private gnu.chu.controles.Cgrid jtLinPed;
     private gnu.chu.controles.CTextField nPedT;
     private gnu.chu.controles.CCheckBox opIgnCadE;
     private gnu.chu.controles.CCheckBox opIgnPrvE;
     private gnu.chu.camposdb.prvPanel prv_codiE;
     private gnu.chu.controles.CTextArea pvc_comenE;
+    private gnu.chu.controles.CTextField pvc_feccadE;
     private gnu.chu.controles.CTextField pvc_fecpedE;
-    private gnu.chu.controles.CTextField pvc_fecpedE1;
+    private gnu.chu.controles.CTextField pvc_fecpreE;
     private gnu.chu.controles.CTextField pvc_horpedE;
     private gnu.chu.controles.CCheckBox pvc_impresE;
     private javax.swing.JScrollPane scrollarea1;

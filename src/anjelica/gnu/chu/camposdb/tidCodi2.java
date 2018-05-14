@@ -39,7 +39,8 @@ public class tidCodi2 extends CLinkBox
   private boolean ADMIN=false;
   private boolean tidAsprfi=false;
   private boolean tidAuclpe=false;
- 
+  private boolean tidResadm=false;
+  private int NUMDESPLIBRE= 10;
   private boolean incluirEstaticos=true;
   AyuTid ayuTid;
   CInternalFrame infFrame;
@@ -73,6 +74,7 @@ public class tidCodi2 extends CLinkBox
     this.infFrame=infFrame;
     this.layPane=layPane;
     EU=entUsuario;
+    NUMDESPLIBRE = EU.getValorParam("numdesplibre", NUMDESPLIBRE);
     dt=dtb;
     texto.setToolTipText("Pulse F3 para buscar tipos despiece");
     combo.setFocusable(false);
@@ -83,6 +85,14 @@ public class tidCodi2 extends CLinkBox
     if (! releer())
       throw new SQLException ("tidCodi2 (iniciar) "+msgError);
     activarEventos();
+  }
+  /**
+   * Incluir despiece Libre.
+   * @param incDespLibre 
+   */
+  public void setIncluirDespiecelibre(boolean incDespLibre)
+  {
+      swIncDespLibre=incDespLibre;
   }
   private void activarEventos()
   {
@@ -134,7 +144,7 @@ public class tidCodi2 extends CLinkBox
         {
             if (getValorInt()<9990)
             {
-                s = "select  tid_activ,tid_asprfi,tid_auclpe from tipodesp "
+                s = "select  tid_resadm,tid_activ,tid_asprfi,tid_auclpe from tipodesp "
                     + " WHERE tid_codi = " + getValorInt()
                     + " and tid_activ != 0";// Solo activos
                 tidActiv = dt.select(s);
@@ -145,36 +155,26 @@ public class tidCodi2 extends CLinkBox
                     requestFocus();
                     return false;
                 }
+                
+                tidResadm=dt.getInt("tid_resadm")!=0;               
                 tidAsprfi=dt.getInt("tid_asprfi")!=0;
                 tidAuclpe=dt.getInt("tid_auclpe")!=0;
             }
             if (getValorInt() == MantTipDesp.LIBRE_DESPIECE && !swModoCons && !ADMIN)
-            {
-                s = "select  tid_agrup from tipodesp "
-                    + " WHERE tid_codi = " + MantTipDesp.LIBRE_DESPIECE;
-                if (!dt.select(s))
-                {
-                    msgError = "No encontrado tipo despiece libre";
-                    setError(true);
-                    requestFocus();
-                    return false;
-                }
-                if (dt.getInt("tid_agrup") <= 0)
-                    return true; // Sin control
-                int numMaxLibres = dt.getInt("tid_agrup");
+            {               
                 s = "select count(*) as cuantos from desporig  WHERE tid_codi = " + MantTipDesp.LIBRE_DESPIECE
                     + (deoCodi == null ? "" : " and deo_codi != " + deoCodi)
                     + " and deo_fecha = current_date and eje_nume = " + EU.ejercicio;
                 dt.select(s);
-                if (dt.getInt("cuantos") >= numMaxLibres)
+                if (dt.getInt("cuantos") >= NUMDESPLIBRE)
                 {
-                    msgError = "Excedidos número máximo de despieces Libres para hoy.(" + dt.getInt("cuantos") + " >= " + numMaxLibres + ")";
+                    msgError = "Excedidos número máximo de despieces Libres para hoy.(" + dt.getInt("cuantos") +
+                        " >= " + NUMDESPLIBRE + ")";
 //                    mensajes.mensajeAviso(msgError);
                     setError(true);
                     requestFocus();
                     return false;
                 }
-
             }
 
         } catch (SQLException ex)
@@ -192,6 +192,15 @@ public class tidCodi2 extends CLinkBox
     {
         return tidAuclpe;
     }
+     /**
+      * Devuelve si el tipo despiece asignado es modo Admin
+      * @return 
+      */
+    public boolean getModoAdmin()
+    {
+        return tidResadm;
+    }
+     
   public void setModoConsulta(boolean modoConsulta )
   {
       swModoCons=modoConsulta;

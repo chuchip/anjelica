@@ -564,7 +564,12 @@ public class Comvalm extends ventana
                   {
                       @Override
                       public void run()
-                      {                   
+                      {                 
+                        if (jf==null)
+                        {
+                          resetMsgEspere();
+                          return;
+                        }
                         ejecutable prog;
                         if ((prog=jf.gestor.getProceso(costkpar.getNombreClase()))==null)
                         {

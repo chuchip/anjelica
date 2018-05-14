@@ -29,6 +29,7 @@ import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.pdalmace;
 import gnu.chu.anjelica.listados.etiqueta;
+import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.anjelica.sql.Desorilin;
 import gnu.chu.anjelica.sql.DesorilinId;
@@ -63,7 +64,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 
-public class DespVenta extends ventana {
+public class DespVenta extends ventana 
+{
+    final int PRO_CODMERMA=60;
     private boolean saliendo=false;
     Date deoFecpro;
     Date deoFecSacr;
@@ -383,7 +386,7 @@ public class DespVenta extends ventana {
                     jt.setEnabled(false);
                     jt.requestFocusFinal();
                     ArrayList v=new ArrayList();
-                    v.add(60); // Mer Venta
+                    v.add(PRO_CODMERMA); // Mer Venta
                     v.add(pro_codiE.getTextNomb());
                     v.add(difkilE.getValorDec()); // Kg
                     v.add(deo_feccadE.getDate());
@@ -401,12 +404,24 @@ public class DespVenta extends ventana {
                   }
                   else
                   {
-                      // Creo una linea automatica para la diferencia
+                      // Creo una linea automatica para la diferencia con el producto origen.
+                    int proCodi=pro_codiE.getValorInt();
+                    if (difkilE.getValorDec()<1)
+                    { // Kilos es menor que 1. Merma?
+                        int ret=mensajes.mensajeYesNoCancel("Kilos sobrantes menor de uno. ¿ Poner como MERMA? ", this);
+                        if (ret==mensajes.YES)
+                         proCodi=PRO_CODMERMA;  
+                        if (ret==mensajes.CANCEL)
+                        {
+                            jt.requestFocusFinalLater();
+                            return;
+                        }
+                    }
                     jt.resetCambio();
                     jt.setEnabled(false);
                     jt.requestFocusFinal();
                     ArrayList v=new ArrayList();
-                    v.add(pro_codiE.getValorInt());
+                    v.add(proCodi);
                     v.add(pro_codiE.getTextNomb());
                     v.add(difkilE.getValorDec()); // Kg
                     v.add(deo_feccadE.getDate());
@@ -543,8 +558,23 @@ void guardaLinOrig(int proCodi,  int ejeLot, String serLot, int numLot,
        int nEle=0;
        if (tidCodi==MantTipDesp.AUTO_DESPIECE || tidCodi==MantTipDesp.LIBRE_DESPIECE 
                ||  tidCodi==MantTipDesp.CONGELADO_DESPIECE)
+       {
+          for (int n=0;n<jt.getRowCount();n++)
+          {
+              if (jt.getValorInt(n,JT_PROCOD)==0 || ! MantArticulos.isVendible(jt.getValorInt(n,JT_PROCOD),dt)
+                  || jt.getValorDec(n,JT_KILOS)<=0)
+                  continue;
+              if (tidCodi== MantTipDesp.AUTO_DESPIECE
+                    && !MantTipDesp.esEquivalente(jt.getValorInt(n,JT_PROCOD), proCodi, dt))
+                    return "Para auto despieces solo permitidos el mismo producto o NO vendibles";
+                if (tidCodi == MantTipDesp.CONGELADO_DESPIECE
+                    && !MantTipDesp.esEquivalenteCongelado(proCodi, jt.getValorInt(n,JT_PROCOD), dt))
+                {
+                    return "Para Despieces a Congelados solo permitidos equivalentes congelados de productos entrada";
+                }
+          }
           return null;//checkAutoDespiece(dt, jt, proCodi, unidEntrada);
-
+       }
        HashMap<String,Integer> htGru  = new HashMap();
        String s="SELECT distinct(tds_grupo) as tds_grupo FROM tipdessal  WHERE tid_codi = "+tidCodi;
        if (dt.select(s))

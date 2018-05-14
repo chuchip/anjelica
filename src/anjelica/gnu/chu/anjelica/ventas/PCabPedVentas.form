@@ -29,9 +29,6 @@
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[682, 102]"/>
         </Property>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[682, 102]"/>
-        </Property>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(10)"/>
@@ -76,14 +73,14 @@
       <SubComponents>
         <Component class="gnu.chu.controles.CLabel" name="cLabel17">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Tiempos"/>
+            <Property name="text" type="java.lang.String" value="Tiempo"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[60, 18]"/>
             </Property>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="570" y="2" width="-1" height="-1"/>
+              <AbsoluteConstraints x="500" y="2" width="50" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -144,7 +141,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="570" y="22" width="70" height="17"/>
+              <AbsoluteConstraints x="610" y="2" width="70" height="17"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -242,7 +239,7 @@
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="630" y="2" width="40" height="18"/>
+              <AbsoluteConstraints x="560" y="2" width="40" height="18"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -252,7 +249,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="400" y="2" width="170" height="18"/>
+              <AbsoluteConstraints x="400" y="2" width="90" height="18"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -271,7 +268,7 @@
         </Component>
         <Component class="gnu.chu.controles.CLabel" name="cLabel27">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Fec.Cad"/>
+            <Property name="text" type="java.lang.String" value="Fec.Cad."/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[60, 18]"/>
             </Property>
@@ -306,7 +303,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="gnu.chu.controles.CTextField" name="pvc_fecpedE1">
+        <Component class="gnu.chu.controles.CTextField" name="pvc_feccadE">
           <Properties>
             <Property name="toolTipText" type="java.lang.String" value=""/>
             <Property name="enabled" type="boolean" value="false"/>
@@ -317,6 +314,32 @@
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="610" y="40" width="60" height="18"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="gnu.chu.controles.CLabel" name="cLabel29">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Fec. Prep."/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[60, 18]"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="560" y="20" width="60" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="gnu.chu.controles.CTextField" name="pvc_fecpreE">
+          <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.CTextField(Types.DATE,&quot;dd-MM-yy&quot;)"/>
+          </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="620" y="20" width="60" height="18"/>
             </Constraint>
           </Constraints>
         </Component>

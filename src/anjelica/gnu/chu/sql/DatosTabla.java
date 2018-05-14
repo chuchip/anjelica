@@ -1758,6 +1758,8 @@ private String parseaSelect(boolean forUpdate) throws SQLException
       i= new Double(o.toString());
      } catch (NumberFormatException k)
      {
+      if (nullisCero)
+         return 0;
       Error=true;
       MsgError="Campo NO se pudo transformar a Numero";
       throw new SQLException(MsgError);

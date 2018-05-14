@@ -50,6 +50,7 @@ public class MantPreMedios extends ventana
   double kilosEntra;
    private int TIDE_AUTOCLASI=108; 
    private int TIDE_108A109=401;
+   private final String TIPODESP_BOLA="275 and 280 ";
    Hashtable<Integer,Double> htBolas = new Hashtable();
    Hashtable<Integer,Integer[]> htLomos = new Hashtable();
    Hashtable<Integer,Boolean> htLomCom = new Hashtable();
@@ -442,7 +443,7 @@ public class MantPreMedios extends ventana
         String s= "select d.pro_codi,st.stp_painac, 0 as kilventa,0 as kildesp, sum(def_kilos) as kilentra"
             + " from v_despfin as d, stockpart as st "
             + "where  d.pro_codi in (" + codBolas + ") "
-            + " and d.def_tiempo between '" + tar_feciniE.getFechaDB() + "' and '"+fecFinComE.getFechaDB()+"'"
+            + " and d.def_tiempo between '" + fecIniDesE.getFechaDB() + "' and '"+fecFinDesE.getFechaDB()+"'"
             + " and d.pro_codi = st.pro_codi "
             + " and d.def_serlot = st.pro_serie "
             + " and d.pro_lote = st.pro_nupar "
@@ -453,12 +454,12 @@ public class MantPreMedios extends ventana
             + "select a.pro_codi,st.stp_painac, sum(avp_canti) as kilventa,0 as kildesp,0 as kilentra"
             + " from v_albventa_detalle as a, "
             + "v_despfin as d,stockpart as st "
-            + "where avl_fecalt between '" + tar_feciniE.getFechaDB()  + "' and '"+fecFinComE.getFechaDB()+"'"
+            + "where avl_fecalt between '" + fecIniVentaE.getFechaDB()  + "' and '"+fecFinVentaE.getFechaDB()+"'"
             +" and a.pro_codi in (" + codBolas + ") "
             + " and a.pro_codi=d.pro_codi and "
             + "a.avp_ejelot=d.def_ejelot and a.avp_serlot=d.def_serlot and a.avp_numpar=d.pro_lote"
             + " and a.avp_numind = d.pro_numind "
-            + " and d.def_tiempo between '" + tar_feciniE.getFechaDB() + "' and '"+fecFinComE.getFechaDB()+"'"
+            + " and d.def_tiempo between '" + fecIniDesE.getFechaDB() + "' and '"+fecFinDesE.getFechaDB()+"'"
             + " and d.pro_codi = st.pro_codi "
             + " and d.def_serlot = st.pro_serie "
             + " and d.pro_lote = st.pro_nupar "
@@ -470,13 +471,13 @@ public class MantPreMedios extends ventana
             + "v_despori as d,stockpart as st, "
             + " v_despfin as f "
             + " where  d.pro_codi in (" + codBolas + ") "
-            + " and f.def_tiempo between '" + tar_feciniE.getFechaDB() + "' and '"+fecFinComE.getFechaDB()+"'"
+            + " and f.def_tiempo between '" + fecIniVentaE.getFechaDB() + "' and '"+fecFinVentaE.getFechaDB()+"'"
             + " and d.pro_codi = f.pro_codi "
             + " and d.deo_serlot = f.def_serlot "
             + " and d.pro_lote = f.pro_lote "
             + " and d.deo_ejelot = f.def_ejelot "
             + " and d.pro_numind = f.pro_numind "            
-            + " and d.deo_tiempo between '" + tar_feciniE.getFechaDB() + "' and '"+fecFinComE.getFechaDB()+"'"
+            + " and d.deo_tiempo between '" + fecIniDesE.getFechaDB() + "' and '"+fecFinDesE.getFechaDB()+"'"
             + " and d.pro_codi = st.pro_codi "
             + " and d.deo_serlot = st.pro_serie "
             + " and d.pro_lote = st.pro_nupar "
@@ -530,11 +531,12 @@ public class MantPreMedios extends ventana
     void calculaBolasAnt()  throws SQLException, ParseException 
     {
         jtBolAnt.removeAllDatos();
-        Date fecIni=Formatear.sumaDiasDate(tar_feciniE.getDate(),-7);
-        Date fecFin=Formatear.sumaDiasDate(fecFinComE.getDate(),-7);
+        Date fecIni=Formatear.sumaDiasDate(fecIniDesE.getDate(),-7);
+        Date fecFin=Formatear.sumaDiasDate(fecFinDesE.getDate(),-7);
         String s= "select st.stp_painac,  sum(deo_kilos) as deo_kilos,sum(deo_kilos*deo_prcost) as importe "
             + " from v_despori as d, stockpart as st "
             + "where  d.pro_codi in (" + codBolas + ") "
+            + "  and tid_codi between "+TIPODESP_BOLA
             + " and d.deo_tiempo between '" + Formatear.getFechaDB(fecIni) + "' and '"+Formatear.getFechaDB(fecFin) +"'"
             + " and d.pro_codi = st.pro_codi "
             + " and d.deo_serlot = st.pro_serie "
@@ -639,6 +641,10 @@ public class MantPreMedios extends ventana
         fecStockE.setDate(Formatear.sumaDiasDate(tar_feciniE.getDate(),-1)); // Sabado anterior
         fecIniComE.setDate(Formatear.sumaDiasDate(tar_feciniE.getDate(),-3)); // Jueves anterior
         fecFinComE.setDate(Formatear.sumaDiasDate(tar_feciniE.getDate(),6)); // Sabado siguiente.
+        fecIniDesE.setDate(tar_feciniE.getDate());
+        fecIniVentaE.setDate(tar_feciniE.getDate());
+        fecFinDesE.setDate(fecFinComE.getDate());
+        fecFinVentaE.setDate(fecFinComE.getDate());
 //        fecIniComE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",-4) ); // Jueves anteerior
 //        fecFinComE.setText(Formatear.sumaDias(tar_feciniE.getText(),"dd-MM-yyyy",3) );
     }
@@ -675,6 +681,16 @@ public class MantPreMedios extends ventana
         cLabel15 = new gnu.chu.controles.CLabel();
         precioBolaOtrasE = new gnu.chu.controles.CTextField(Types.DECIMAL,"9.999");
         Brefrescar = new gnu.chu.controles.CButton();
+        cLabel10 = new gnu.chu.controles.CLabel();
+        fecFinDesE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        fecIniDesE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel18 = new gnu.chu.controles.CLabel();
+        cLabel19 = new gnu.chu.controles.CLabel();
+        fecIniVentaE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        fecFinVentaE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
+        cLabel21 = new gnu.chu.controles.CLabel();
+        cLabel22 = new gnu.chu.controles.CLabel();
+        cLabel23 = new gnu.chu.controles.CLabel();
         PPie = new gnu.chu.controles.CPanel();
         cLabel7 = new gnu.chu.controles.CLabel();
         fecStockE = new gnu.chu.controles.CTextField(Types.DATE,"dd-MM-yyyy");
@@ -779,7 +795,6 @@ public class MantPreMedios extends ventana
         jtBolas.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtBolas.setMaximumSize(new java.awt.Dimension(240, 100));
         jtBolas.setMinimumSize(new java.awt.Dimension(240, 100));
-        jtBolas.setPreferredSize(new java.awt.Dimension(240, 100));
 
         ArrayList v=new ArrayList();
         v.add("Producto");//0
@@ -820,7 +835,6 @@ public class MantPreMedios extends ventana
         jtBolAnt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jtBolAnt.setMaximumSize(new java.awt.Dimension(240, 40));
         jtBolAnt.setMinimumSize(new java.awt.Dimension(240, 40));
-        jtBolAnt.setPreferredSize(new java.awt.Dimension(240, 40));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -831,18 +845,18 @@ public class MantPreMedios extends ventana
         Pprinc.add(jtBolAnt, gridBagConstraints);
 
         PPrecioBola.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        PPrecioBola.setMaximumSize(new java.awt.Dimension(110, 100));
-        PPrecioBola.setMinimumSize(new java.awt.Dimension(110, 100));
-        PPrecioBola.setPreferredSize(new java.awt.Dimension(110, 100));
+        PPrecioBola.setMaximumSize(new java.awt.Dimension(115, 100));
+        PPrecioBola.setMinimumSize(new java.awt.Dimension(115, 100));
+        PPrecioBola.setPreferredSize(new java.awt.Dimension(115, 100));
         PPrecioBola.setLayout(null);
 
         cLabel11.setText("Polaca");
         PPrecioBola.add(cLabel11);
-        cLabel11.setBounds(0, 60, 60, 17);
+        cLabel11.setBounds(0, 50, 60, 17);
 
         precioBolaPoloniaE.setText("2.8");
         PPrecioBola.add(precioBolaPoloniaE);
-        precioBolaPoloniaE.setBounds(70, 60, 35, 20);
+        precioBolaPoloniaE.setBounds(70, 50, 35, 20);
 
         cLabel13.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         cLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -852,23 +866,75 @@ public class MantPreMedios extends ventana
 
         cLabel14.setText("Alemana");
         PPrecioBola.add(cLabel14);
-        cLabel14.setBounds(0, 40, 60, 17);
+        cLabel14.setBounds(0, 30, 60, 17);
 
         precioBolaAlemE.setValorDec(2.95);
         PPrecioBola.add(precioBolaAlemE);
-        precioBolaAlemE.setBounds(70, 40, 35, 20);
+        precioBolaAlemE.setBounds(70, 30, 35, 20);
 
         cLabel15.setText("Otras");
         PPrecioBola.add(cLabel15);
-        cLabel15.setBounds(0, 80, 60, 17);
+        cLabel15.setBounds(0, 70, 60, 17);
 
         precioBolaOtrasE.setText("2.9");
         PPrecioBola.add(precioBolaOtrasE);
-        precioBolaOtrasE.setBounds(70, 80, 35, 20);
+        precioBolaOtrasE.setBounds(70, 70, 35, 20);
 
         Brefrescar.setText("Refrescar");
         PPrecioBola.add(Brefrescar);
-        Brefrescar.setBounds(20, 190, 80, 19);
+        Brefrescar.setBounds(20, 220, 80, 19);
+
+        cLabel10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        cLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cLabel10.setText("Entradas");
+        PPrecioBola.add(cLabel10);
+        cLabel10.setBounds(10, 90, 80, 17);
+
+        fecFinDesE.setMaximumSize(new java.awt.Dimension(10, 18));
+        fecFinDesE.setMinimumSize(new java.awt.Dimension(10, 18));
+        fecFinDesE.setPreferredSize(new java.awt.Dimension(10, 18));
+        PPrecioBola.add(fecFinDesE);
+        fecFinDesE.setBounds(40, 130, 70, 17);
+
+        fecIniDesE.setMaximumSize(new java.awt.Dimension(10, 18));
+        fecIniDesE.setMinimumSize(new java.awt.Dimension(10, 18));
+        fecIniDesE.setPreferredSize(new java.awt.Dimension(10, 18));
+        PPrecioBola.add(fecIniDesE);
+        fecIniDesE.setBounds(40, 110, 70, 17);
+
+        cLabel18.setText("Inicio");
+        PPrecioBola.add(cLabel18);
+        cLabel18.setBounds(2, 110, 40, 17);
+
+        cLabel19.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        cLabel19.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        cLabel19.setText("Salidas");
+        PPrecioBola.add(cLabel19);
+        cLabel19.setBounds(10, 150, 80, 17);
+
+        fecIniVentaE.setMaximumSize(new java.awt.Dimension(10, 18));
+        fecIniVentaE.setMinimumSize(new java.awt.Dimension(10, 18));
+        fecIniVentaE.setPreferredSize(new java.awt.Dimension(10, 18));
+        PPrecioBola.add(fecIniVentaE);
+        fecIniVentaE.setBounds(40, 170, 70, 17);
+
+        fecFinVentaE.setMaximumSize(new java.awt.Dimension(10, 18));
+        fecFinVentaE.setMinimumSize(new java.awt.Dimension(10, 18));
+        fecFinVentaE.setPreferredSize(new java.awt.Dimension(10, 18));
+        PPrecioBola.add(fecFinVentaE);
+        fecFinVentaE.setBounds(40, 190, 70, 17);
+
+        cLabel21.setText("Fin");
+        PPrecioBola.add(cLabel21);
+        cLabel21.setBounds(2, 125, 40, 17);
+
+        cLabel22.setText("Inicio");
+        PPrecioBola.add(cLabel22);
+        cLabel22.setBounds(2, 170, 40, 17);
+
+        cLabel23.setText("Fin");
+        PPrecioBola.add(cLabel23);
+        cLabel23.setBounds(2, 190, 40, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -938,12 +1004,18 @@ public class MantPreMedios extends ventana
     private gnu.chu.controles.CPanel PPie;
     private gnu.chu.controles.CPanel PPrecioBola;
     private gnu.chu.controles.CPanel Pprinc;
+    private gnu.chu.controles.CLabel cLabel10;
     private gnu.chu.controles.CLabel cLabel11;
     private gnu.chu.controles.CLabel cLabel12;
     private gnu.chu.controles.CLabel cLabel13;
     private gnu.chu.controles.CLabel cLabel14;
     private gnu.chu.controles.CLabel cLabel15;
+    private gnu.chu.controles.CLabel cLabel18;
+    private gnu.chu.controles.CLabel cLabel19;
     private gnu.chu.controles.CLabel cLabel2;
+    private gnu.chu.controles.CLabel cLabel21;
+    private gnu.chu.controles.CLabel cLabel22;
+    private gnu.chu.controles.CLabel cLabel23;
     private gnu.chu.controles.CLabel cLabel3;
     private gnu.chu.controles.CLabel cLabel5;
     private gnu.chu.controles.CLabel cLabel7;
@@ -951,7 +1023,11 @@ public class MantPreMedios extends ventana
     private gnu.chu.controles.CTextField cta_semanaE;
     private gnu.chu.controles.CTextField eje_numeE;
     private gnu.chu.controles.CTextField fecFinComE;
+    private gnu.chu.controles.CTextField fecFinDesE;
+    private gnu.chu.controles.CTextField fecFinVentaE;
     private gnu.chu.controles.CTextField fecIniComE;
+    private gnu.chu.controles.CTextField fecIniDesE;
+    private gnu.chu.controles.CTextField fecIniVentaE;
     private gnu.chu.controles.CTextField fecStockE;
     private gnu.chu.controles.Cgrid jtBolAnt;
     private gnu.chu.controles.Cgrid jtBolas;

@@ -383,7 +383,7 @@ public class MantDespTactil  extends ventanaPad implements PAD
  }
  private void setParametros(Hashtable<String,String> ht)
  {
-           if (ht!=null)
+      if (ht!=null)
       {
         if (ht.get("admin") != null)
             setArgumentoAdmin(Boolean.parseBoolean(ht.get("admin")));
@@ -1517,6 +1517,7 @@ boolean checkCabecera() throws ParseException, SQLException
       datTrazFrame.setLocation(this.getLocation().x, this.getLocation().y + 30);
       tid_codiE.setIncluirEstaticos(false); // 
       tid_codiE.iniciar(dtStat, this, vl, EU);
+//      tid_codiE.setModoAdmin(isAdmin());
       dtAux = new DatosTabla(ct);
       tipoEmp=pdconfig.getTipoEmpresa(EU.em_cod, dtStat);
       isEmpPlanta=tipoEmp==pdconfig.TIPOEMP_PLANTACION;

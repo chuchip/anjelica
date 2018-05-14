@@ -450,7 +450,7 @@ public class CLinvcong extends ventana
 
         opDesgEstado.setSelected(true);
         opDesgEstado.setText("Desg. Estado");
-        opDesgEstado.setToolTipText("Desglosar Individuos");
+        opDesgEstado.setToolTipText("Desglosar Estado");
         Pcabe.add(opDesgEstado);
         opDesgEstado.setBounds(460, 40, 100, 18);
 

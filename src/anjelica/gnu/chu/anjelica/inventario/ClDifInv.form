@@ -62,6 +62,15 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="MVerInvActionPerformed"/>
       </Events>
     </Component>
+    <Component class="javax.swing.JMenuItem" name="MDelInvDep">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Borrar Reg. Inv. Dep"/>
+        <Property name="toolTipText" type="java.lang.String" value="Borrar Reg. Inv. Deposito"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="MDelInvDepActionPerformed"/>
+      </Events>
+    </Component>
   </NonVisualComponents>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -427,7 +436,7 @@
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new gnu.chu.controles.Cgrid(14)"/>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Producto&quot;); //0&#xa;v.add(&quot;Nombre&quot;); // 1&#xa;v.add(&quot;Ejer&quot;); // 2&#xa;v.add(&quot;Serie&quot;); // 3&#xa;v.add(&quot;Lote&quot;); //4&#xa;v.add(&quot;Ind&quot;); // 5&#xa;v.add(&quot;K.Inv&quot;); // 6&#xa;v.add(&quot;K.Cal&quot;); // 7&#xa;v.add(&quot;Coment.&quot;); // 8&#xa;v.add(&quot;Inc&quot;); // 9&#xa;v.add(&quot;Causa&quot;); //10&#xa;v.add(&quot;Alm&quot;); // 11&#xa;v.add(&quot;Cod&quot;);&#xa;v.add(&quot;NL&quot;);&#xa;jt.setCabecera(v);&#xa;&#xa;jt.setFormatoColumna(6, &quot;---,--9.99&quot;);&#xa;jt.setFormatoColumna(7, &quot;---,--9.99&quot;);&#xa;jt.setFormatoColumna(9, &quot;BSN&quot;);&#xa;jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,2,0,1,0,2,2,2});&#xa;jt.setAnchoColumna(new int[]{50,150,40,30,45,40,60,60,80,30,80,30,20,20});&#xa;jt.getPopMenu().add(MVerInv);&#xa;jt.getPopMenu().add(MInsInv);&#xa;jt.getPopMenu().add(MDelInv);&#xa;jt.getPopMenu().add(MInsInvDep);&#xa;jt.getPopMenu().add(MInsReg);"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="ArrayList v=new ArrayList();&#xa;v.add(&quot;Producto&quot;); //0&#xa;v.add(&quot;Nombre&quot;); // 1&#xa;v.add(&quot;Ejer&quot;); // 2&#xa;v.add(&quot;Serie&quot;); // 3&#xa;v.add(&quot;Lote&quot;); //4&#xa;v.add(&quot;Ind&quot;); // 5&#xa;v.add(&quot;K.Inv&quot;); // 6&#xa;v.add(&quot;K.Cal&quot;); // 7&#xa;v.add(&quot;Coment.&quot;); // 8&#xa;v.add(&quot;Inc&quot;); // 9&#xa;v.add(&quot;Causa&quot;); //10&#xa;v.add(&quot;Alm&quot;); // 11&#xa;v.add(&quot;Cod&quot;);&#xa;v.add(&quot;NL&quot;);&#xa;jt.setCabecera(v);&#xa;&#xa;jt.setFormatoColumna(6, &quot;---,--9.99&quot;);&#xa;jt.setFormatoColumna(7, &quot;---,--9.99&quot;);&#xa;jt.setFormatoColumna(9, &quot;BSN&quot;);&#xa;jt.setAlinearColumna(new int[]{2,0,2,1,2,2,2,2,0,1,0,2,2,2});&#xa;jt.setAnchoColumna(new int[]{50,150,40,30,45,40,60,60,80,30,80,30,20,20});&#xa;jt.getPopMenu().add(MVerInv);&#xa;jt.getPopMenu().add(MInsInv);&#xa;jt.getPopMenu().add(MDelInv);&#xa;jt.getPopMenu().add(MDelInvDep);&#xa;jt.getPopMenu().add(MInsInvDep);&#xa;jt.getPopMenu().add(MInsReg);"/>
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">

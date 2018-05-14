@@ -308,7 +308,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private boolean P_ADMIN = false;
   boolean modModif = true;
   boolean P_MODPRECIO = false; // Indica si se pueden Modificar Precios
-  boolean P_FACIL= false; // Indica si esta en modo facil.
+  boolean P_FACIL= false; // Indica si esta en modo facil. (BAJA AL GRID DESGLOSE AUTOMAGICAMENTE)
   boolean P_ETIALBARAN= false; // Indica si la etiqueta mostrara el numero albaran en vez del lote
   boolean P_PONPRECIO = false; // Indica si se pueden Poner Precios
   boolean P_CHECKPED= false; // Comprueba si hay pedidos nuevos.
@@ -589,28 +589,10 @@ public class pdalbara extends ventanaPad  implements PAD
   CButton BbusPed = new CButton(Iconos.getImageIcon("find"));
   
   PCabPedVentas linped = new PCabPedVentas();
-  PConfPedVen PajuPed = new PConfPedVen()
-  {
-//    @Override
-//    public void actualCanti(double cantidad)
-//    {
-//         linped.setnum jtLinPed.setValor(cantidad,JTP_CANMOD);
-//    }
-  };
+  PConfPedVen PajuPed = new PConfPedVen();
+ 
   CLabel cLabel25 = new CLabel();
-//  CTextField pvc_fecentE = new CTextField(Types.DATE,"dd-MM-yyyy");
-//  CLabel cLabel26 = new CLabel();
-//  CTextField pvc_fecentE = new CTextField(Types.DATE,"dd-MM-yyyy");
-//  CScrollPane jScrollPane1 = new CScrollPane();
-//  CLabel pvc_comenL = new CLabel();
-//  CTextArea pvc_comenE = new CTextArea();
-//  CTextField pvc_fecpedE = new CTextField(Types.DATE,"dd-MM-yyyy");
-//  CLabel cLabel27 = new CLabel();
-//  CLabel cLabel111 = new CLabel();
-//  CTextField usu_nompedE = new CTextField(Types.CHAR,"X",20);
-//  CTextField pvc_horpedE = new CTextField(Types.DECIMAL,"99.99");
-//  CTextField cantE = new CTextField(Types.DECIMAL,"---9");
-//  CTextField nlE = new CTextField(Types.DECIMAL,"#9");
+
   CLabel usu_nombL = new CLabel();
   CLabel cLabel29 = new CLabel();
   GridBagLayout gridBagLayout2 = new GridBagLayout();
@@ -667,8 +649,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     catch (Exception e)
     {
-      Logger.getLogger(pdalbara.class.getName()).log(Level.SEVERE, null, e);
-      setErrorInit(true);
+       ErrorInit(e);
     }
   }
 
@@ -688,8 +669,7 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     catch (Exception e)
     {
-        e.printStackTrace();
-      setErrorInit(true);
+        ErrorInit(e);
     }
   }
   private void ponParametros(Hashtable<String,String> ht)
@@ -737,7 +717,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2018-05-06" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2018-05-09" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1812,7 +1792,7 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     if (error)
       return;
-    if (! cli_codiE.hasCambio())
+    if (! cli_codiE.hasCambio() || cli_codiE.getQuery())
         return;
     cli_codiE.resetCambio();
     try
@@ -3127,20 +3107,29 @@ public class pdalbara extends ventanaPad  implements PAD
             cli_codiE.setValorInt(copeve.cliCodiS);            
             cli_codiE.setNombreCliente(copeve.getCliNomb());
             cli_rutaE.setText(copeve.getRuta());
+            
             afterFocusLostCli(false);
-            if (nav.pulsado==navegador.ADDNEW && copeve.getNumeroAlbaran()!=0)
+            if (nav.pulsado==navegador.ADDNEW )
             {
-                if (getAlbaranCab(dtCons, EU.em_cod, copeve.getEjercicioAlbaran(), copeve.getSerieAlbaran(), copeve.getNumeroAlbaran()))
-                {
-                    verDatos(dtCons);
-                    PADEdit();    
-                    jt.setEnabled(false);
-                    jt.requestFocusFinal();
-                    jt.mueveSigLinea(JT_PROCODI);
-                    jt.setEnabled(true);
-                    jt.requestFocusFinalLater();
-                    return;
+                if (copeve.getNumeroAlbaran()!=0)
+                { // Ya tiene asignado albaran.
+                    if (getAlbaranCab(dtCons, EU.em_cod, copeve.getEjercicioAlbaran(), copeve.getSerieAlbaran(), copeve.getNumeroAlbaran()))
+                    {
+                        verDatos(dtCons);
+                        PADEdit();    
+                        jt.setEnabled(false);
+                        jt.requestFocusFinal();
+                        jt.mueveSigLinea(JT_PROCODI);
+                        jt.setEnabled(true);
+                        jt.requestFocusFinalLater();
+                        return;
+                    }
                 }
+                else
+                {
+                  avc_obserE.setText(copeve.getComentarioRuta());
+                  avc_obserE.setCaretPosition(0);  
+                }                
             }           
         } catch (SQLException ex) {
            Error("Error al buscar ruta", ex);
@@ -3390,6 +3379,7 @@ public class pdalbara extends ventanaPad  implements PAD
       avc_valoraE.setValor(""+dtAdd.getInt("avc_valora"));
       avc_almoriE.setValor(dtAdd.getString("avc_almori"));
       avc_obserE.setText(dtAdd.getString("avc_obser"));
+      avc_obserE.setCaretPosition(0);
       div_codiE.setValor(dtAdd.getString("div_codi"));
       sbe_codiE.setValorInt(dtAdd.getInt("sbe_codi",true));
       avc_represE.setText(dtAdd.getString("avc_repres"));
@@ -4576,9 +4566,21 @@ public class pdalbara extends ventanaPad  implements PAD
   {
       nav.btnUltimo.doClick();
   }
+  /**
+   * Devuelve si el programa esta ocupado .
+   * @return 
+   */
   public boolean inTransation()
   {
-      return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
+        if (nav.getPulsado()==navegador.ADDNEW)
+        {
+            if (avc_numeE.getValorInt()==0)
+            {
+                canc_addnew();
+                return false;
+            }
+        }
+      return ( nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
   }
   
   @Override
@@ -9233,8 +9235,9 @@ public class pdalbara extends ventanaPad  implements PAD
             {
                 msgBox("Desagrupe las lineas para establecer fecha Albaran");
                 return;
-            }
-          String s1="update v_albavel set avl_fecalt = '"+avc_fecalbE.getFechaDB()+"'"+
+            }         
+          String fecha = Formatear.getFecha(avc_fecalbE.getDate(), "yyyy-MM-dd")+" 23:59:59.59";
+          String s1="update v_albavel set avl_fecalt = '"+ fecha+"'"+
               " where avc_ano =" + avc_anoE.getValorInt() +
               " and emp_codi = " + emp_codiE.getValorInt() +
               " and avc_serie = '" + avc_seriE.getText() + "'" +
@@ -9244,7 +9247,7 @@ public class pdalbara extends ventanaPad  implements PAD
           dtAdd.executeUpdate(s1);
           if (nl>=0)
             jt.setValor(avc_fecalbE.getDate(),nl,JT_FECMVT);
-          changeFecMvto(nl,avc_fecalbE.getFechaDB());
+          changeFecMvto(nl,fecha);
           dtAdd.commit();
           if (nl==-1)
               verDatos(dtCons);
@@ -9271,12 +9274,12 @@ public class pdalbara extends ventanaPad  implements PAD
                 return;
             }
             if (nl>=0)
-                changeFecMvto(nl,Formatear.getFechaDB(jt.getValString(nl,JT_FECMVT)));
+                changeFecMvto(nl,Formatear.getFechaDB(jt.getValString(nl,JT_FECMVT)+" 23:59:59.59"));
             else
             {
                 for (int n=0;n<jt.getRowCount();n++)
                 {
-                  changeFecMvto(n,Formatear.getFechaDB(jt.getValString(nl,JT_FECMVT)));   
+                  changeFecMvto(n,Formatear.getFechaDB(jt.getValString(nl,JT_FECMVT)+" 23:59:59.59"));   
                 }
             }
             dtAdd.commit();
@@ -9292,7 +9295,7 @@ public class pdalbara extends ventanaPad  implements PAD
   /**
    * Cambia la fecha de mvto a la de la fecha establecida en la linea
    * @param nl Numero Linea. -1 Todos.
-   * @param fecMvto Fecha Movimiento en formato 'yyyyMMdd'
+   * @param fecMvto Fecha Movimiento en formato 'yyyyMMdd 23:59.59"'
    * @throws SQLException
    * @throws ParseException 
    */
@@ -9767,7 +9770,7 @@ public class pdalbara extends ventanaPad  implements PAD
             {
                 if (!avp_serlotE.isNull() && !avp_numparE.isNull() && !avp_numindE.isNull())
                 {
-                    jtDes.requestFocusLater(row, JTDES_KILOS);                   
+                    jtDes.requestFocusLater(row, JTDES_UNID);                   
                 }
             }
         }
@@ -10056,7 +10059,7 @@ public class pdalbara extends ventanaPad  implements PAD
             if (colNueva==JT_KILOS  && P_FACIL  )
             {
                 if (! pro_codiE.hasCambio())
-                    irGridDes(JTDES_KILOS);
+                    irGridDes(JTDES_UNID);
                 else
                 {
                     if (pro_codiE.controla(false))

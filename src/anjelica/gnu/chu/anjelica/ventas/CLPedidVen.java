@@ -38,15 +38,12 @@ import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.camposdb.proPanel;
 import gnu.chu.camposdb.prvPanel;
 import gnu.chu.controles.StatusBar;
-import gnu.chu.controles.miCellRender;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Formatear;
 import gnu.chu.utilidades.Iconos;
-import gnu.chu.utilidades.cgpedven;
 import gnu.chu.utilidades.ventana;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -188,7 +185,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
 
         iniciarFrame();
 
-        this.setVersion("2018-05-06");
+        this.setVersion("2018-05-08");
 
         initComponents();
         this.setSize(new Dimension(730, 535));
@@ -330,14 +327,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
               JpopupMenu.show(BFiltroCam,0,24);
             }
         });
-//        Bimpri.addActionListener(new ActionListener()
-//        {
-//          @Override
-//          public void actionPerformed(ActionEvent e)
-//          {
-//            Bimpri_actionPerformed(e.getActionCommand());
-//          }
-//        });
+   
 
         Baceptar.addActionListener(new ActionListener()
         {
@@ -348,7 +338,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
           }
         });
       jtCabPed.addListSelectionListener(new ListSelectionListener()
-     {
+      {
       @Override
       public void valueChanged(ListSelectionEvent e)
       {
@@ -431,6 +421,10 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
     public String getRuta() throws SQLException
     {
         return pdpeve.getRuta(dtCon1, empCodiS, ejeNumeS, pvcNumeS);
+    }
+    public String getComentarioRuta()
+    {
+       return linPed.getComentarioRuta();
     }
     public String getSerieAlbaran() 
     {
@@ -617,7 +611,7 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
          + " left join tiempostarea as tt on tit_tipdoc='P' and tit_id=c.pvc_id and tt.usu_nomb='"+tit_usunomE.getText()+"'"
          + " left join v_pedruta as pr on  c.pvc_id=pr.pvc_id "
          + ",clientes as cl,v_rutas as al "       
-        + " WHERE c.pvc_fecent between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
+        + " WHERE c.pvc_fecpre between to_date('" + pvc_feciniE.getText() + "','dd-MM-yyyy')" +       
         " and  to_date('" + pvc_fecfinE.getText()  + "','dd-MM-yyyy')" +
         " and c.emp_codi = "+EU.em_cod+
         " and cl.cli_codi = c.cli_codi " +
@@ -1066,13 +1060,13 @@ public class CLPedidVen extends  ventana   implements  JRDataSource
                 case "pro_codi":
                     return linPed.getGrid().getValorInt(nLineaDet,linPed.JT_PROCOD);
                 case "pro_nomb":
-                    return linPed.getGrid().getValString(nLineaDet,linPed.JT_PROCOD);
+                    return linPed.getGrid().getValString(nLineaDet,linPed.JT_PRONOMB);
                 case "pvl_comen":
                     return linPed.getGrid().getValString(nLineaDet,linPed.JT_COMENT);
                 case "pvc_comen":
                     return linPed.getComentarioPedido();
                 case "pvl_tipo":
-                    return linPed.getGrid().getValString(nLineaDet,linPed.JT_COMENT);
+                    return linPed.getGrid().getValString(nLineaDet,linPed.JT_TIPLIN);
                 case "cli_codi":
                     return jtCabPed.getValorInt(nLineaReport,JTCAB_CLICOD);
                 case "pvc_clinom":

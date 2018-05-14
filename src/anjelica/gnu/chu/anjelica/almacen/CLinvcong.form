@@ -331,7 +331,7 @@
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Desg. Estado"/>
-                <Property name="toolTipText" type="java.lang.String" value="Desglosar Individuos"/>
+                <Property name="toolTipText" type="java.lang.String" value="Desglosar Estado"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

@@ -1,3 +1,17 @@
+alter table anjelica.tipodesp add  tid_resadm smallint not null default 0; -- Reservado Administradores
+insert into parametros values('*','numdesplibre','Maximo Numero Desp.Libres al dia','10');
+--
+drop view v_despiece;
+alter table grupdesp add grd_nomb varchar(50); -- Descripcion del grupo
+create  view v_despiece as select  1 as emp_codi, c.*, g.grd_serie,grd_nomb,g.grd_kilo,grd_unid,grd_prmeco,grd_incval,
+grd_valor,grd_block,grd_feccad,g.prv_codi as grd_prvcod,grd_desnue,grd_fecpro,grd_fecha,
+1 as deo_emloge, 1 as deo_emplot ,
+l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcost, deo_kilos , deo_preusu,deo_tiempo
+ from desporig as c left join grupdesp as g on c.eje_nume=g.eje_nume and c.deo_numdes = g.grd_nume, 
+ desorilin as l 
+  where c.eje_nume=l.eje_nume
+ and c.deo_codi= l.deo_codi;
+--
 alter table tarifa alter tar_preci type float;
 --
 insert into parametros values('*','fl','Fecha Larga','');

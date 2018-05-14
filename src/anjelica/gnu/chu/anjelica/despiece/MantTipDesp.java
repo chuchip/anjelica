@@ -5,7 +5,7 @@ package gnu.chu.anjelica.despiece;
  * <p>Título: MantTipDesp </p>
  * <p>Descripcion: Mantenimiento Tipos de Despiece</p>
  * <p>Empresa: miSL</p>
-*  <p>Copyright: Copyright (c) 2005-2015
+*  <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -110,7 +110,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
     }
     private void jbInit() throws Exception
     {
-      this.setVersion("2017-11-05" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
+      this.setVersion("2018-05-11" + (ARG_MODCONSULTA ? " SOLO LECTURA" : ""));
       statusBar = new StatusBar(this);
       nav = new navegador(this,dtCons,false);
       iniciarFrame();
@@ -298,6 +298,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
         dtAdd.setDato("tid_nomb",tid_nombE.getText());
         dtAdd.setDato("tid_activ",tid_activE.getValor());
         dtAdd.setDato("tid_merven",tid_mervenE.isSelected()?-1:0);
+        dtAdd.setDato("tid_resadm",tid_resadmE.isSelected()?-1:0);
         dtAdd.setDato("tid_agrup",tid_agrupE.getValorInt());
         dtAdd.setDato("tid_usoequ",tid_usoequE.isSelected()?-1:0);
         dtAdd.setDato("tid_asprfi",tid_asprfiE.isSelected()?-1:0);
@@ -384,6 +385,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
         usu_nombE.setText(dtStat.getString("usu_nomb"));
         tid_usoequE.setSelected(dtStat.getInt("tid_usoequ")!=0);
         tid_mervenE.setSelected(dtStat.getInt("tid_merven")!=0);
+        tid_resadmE.setSelected(dtStat.getInt("tid_resadm")!=0);
         tid_agrupE.setValorInt(dtStat.getInt("tid_agrup"));
         tid_asprfiE.setSelected(dtStat.getInt("tid_asprfi")!=0);
         tid_auclpeE.setSelected(dtStat.getInt("tid_auclpe")!=0);
@@ -473,6 +475,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
       tid_mervenE.setEnabled(act);
       tid_agrupE.setEnabled(act);
       tid_codiE.setEnabled(act);
+      tid_resadmE.setEnabled(act);
       Baceptar.setEnabled(act);
       Bcancelar.setEnabled(act);
       Pcabe.setEnabled(act);
@@ -661,6 +664,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
     
     tid_usoequE.setSelected(true);
     tid_mervenE.setSelected(false);
+    tid_resadmE.setSelected(false);
     tid_agrupE.setValorInt(0);
     tid_codiE.requestFocus();
     mensaje("Insertando ....");
@@ -983,6 +987,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
         tid_codiE = new gnu.chu.controles.CTextField(Types.DECIMAL,"###9");
         tid_auclpeE = new gnu.chu.controles.CCheckBox();
         tid_asprfiE = new gnu.chu.controles.CCheckBox();
+        tid_resadmE = new gnu.chu.controles.CCheckBox();
         jtEnt = new gnu.chu.controles.CGridEditable(4){
             public void cambiaColumna(int col, int colNueva,int row)
             {
@@ -1131,11 +1136,16 @@ public class MantTipDesp  extends ventanaPad implements PAD
 
         tid_auclpeE.setText("Clasif. Peso");
         Pcabe.add(tid_auclpeE);
-        tid_auclpeE.setBounds(390, 23, 100, 17);
+        tid_auclpeE.setBounds(490, 23, 100, 17);
 
         tid_asprfiE.setText("Prod.Salida");
         Pcabe.add(tid_asprfiE);
         tid_asprfiE.setBounds(290, 23, 100, 17);
+
+        tid_resadmE.setText("Administrador");
+        tid_resadmE.setToolTipText("Reservador Administadores");
+        Pcabe.add(tid_resadmE);
+        tid_resadmE.setBounds(390, 23, 100, 17);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1337,6 +1347,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
     private gnu.chu.controles.CTextField tid_feulmoE;
     private gnu.chu.controles.CCheckBox tid_mervenE;
     private gnu.chu.controles.CTextField tid_nombE;
+    private gnu.chu.controles.CCheckBox tid_resadmE;
     private gnu.chu.controles.CCheckBox tid_usoequE;
     private gnu.chu.controles.CTextField usu_nombE;
     // End of variables declaration//GEN-END:variables
@@ -1366,7 +1377,7 @@ public class MantTipDesp  extends ventanaPad implements PAD
      * Comprueba si un producto Fresco es equivalente a otro Congelado
      * Comprueba la tabla artiequiv y arteqcon
      * @param proCodFre Producto Fresco
-     * @param proCodfin Producto Congelado
+     * @param proCodCon Producto Congelado
      * @param dt
      * @return true si son equivalentes.
      * @throws SQLException
@@ -1413,5 +1424,19 @@ public class MantTipDesp  extends ventanaPad implements PAD
             return false;
         return dt.getInt("tid_usoequ ")!=0;
     }
-   
+    /**
+     * Indica si un tipo de despiec es solo para administradores.
+     * @param tidCodi
+     * @param dt
+     * @return true o false
+     * @throws SQLException 
+     */
+    public static boolean isTipoAdmin(int tidCodi, DatosTabla dt) throws SQLException
+    {
+        String s= "SELECT tid_resadm  FROM tipodesp WHERE "+
+              " tid_codi = "+tidCodi;
+        if (! dt.select(s))
+            return false;
+        return dt.getInt("tid_resadm ")!=0;
+    } 
 }

@@ -1129,7 +1129,7 @@ fcc_nume int,			-- Numero de Fra.
 acc_obser varchar(255),
 acc_portes char(1) not null,	-- Portes Pagados/Debidos
 acc_impokg float,		-- Importe de Porte/Kg.
-acc_imcokg float not null default 0, 		-- Importe de COmisiones / Kg
+acc_imcokg float not null default 0, 		-- Importe de Comisiones / Kg
 frt_ejerc int not null,		-- Ejercicio Fra. de transp.
 frt_nume int not null,		-- Fra. de Transportista
 acc_cerra int not null,		-- Albaran Cerrado (0 NO -1 Si)
@@ -1954,6 +1954,7 @@ create table anjelica.grupdesp
 	emp_codi int not null, -- Deprecated
 	eje_nume int not null,
 	grd_nume int not null, -- Une con el deo_numdes en desporig
+	grd_nomb varchar(50), -- Descripcion del grupo
 	grd_serie char(1) not null,
 	grd_kilo decimal(8,2) not null, -- Kilos
 	grd_unid int not null,          -- Unidades
@@ -2023,7 +2024,7 @@ tar_codi int not null, -- Codigo de Tarifa
 tar_linea int not null, -- Linea de tarifa
 pro_codart varchar(15) not null, -- Codigo de Articulo
 pro_nomb VARCHAR(50) not null, -- Descripcion del Articulo
-tar_preci decimal(10,2),
+tar_preci float, -- Precio
 tar_comrep float default 0 not null,   -- Comision Representantes
 tar_comen varchar(150),
 tar_grupo smallint not null, -- Grupo de familia  (solo se usa cuando pro_codart='')
@@ -2558,12 +2559,13 @@ create table anjelica.tipodesp
 	tid_merven smallint not null default 0, -- Linea Mer Venta para AutoDespiece.
 	tid_asprfi smallint not null default 0, -- Asignar Producto Salida 
 	tid_auclpe smallint not null default 0, -- Autoclasificar por peso.
+	tid_resadm smallint not null default 0, -- Reservado Administradores
 	primary key (tid_codi)
 );
 create index ix_tipodes1 on tipodesp (tid_nomb);
 -- Este tipo de despiece limita al dia actual, el numero de despieces libres al
 -- numero puesto en tid_agrup
-insert into tipodesp values (9998,'DESPIECE LIBRE',0,5,'20110101',null,null);
+insert into tipodesp values (9998,'DESPIECE LIBRE',0,5,'20110101',null,null,-1,0,0,0,0);
 --
 -- Tabla despieces (Entradas)
 ---
@@ -3742,6 +3744,8 @@ create table anjelica.hispedvenc
  pvc_cerra int not null,	-- Albaran Cerrado (0 NO, -1 SI)
  pvc_nupecl varchar(20),	-- Numero pedido de Cliente
  pvc_impres char(1) not null,	-- Listado (S/N)
+ rut_codi varchar(2) ,
+ pvc_fecpre date
  his_usunom varchar(15) not null, -- Usuario que realiza el Cambio
  his_fecha timestamp not null, -- Fecha de Cambio
  his_coment varchar(100), -- Comentario sobre el Cambio
@@ -3764,7 +3768,7 @@ create table anjelica.pedvenl
  pvl_kilos float not null,	-- Kilos o unidades de producto.
  pvl_unid float not null,   -- Unidades
  pvl_canti float not null default '0',  -- Cantidad Introducida.
- pvl_tipo char(1) not null default 'K', -- Tipo Unidad introducida. (K/P/C)
+ pvl_tipo char(1) not null default 'K', -- Tipo Unidad introducida. (Kg/Pieza/Caja)
  pro_codi int not null,		-- Codigo de Producto
  pvl_comen varchar(100),	-- Comentario sobre el producto
  pvl_precio float not null,	-- Precio
@@ -4476,7 +4480,7 @@ create table tiempostarea
 	cam_codi varchar(2) not null,		-- Camara
 	tit_tipo varhar(1) not null default 'B', 		-- Tipo: Alta, Media, Baja
 	tit_tiempo int not null, 			-- Tiempo Identificador	
-	constraint ix_tiempostarea primary  key (usu_nomb,tit_tipdoc,tit_id);
+	constraint ix_tiempostarea primary  key (usu_nomb,tit_tipdoc,tit_idt);
 );
 grant all on anjelica.tiempostarea to public;
 create view v_tiempospedido as
@@ -4595,8 +4599,8 @@ CREATE OR REPLACE VIEW v_despsal AS
     v_despfin l
   WHERE c.eje_nume = l.eje_nume AND c.deo_codi = l.deo_codi;
 grant select on  anjelica.v_despsal to public;
-
-create  view v_despiece as select  1 as emp_codi, c.*, g.grd_serie,g.grd_kilo,grd_unid,grd_prmeco,grd_incval,
+-- drop view v_despiece
+create  view v_despiece as select  1 as emp_codi, c.*, g.grd_serie,grd_nomb,g.grd_kilo,grd_unid,grd_prmeco,grd_incval,
 grd_valor,grd_block,grd_feccad,g.prv_codi as grd_prvcod,grd_desnue,grd_fecpro,grd_fecha,
 1 as deo_emloge, 1 as deo_emplot ,
 l.del_numlin, pro_codi, deo_ejelot,  deo_serlot, pro_lote,pro_numind , deo_prcost, deo_kilos , deo_preusu,deo_tiempo

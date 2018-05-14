@@ -269,7 +269,12 @@ public class pdpeve  extends ventanaPad   implements PAD
   }
   public boolean inTransation()
   {
-      return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
+      if (nav.getPulsado()==navegador.ADDNEW && jt.isVacio())
+      {
+         canc_addnew();
+         return false;
+      }
+      return ( nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
   }
   
   private void ponParametros(Hashtable<String, String> ht)
@@ -1522,7 +1527,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       jt.removeAllDatos();
       swExterno=false;
       pvc_fecentE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
-      pvc_fecpreE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+//      pvc_fecpreE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
       nuevoPedido();
   }
 

@@ -22,9 +22,7 @@ package gnu.chu.anjelica.despiece;
  * @author chuchiP
  * @version 1.1
  */
-/**
- * @todo Incluir Nombre Pais del Matadero en trazabilidad
- */
+
 import gnu.chu.anjelica.almacen.StkPartid;
 import gnu.chu.anjelica.almacen.ActualStkPart;
 import gnu.chu.anjelica.almacen.DatIndivBase;
@@ -46,8 +44,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 
 public class utildesp
-{
-  
+{  
   double kgDocum,impDocum;
   private boolean debug=false;
   PreparedStatement psMvt;
@@ -770,7 +767,21 @@ public class utildesp
       return grdNume+1;
   }
 
-  
+  /**
+   * Busca el Peso de un individuo segun la tabla v_stkpart. 
+   * Si esta reservado para algun cliente lo marcara como reservado.
+   * @param dt DatosTabla a utlizar
+   * @param ejeLot Ejerc. Lote
+   * @param empLot Empresa Lote
+   * @param serLot Serie del Lote
+   * @param numLot Numero del Lote
+   * @param numind Individuo del Lote
+   * @param proCodi Producto
+   * @param almCodi Almacen si es cero, busca en todos.
+   * 
+   * @return mensaje de Error. NULL si todo ha ido bien
+   * @throws SQLException En caso de error en base datos
+   */
    public static StkPartid buscaPeso(DatosTabla dt,int ejeLot,int empLot,
                                  String serLot,int numLot,int numind,int proCodi,
                                  int almCodi) throws SQLException
@@ -1003,11 +1014,13 @@ public class utildesp
                 boolean swIgn=false;
                 double importeStock=kgStock * precioMedioStock;
                 double kgStockNuevo=  kgStock + rs.getDouble("mvt_canti");
-                if (importeStock + (rs.getDouble("mvt_canti")  * precioMvto)<0.001 || kgStockNuevo< 0.01 )
-                {                    
-                    // Estoy con stock en negativo . Ignoro acumulados de precios medios.
-                    if (kgStock<0.01)
+                if (kgStockNuevo>0 && kgStock<=0)
+                { // Stock anterior inferior/Igual a 0 y Stock Actual > 0
+                    if (precioMvto>0)
                          precioMedioStock=precioMvto;  // Si los kilos de stock anteriores son 0 pongo costo de mvto.
+                }
+                if (importeStock + (rs.getDouble("mvt_canti")  * precioMvto)<0.001 || kgStockNuevo< 0.01 )
+                {    // Ignrore precios.                            
                     kgStock = kgStockNuevo;
                     swIgn=true;
                 }
@@ -1017,16 +1030,17 @@ public class utildesp
                     precioMedioStock=precioMvto;   
                     swIgn=true;
                 }
-                if ((precioMvto==0 && rs.getString("mvt_tipdoc").equals("d")) || isDocumActual)
-                { /// Ignoro despieces sin valorar.
-                        swIgn=true;
+                if (!swIgn && ((precioMvto==0 && rs.getString("mvt_tipdoc").equals("d")) || isDocumActual))
+                { /// Ignoro despieces sin valorar para costos
+                    swIgn=true;
+                    kgStock = kgStockNuevo;                     
                 }
 
                     
                 if (!swIgn)
                 {
                     importeStock = kgStock * precioMedioStock;             
-                    kgStock += rs.getDouble("mvt_canti");
+                    kgStock = kgStockNuevo;
                    
                     importeStock += rs.getDouble("mvt_canti")
                           * precioMvto;

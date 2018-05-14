@@ -135,7 +135,7 @@ public class ClDifInv extends ventana {
      
         iniciarFrame(); 
        
-        this.setVersion("2018-03-21");
+        this.setVersion("2018-05-09");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -1429,6 +1429,7 @@ public class ClDifInv extends ventana {
         MDelInv = new javax.swing.JMenuItem();
         MDelRep = new javax.swing.JMenuItem();
         MVerInv = new javax.swing.JMenuItem();
+        MDelInvDep = new javax.swing.JMenuItem();
         Pgeneral = new gnu.chu.controles.CPanel();
         Pcondic = new gnu.chu.controles.CPanel();
         cLabel1 = new gnu.chu.controles.CLabel();
@@ -1519,6 +1520,14 @@ public class ClDifInv extends ventana {
             }
         });
         MVerInv.getAccessibleContext().setAccessibleName("Buscar Inv.");
+
+        MDelInvDep.setText("Borrar Reg. Inv. Dep");
+        MDelInvDep.setToolTipText("Borrar Reg. Inv. Deposito");
+        MDelInvDep.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MDelInvDepActionPerformed(evt);
+            }
+        });
 
         Pgeneral.setLayout(new java.awt.GridBagLayout());
 
@@ -1678,6 +1687,7 @@ public class ClDifInv extends ventana {
         jt.getPopMenu().add(MVerInv);
         jt.getPopMenu().add(MInsInv);
         jt.getPopMenu().add(MDelInv);
+        jt.getPopMenu().add(MDelInvDep);
         jt.getPopMenu().add(MInsInvDep);
         jt.getPopMenu().add(MInsReg);
 
@@ -1808,23 +1818,6 @@ public class ClDifInv extends ventana {
     private int borrarInventario(int nl) throws ParseException, SQLException
     {
       
-//        int proCodi=jt.getValorInt(nl,JT_PROCODI);
-//       
-//        for (int n=nl;n>=0;n--)
-//        {
-//              if (jt.getValorInt(n,0)!=0)
-//              {
-//                  proCodi=jt.getValorInt(n,JT_PROCODI);
-//                  break;
-//              }
-//        }
-//        if (! checkRegInv(nl,proCodi,cci_fecconE.getFechaDB()," and alm_codlin  ="+ jt.getValorInt(nl,JT_ALMCODI),
-//            dtCon1))
-//      
-//        {
-//            msgBox("No encontrado apunte en control inventario\n"+s);
-//            return 0;
-//        }
         int nDel=dtAdd.executeUpdate("delete from coninvlin where cci_codi ="+jt.getValorInt(nl,JT_CCICODI)+
                 " and lci_nume="+jt.getValorInt(nl,JT_LCINUME)     );
         dtAdd.commit();
@@ -1892,7 +1885,21 @@ public class ClDifInv extends ventana {
             ctUp.commit();
             return null;
     }
-   
+   /**
+    * Busca codigo producto
+    * @return 
+    */
+   int buscaProd()
+   {
+        for (int n=jt.getSelectedRow();n>=0;n--)
+        {
+            if (jt.getValorInt(n,JT_PROCODI)!=0)
+            {
+                return jt.getValorInt(n,JT_PROCODI);
+            }
+        }   
+        return -1;
+   }
     private void MInsRegActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MInsRegActionPerformed
         if (jf==null)
              return;
@@ -1908,15 +1915,7 @@ public class ClDifInv extends ventana {
          try
          {
             cm.nav.btnAddNew.doClick();
-            for (int n=jt.getSelectedRow();n>=0;n--)
-            {
-                if (jt.getValorInt(n,JT_PROCODI)!=0)
-                {
-                    cm.setProCodi(jt.getValorInt(n,JT_PROCODI));
-                    break;
-                }
-            }          
-
+            cm.setProCodi(buscaProd());    
             cm.setLote(jt.getValorInt(JT_PRPPART));
             cm.setIndividuo(jt.getValorInt(JT_PRPINDI));
             cm.setEjercicio(jt.getValorInt(JT_PRPANO));
@@ -2123,11 +2122,36 @@ public class ClDifInv extends ventana {
         jf.gestor.ir(cm);
     }//GEN-LAST:event_MVerInvActionPerformed
 
+    private void MDelInvDepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MDelInvDepActionPerformed
+        try
+        {
+            if (jt.isVacio())
+                return;
+            int n = jt.getSelectedRowDisab();
+            int proCodi = buscaProd();
+            String s="delete from invdepos where pro_codi =" + proCodi
+                + " and eje_nume=" + jt.getValorInt(n, JT_PRPANO)
+                + " and pro_serie = '" + jt.getValString(n, JT_PRPSERI) + "'"
+                + " AND pro_nupar = " + jt.getValorInt(n, JT_PRPANO)
+                + " and pro_numind = " + jt.getValorInt(n, JT_PRPINDI);
+            int nDel = dtAdd.executeUpdate(s);
+            dtAdd.commit();
+            if (nDel > 0)
+                msgBox("Borrado apunte en inventario de deposito");
+            else
+                msgBox("No encontrado apunte en inventario de deposito");
+        } catch (SQLException ex)
+        {
+            Error("Error al Borrar registro en control inventario", ex);
+        }
+    }//GEN-LAST:event_MDelInvDepActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private gnu.chu.controles.CButtonMenu BSelec;
     private gnu.chu.controles.CButtonMenu Baccion;
     private gnu.chu.controles.CButtonMenu Baceptar;
     private javax.swing.JMenuItem MDelInv;
+    private javax.swing.JMenuItem MDelInvDep;
     private javax.swing.JMenuItem MDelRep;
     private javax.swing.JMenuItem MInsInv;
     private javax.swing.JMenuItem MInsInvDep;

@@ -1704,6 +1704,9 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
 
   /**
    * Resta dos horas
+     * @param hora1
+     * @param hora2
+     * @return 
    */
   public static double restaHora(double hora1,double hora2) {
 //      int min1 = horToMin(hora1), min2 = horToMin(hora2);
@@ -1711,7 +1714,11 @@ private static String creaLinea(Vector palabras, int espaciosMeter, boolean finP
   }
 
   /**
-   * Suma dos a horas
+   * Suma dos horas (en formato sexagesimal)
+   * 
+     * @param hora1
+     * @param hora2
+     * @return 
    */
   public static double sumaHora(double hora1,double hora2) {
 //      int min1 = horToMin(hora1), min2 = horToMin(hora2);

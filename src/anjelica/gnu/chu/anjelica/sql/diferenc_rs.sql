@@ -1,3 +1,4 @@
+alter table tarifa alter tar_preci type float;
 --
 CREATE INDEX ix_mvtalm4 on anjelica.mvtosalm(mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,MVT_NUMDOC);
 --
@@ -6,7 +7,7 @@ ALTER TABLE USUARIOS ADD usu_adlock smallint not null default 0;
 insert into parametros values('cpuente','formatocosto','Formato para campos costo','---9.9999'); 
 --
 --
-create view anjelica.v_tiporegu 
+create view anjelica.v_tiporegu as
 select dis_codi as tir_tipo,dis_nomb as tir_nomb  from v_discrim
 where dis_tipo='Or';
 grant select on anjelica.v_tiporegu to public;

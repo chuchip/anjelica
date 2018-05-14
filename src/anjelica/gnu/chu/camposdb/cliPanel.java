@@ -381,7 +381,7 @@ public class cliPanel extends CPanel
   /**
    * Machacar para controlar que hacer despues de un focus lost.
    * Esta funcion es llamada despues de un focusLost, si ha habido cambio en el
-   * codigo de cliente y despues de haber llamado a controlar
+   * codigo de cliente y despues de haber llamado a e
    * @see controlar()
    * @param noError boolean Recibe el resultado de la funcion controlar
    *              true significa que NO ha habido error
@@ -760,10 +760,11 @@ public void setZona(String zonCli)
     {
         try {
             cli_codiE.setText(aycli.getCliCodi());
-            if (swControl && !isGenerico())
-                cli_nombE.setText(aycli.getCliNomb());
-            if ( !isGenerico())
-                setNomComercial(aycli.getNombCom());
+            controlar(CHECK_NOTEXT);
+            if (!getQuery() )
+                cli_nombE.setText(aycli.getNombCom());
+            if ( !getQuery())
+                setNomComercial(aycli.getCliNomb());
             cli_codrepL.setText(aycli.getCodigoReparto());
         } catch (SQLException ex) {
             Logger.getLogger(cliPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -828,12 +829,11 @@ public void setZona(String zonCli)
     cli_nombE.setText("");
     cli_codiE.resetCambio();
   }
+    @Override
   public boolean hasCambio() {
-         if (copia.equals(getText()))
-            return false;
-         else
-             return true;
+        return !copia.equals(getText());
   }
+    @Override
   public void resetCambio() {
          copia = getText();
   }

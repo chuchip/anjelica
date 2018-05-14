@@ -96,7 +96,7 @@ public class RepEtiqueta extends ventana
 
         iniciarFrame();
 
-        this.setVersion("2018-02-20");
+        this.setVersion("2018-05-09");
         statusBar = new StatusBar(this);
         this.getContentPane().add(statusBar, BorderLayout.SOUTH);
         conecta();
@@ -567,7 +567,7 @@ public class RepEtiqueta extends ventana
             utDesp.getDespiezado(),
             utDesp.getNumeroCrotal(),deo_kilosE.getValorDec(),
             utDesp.getConservar(), utDesp.getSacrificado(),
-            utDesp.getFechaProduccion(),utDesp.getFechaProduccion(), utDesp.getFechaCaducidad(),
+            null,utDesp.getFechaProduccion(), utDesp.getFechaCaducidad(),
             utDesp.getFechaSacrificio());
         etiq.setNumCopias(tipoEtiq==ETIQINT?numCopiasE.getValorInt():1);
         etiq.listarDefec();

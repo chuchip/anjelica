@@ -112,7 +112,7 @@ private void jbInit() throws Exception
   {
       iniciarFrame();
 
-      this.setVersion("2018-04-10 "+(P_VERPRECIO?"":" NO VER PRECIOS"));
+      this.setVersion("2018-05-08 "+(P_VERPRECIO?"":" NO VER PRECIOS"));
       statusBar = new StatusBar(this);
       this.getContentPane().add(statusBar, BorderLayout.SOUTH);
       conecta();
@@ -488,7 +488,8 @@ private void jbInit() throws Exception
          if (!checkCondiciones())
              return;
          jt.removeAllDatos();
-         String s="select r.*,a.pro_nomb from v_regstock as r,v_articulo as a where rgs_fecha between '"+feciniE.getFechaDB()+"' and '"+
+         String s="select r.*,a.pro_nomb from v_regstock as r,"
+             + "v_articulo as a where rgs_fecha between '"+feciniE.getFechaDB()+"' and '"+
              fecfinE.getFechaDB()+"' "+
              " and a.pro_codi = r.pro_codi "+
              " and tir_afestk != '=' "+
@@ -517,8 +518,8 @@ private void jbInit() throws Exception
              v.add(dtCon1.getInt("eje_nume")+dtCon1.getString("pro_serie")+ 
                  dtCon1.getInt("pro_nupar")+"-"+dtCon1.getInt("pro_numind")); // 3
              v.add("("+dtCon1.getString("tir_afestk")+") "+dtCon1.getString("tir_nomb")); // 4
-            v.add(dtCon1.getString("rgs_canti")); // 5
-            v.add(dtCon1.getString("rgs_kilos")); // 6
+            v.add(dtCon1.getDouble("rgs_canti") * (dtCon1.getString("tir_afestk").equals("-")?-1:1)); // 5
+            v.add(dtCon1.getDouble("rgs_kilos") * (dtCon1.getString("tir_afestk").equals("-")?-1:1)) ; //6
             v.add(P_VERPRECIO?dtCon1.getString("rgs_prregu"):0); // 7
             v.add(P_VERPRECIO?dtCon1.getString("rgs_prmeco"):0); // 8
             v.add(dtCon1.getString("rgs_nume"));  // 9

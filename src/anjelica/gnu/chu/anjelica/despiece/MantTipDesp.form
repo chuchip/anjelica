@@ -281,7 +281,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="390" y="23" width="100" height="17"/>
+                  <AbsoluteConstraints x="490" y="23" width="100" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -292,6 +292,17 @@
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="290" y="23" width="100" height="17"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="gnu.chu.controles.CCheckBox" name="tid_resadmE">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Administrador"/>
+                <Property name="toolTipText" type="java.lang.String" value="Reservador Administadores"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="390" y="23" width="100" height="17"/>
                 </Constraint>
               </Constraints>
             </Component>

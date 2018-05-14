@@ -312,7 +312,7 @@ public class pdfaccom extends ventanaPad   implements PAD,JRDataSource
 
    iniciarFrame();
    this.setSize(new Dimension(764, 531));
-   this.setVersion("2018-04-02 "+(modPrecio?"-Modificar Precios-":"")+
+   this.setVersion("2018-05-08 "+(modPrecio?"-Modificar Precios-":"")+
          (admin?"-ADMINISTRADOR-":"")+ (swConsulta?"-Solo Consulta-":""));
    strSql = "SELECT emp_codi,eje_nume,fcc_nume " +
        " FROM v_facaco WHERE emp_codi = " + EU.em_cod +
@@ -1888,7 +1888,7 @@ void insLinAlb(int row) throws Exception
   if (jtFra.getValString(row,9,true).equals(""))
     return; // Sin Numero de Linea
   // Busco los datos del Albaran.
-  s="SELECT c.acc_impokg, c.acc_fecrec, l.*,p.pro_nomb "+
+  s="SELECT c.acc_impokg,acc_imcokg, c.acc_fecrec, l.*,p.pro_nomb "+
        " FROM v_albacoc as c, v_albacol as l,v_articulo as p "+
       " WHERE l.emp_codi = " + EU.em_cod +
       " AND C.prv_codi = "+prv_codiE.getValorInt()+

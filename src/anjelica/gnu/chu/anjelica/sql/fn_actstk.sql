@@ -143,8 +143,8 @@ $BODY$
  RAISE  NOTICE 'update  % cantidad % kilos %',STKNEW.stp_kilact,NEW.mvt_canti,kilos	;
                 UPDATE anjelica.stockpart set stp_kilact= kilos,
                         stp_unact=unid,
-			prv_codi = mvtCliprv,
-			stp_feccad=mvtFeccad,
+						prv_codi = mvtCliprv,
+						stp_feccad=mvtFeccad,
                         stp_fecpro=acpFecpro,
                         stp_fecsac=acpFecsac,
                         stp_nucrot=acpNucrot,

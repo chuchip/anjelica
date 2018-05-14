@@ -232,6 +232,7 @@ public class MantDesp extends ventanaPad implements PAD
             ErrorInit(e);            
         }
     }
+    
     private void setParametros(Hashtable<String,String> ht)
     {
         if (ht != null)
@@ -262,10 +263,11 @@ public class MantDesp extends ventanaPad implements PAD
         jf.gestor.ir(cm);
         return true;
     }
+    
     private void jbInit() throws Exception {
         if (isAdmin() )
             MODPRECIO=true; 
-        setVersion("2018-04-29" + (MODPRECIO ? " (VER PRECIOS)" : "") + (isArgumentoAdmin() ? " ADMINISTRADOR" : ""));
+        setVersion("2018-05-11" + (MODPRECIO ? " (VER PRECIOS)" : "") + (isArgumentoAdmin() ? " ADMINISTRADOR" : ""));
         swThread = false; // Desactivar Threads en ej_addnew1/ej_edit1/ej_delete1 .. etc
 
         CHECKTIDCODI = EU.getValorParam("checktidcodi", CHECKTIDCODI);
@@ -321,6 +323,7 @@ public class MantDesp extends ventanaPad implements PAD
         pro_codlE.setEntrada(true);
         tid_codiE.setCeroIsNull(true);       
         tid_codiE.setModoConsulta(false);
+
         tid_codiE.iniciar(dtProd, this, vl, EU);
         tid_codiE.setAdmin(isAdmin());
         pdalmace.llenaLinkBox(deo_almoriE, dtCon1);
@@ -1519,7 +1522,15 @@ public class MantDesp extends ventanaPad implements PAD
     }
     public boolean inTransation()
     {
-        return (nav.getPulsado()==navegador.ADDNEW || nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
+        if (nav.getPulsado()==navegador.ADDNEW)
+        {
+            if (deo_codiE.getValorInt()==0)
+            {
+                canc_addnew();
+                return false;
+            }
+        }
+        return (nav.getPulsado()==navegador.EDIT || nav.getPulsado()==navegador.DELETE);
     }
     public void setGrupo(int grdNume) {
         deo_numdesE.setValorInt(grdNume);
@@ -1529,7 +1540,15 @@ public class MantDesp extends ventanaPad implements PAD
     public static String getNombreClase() {
         return "gnu.chu.anjelica.despiece.MantDesp";
     }
-
+    public static String getGrupoNombre(DatosTabla dt,int ejeNume,int grdNume,boolean ponNull)  throws SQLException
+    {
+          String s="select grd_nomb from grupdesp "+
+                   " where eje_nume= "+ejeNume+
+                   " and grd_nume = "+grdNume;
+          if (!dt.select(s))
+              return ponNull?null:"";
+          return dt.getString("grd_nomb",true);
+    }
     @Override
     public void PADQuery() {
         mensajeErr("");
@@ -2260,10 +2279,28 @@ public class MantDesp extends ventanaPad implements PAD
             if (kgDifE.getValorDec() <= kgOrigE.getValorDec() * MantDesp.LIMDIF)
             {                
                 // Compruebo integridad de despiece, ya q se marcara como cerrado.
-                if (isComprobarTipoDespiece())
+                if (isComprobarTipoDespiece() )
                 {
+                    int proCodOri=0;
+                    for (int n=0;n< jtCab.getRowCount();n++)
+                    {
+                        if (jtCab.getValorInt(n,JTCAB_PROCODI)==0 || !MantArticulos.isVendible(jtCab.getValorInt(n,JTCAB_PROCODI),dtStat))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if (proCodOri==0 && jtCab.getValorDec(n,JTCAB_KILOS)>0 )
+                              proCodOri= jtCab.getValorInt(n,JTCAB_PROCODI);
+                        }
+                         int ret= checkArticuloEntrada(jtCab.getValorInt(n,JTCAB_PROCODI),
+                             MantArticulos.isCongelado(jtCab.getValorInt(n,JTCAB_PROCODI),dtStat),n);
+                         if (ret>=0)
+                            return false;
+                    }
+                   
                     s = DespVenta.checkArtSalidaDesp(dtCon1, tid_codiE.getValorInt(),
-                        jtLin, pro_codiE.getValorInt(), uniOrigE.getValorInt(),true);
+                        jtLin, proCodOri , uniOrigE.getValorInt(),true);
                     if (s != null)
                     {
                         mensajeErr(s);
@@ -3104,8 +3141,7 @@ public class MantDesp extends ventanaPad implements PAD
     int cambiaLineajtCab(int linea) 
     {
         try
-        {
-            
+        {            
             if (!pro_numindE.hasCambio() && !pro_loteE.hasCambio()
                && !pro_codiE.hasCambio() && !deo_serlotE.hasCambio()
                && !deo_ejelotE.hasCambio() && !deo_kilosE.hasCambio() && !swErrCab) 
@@ -3164,39 +3200,10 @@ public class MantDesp extends ventanaPad implements PAD
                 if (!tid_codiE.isNull() && tid_codiE.getValorInt() != MantTipDesp.LIBRE_DESPIECE
                     && CHECKTIDCODI && !opSimular.isSelected() && pro_codiE.isVendible())
                 { // Tipo despiece esta metido. Comprobar productos
-                    if (tid_codiE.getValorInt() == MantTipDesp.AUTO_DESPIECE
-                        || tid_codiE.getValorInt() == MantTipDesp.CONGELADO_DESPIECE)
-                    {
-                        int nRow = jtCab.getRowCount();
-                        for (int n = 0; n < nRow; n++)
-                        {
-                            if (tid_codiE.getValorInt() == MantTipDesp.CONGELADO_DESPIECE && pro_codiE.isCongelado())
-                            {
-                                mensajeErr("Para tipo despiece CONGELAR, los productos de entrada deben ser frescos");
-                                return 0;
-                            }
-                            if (n == linea)
-                            {
-                                continue;
-                            }
-                            if (jtCab.getValorDec(n, JTCAB_KILOS) == 0 || jtCab.getValorInt(n, JTCAB_PROCODI) == 0)
-                                continue;
-
-                            if (MantArticulos.getTipoProd(jtCab.getValorInt(n, JTCAB_PROCODI),dtStat).equals(MantArticulos.TIPO_VENDIBLE) && !MantTipDesp.esEquivalente(jtCab.getValorInt(n, JTCAB_PROCODI), pro_codiE.getValorInt(), dtStat) )
-                            {
-                                mensajeErr("Para autodespieces TODOS los productos entrada deben ser iguales");
-                                return 0;
-                            }
-                        }
-                    } 
-                    else
-                    {
-                        if (!MantTipDesp.checkArticuloEntrada(dtStat, pro_codiE.getValorInt(), tid_codiE.getValorInt()))
-                        {
-                            mensajeErr("ARTICULO no valido para este tipo de despiece");
-                            return 0;
-                        }
-                    }
+                    int ret= (checkArticuloEntrada(pro_codiE.getValorInt(),pro_codiE.isCongelado(),linea));
+                    if (ret>=0)
+                        return ret;
+                    
                 }
             }
 //      jtCab.setValor("" + 1, linea, 7);
@@ -3348,7 +3355,39 @@ public class MantDesp extends ventanaPad implements PAD
         }
         return -1;
     }
+    int checkArticuloEntrada(int proCodi,boolean swCongelado,int linea) throws SQLException
+    {
+        if (tid_codiE.getValorInt() == MantTipDesp.AUTO_DESPIECE
+            || tid_codiE.getValorInt() == MantTipDesp.CONGELADO_DESPIECE)
+        {
+            int nRow = jtCab.getRowCount();
+            for (int n = 0; n < nRow; n++)
+            {
+                if (tid_codiE.getValorInt() == MantTipDesp.CONGELADO_DESPIECE && swCongelado)
+                {
+                    mensajeErr("Para tipo despiece CONGELAR, los productos de entrada deben ser frescos");
+                    return 0;
+                }
+                if (n == linea)
+                    continue;
+                if (jtCab.getValorDec(n, JTCAB_KILOS) == 0 || jtCab.getValorInt(n, JTCAB_PROCODI) == 0)
+                    continue;
 
+                if (MantArticulos.getTipoProd(jtCab.getValorInt(n, JTCAB_PROCODI), dtStat).equals(MantArticulos.TIPO_VENDIBLE)
+                    && !MantTipDesp.esEquivalente(jtCab.getValorInt(n, JTCAB_PROCODI), proCodi, dtStat))
+                {
+                    mensajeErr("Para autodespieces TODOS los productos entrada deben ser iguales");
+                    return 0;
+                }
+            }
+        } else if (!MantTipDesp.checkArticuloEntrada(dtStat, proCodi, tid_codiE.getValorInt()))
+        {
+            mensajeErr("ARTICULO no valido para este tipo de despiece");
+            return 0;
+        }
+        return -1;
+    }
+    
     /**
      * LLamado cuando se cambia la linea en el grid de cabecera
      * Guarda la linea de origen (producto que se despieza) y si hace 
@@ -3428,12 +3467,7 @@ public class MantDesp extends ventanaPad implements PAD
                 }
             }
            
-            
-//     if (! pro_codlE.isVendible())
-//     {
-//         mensajeErr("Producto NO es vendible");
-//         return 0;
-//     }
+     
             if (!pro_codlE.isActivo())
             {
                 mensajeErr("Producto NO esta ACTIVO");
@@ -5531,6 +5565,8 @@ public class MantDesp extends ventanaPad implements PAD
     }//GEN-LAST:event_MVerTraLinActionPerformed
     void mostrarMvtos(int proCodi,int ejeNume,String serie, int lote,int numInd) 
     {
+        if (jf==null)
+            return;
         ejecutable prog;
         if ((prog = jf.gestor.getProceso(Comvalm.getNombreClase())) == null)
             return;

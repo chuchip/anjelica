@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -193,9 +194,11 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     this.setFont(new Font("Dialog", 0, 11));
     this.setMargin(new Insets(0,0,0,0));
 
-    this.setDisabledTextColor((Color) UIManager.get("ComboBox.disabledForeground"));
-    
+//    this.setDisabledTextColor((Color) UIManager.get("ComboBox.disabledForeground"));
+//    UIManager.put("TextField.inactiveBackground", new ColorUIResource(Color.BLUE));
+    this.setDisabledTextColor(Color.DARK_GRAY);
     this.addFocusListener(new FocusAdapter() {
+      @Override
       public void focusGained(FocusEvent e) {
         if (e.isTemporary())
           return;
@@ -209,6 +212,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
   private Color unselectedBackground=null;
   protected static javax.swing.border.Border noFocusBorder = new  javax.swing.border.EmptyBorder(1, 1, 1, 1);
 
+  @Override
   public Component getTableCellRendererComponent(JTable table, Object value,
                                                  boolean isSelected,
                                                  boolean hasFocus,
@@ -847,6 +851,7 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
     else
       htButton.put(tecla,boton);
   }
+  @Override
   public void setBackground(Color colorBack)
   {
       colBackGround=colorBack;
@@ -857,9 +862,16 @@ public class CTextField extends JTextField implements  CQuery,CEditable,TableCel
   public void setEnabled(boolean enab)
  {
    if (enab)
+   {
       super.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-   else if (!getCursor().equals(new Cursor(Cursor.WAIT_CURSOR)))
-       super.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+//      super.setBackground(colBackGround==null?Color.WHITE:colBackGround);
+   }
+   else
+   {
+//       setBackground(Color.CYAN);
+       if (!getCursor().equals(new Cursor(Cursor.WAIT_CURSOR)))
+           super.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+   }
    activado=enab;
    if (activado)
    {
