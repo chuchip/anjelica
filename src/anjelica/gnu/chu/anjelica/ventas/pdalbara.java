@@ -269,6 +269,7 @@ public class pdalbara extends ventanaPad  implements PAD
   private String lastAvcSerie;
   int avcImpres=0;
   boolean swAvisoAlbRep;
+  boolean AVISOALBREP=false;
   sepAlbVen dgAlb;
   boolean isLock=false;
   CButton Bdesgl=new CButton(Iconos.getImageIcon("duplicar"));
@@ -717,7 +718,7 @@ public class pdalbara extends ventanaPad  implements PAD
             PERMFAX=true;
         iniciarFrame();
         this.setSize(new Dimension(701, 535));
-        setVersion("2018-05-09" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
+        setVersion("2018-05-15" + (P_MODPRECIO ? "-CON PRECIOS-" : "")
                 + (P_ADMIN ? "-ADMINISTRADOR-" : "")
             + (P_FACIL ? "-FACIL-" : "")
              );
@@ -1420,6 +1421,7 @@ public class pdalbara extends ventanaPad  implements PAD
           DIASALBMOD=EU.getValorParam("diasAlbVentaMod", DIASALBMOD);
           ERROR_DIASCAD= EU.getValorParam("errordiascad", ERROR_DIASCAD);
           SOLSINSTOCK=EU.getValorParam("solsinstock", SOLSINSTOCK);
+          AVISOALBREP=EU.getValorParam("avisoalbrep", AVISOALBREP);
           avl_numpalE.setEnabled(swUsaPalets);
           PTrans.iniciarPanel(dtAdd,INC_HOJATRA,this);
           if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
@@ -4786,8 +4788,11 @@ public class pdalbara extends ventanaPad  implements PAD
           msgBox("Albaran NO encontrado .. PROBABLEMENTE se ha borrado");
           return false;
       }
-      if (!verDatos(dtCons, false))
+      if ( ! swEntdepos)
+      {
+        if (!verDatos(dtCons, false))
           return false;
+      }
       if (!P_ADMIN)
       {
           if (rutPanelE.getNumeroRuta() != 0 && !avc_cucomiE.isSelected())
@@ -4797,7 +4802,7 @@ public class pdalbara extends ventanaPad  implements PAD
           }
 
       }
-      if (DIASALBMOD > 0 && Formatear.comparaFechas(Formatear.getDateAct(), avc_fecalbE.getDate()) > DIASALBMOD
+      if (!swEntdepos && DIASALBMOD > 0 && Formatear.comparaFechas(Formatear.getDateAct(), avc_fecalbE.getDate()) > DIASALBMOD
           && !avc_cucomiE.isSelected())
       {
           if (P_ADMIN)
@@ -4836,7 +4841,7 @@ public class pdalbara extends ventanaPad  implements PAD
               msgBox("ATENCION!!! Albaran es de un ejercicio YA cerrado");
       }
 
-      if ((fvc_anoE.getValorDec() > 0 || fvc_numeE.getValorDec() > 0)
+      if (!swEntdepos && (fvc_anoE.getValorDec() > 0 || fvc_numeE.getValorDec() > 0)
           && !P_ADMIN && !swEntdepos)
       {
           msgBox("Albaran YA se HA FACTURADO ... IMPOSIBLE"+(nav.getPulsado()==navegador.DELETE?"BORRAR":"EDITAR"));
@@ -5137,7 +5142,9 @@ public class pdalbara extends ventanaPad  implements PAD
         jtPalet.requestFocusInicio();
     }
     PTrans.resetCambio();
-    PTrans.verUltimosValores(0,PTrans.getTransportista());
+    PTrans.verUltimosValores(0,PTrans.getTransportista());     
+    if (swEntdepos) 
+        verDatLin(dtCons, false, true);
     irGridLin();
   }  catch (Exception k)
     {
@@ -5435,7 +5442,7 @@ public class pdalbara extends ventanaPad  implements PAD
       {
           Ptab1.setSelectedIndex(0);
           //    swPasLin=false;
-          swAvisoAlbRep=true;
+          swAvisoAlbRep=AVISOALBREP;
           idTiempo=0;
           if (P_PONPRECIO || P_MODPRECIO)
               verPrecios=true;
@@ -6328,17 +6335,20 @@ public class pdalbara extends ventanaPad  implements PAD
         if (mensajes.mensajeYesNo("ANULAR BORRADO ? ", this) == mensajes.YES)
           return;
       }
+      
       boolean swDestruir=false;
-      if (swPreguntaDestruir)
+      if (! swEntdepos)
       {
-          swDestruir=mensajes.mensajeYesNo("DESTRUIR TODO RASTRO DE ESTE ALBARAN ? ", this) == mensajes.YES;
+        if (swPreguntaDestruir)
+        {
+            swDestruir=mensajes.mensajeYesNo("DESTRUIR TODO RASTRO DE ESTE ALBARAN ? ", this) == mensajes.YES;
+        }
+        else
+        {        
+          copiaAlbaranNuevo(dtCon1,dtAdd,"Borrado Albaran",EU.usuario,avc_anoE.getValorInt(),
+                emp_codiE.getValorInt(),avc_seriE.getText(),avc_numeE.getValorInt());
+        }
       }
-      else
-      {
-        copiaAlbaranNuevo(dtCon1,dtAdd,"Borrado Albaran",EU.usuario,avc_anoE.getValorInt(),
-              emp_codiE.getValorInt(),avc_seriE.getText(),avc_numeE.getValorInt());
-      }
-        
       if (jf != null )
       {
         jf.ht.clear();
@@ -7402,7 +7412,22 @@ public class pdalbara extends ventanaPad  implements PAD
           }
 
           actAcuLiDes(row); // Actualiza Acumulados lineas desglose
-
+          if (pro_codiE.getControlStockIndividuo())
+          {
+            for (int n=0;n<jtDes.getRowCount();n++)
+            {
+                if (n==row)
+                    continue;
+                if (avp_numparE.getValorInt()==jtDes.getValorInt(n,JTDES_LOTE) && 
+                    avp_serlotE.getText().equals(jtDes.getValString(n,JTDES_SERIE)) &&
+                    avp_numindE.getValorInt()==jtDes.getValorInt(n,JTDES_NUMIND) &&
+                    avp_ejelotE.getValorInt()==jtDes.getValorInt(n,JTDES_EJE))
+                {
+                    mensajeErr("Linea ya introducida en posicion "+n);
+                    return JTDES_EJE;
+                }
+            }
+          }
         //  double unid = 0;
         //  double canti = 0;
           if (!checkIndiv(row,!swEntdepos ||  ! P_ADMIN || avp_cantiE.getValorDec()==0 ))
