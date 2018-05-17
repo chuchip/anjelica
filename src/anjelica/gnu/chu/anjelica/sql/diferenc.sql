@@ -1,3 +1,15 @@
+--
+--
+-- Tabla dias de ruta.
+--
+create table diasruta
+(
+rut_codi char(2) not null,  --  Codigo de Ruta
+rut_dia  char(1) not null,  -- Dias de la ruta. (L,m,M,J,V,S,D)
+rut_hora decimal(4,2),		-- Hora de salida.
+tra_codi int,			    -- Transportista Habitual.
+);
+--
 alter table anjelica.tipodesp add  tid_resadm smallint not null default 0; -- Reservado Administradores
 insert into parametros values('*','numdesplibre','Maximo Numero Desp.Libres al dia','10');
 --

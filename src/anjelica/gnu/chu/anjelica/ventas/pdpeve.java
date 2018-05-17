@@ -1527,6 +1527,7 @@ public class pdpeve  extends ventanaPad   implements PAD
       jt.removeAllDatos();
       swExterno=false;
       pvc_fecentE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
+      pvc_fecpreE.resetTexto();
 //      pvc_fecpreE.setText(Formatear.getFechaAct("dd-MM-yyyy"));
       nuevoPedido();
   }
@@ -2233,7 +2234,8 @@ public class pdpeve  extends ventanaPad   implements PAD
                 rut_codiE.setText(cli_codiE.getLikeCliente().getString("rut_codi"));
                 if (cli_codiE.getLikeCliente().getInt("cli_gener") == 0 && nav.getPulsado() == navegador.ADDNEW)
                 {
-                    s = "select p.eje_nume,p.pvc_nume,p.avc_ano,p.avc_serie,p.avc_nume,avc_impres,pvc_fecent from pedvenc as p left join v_albavec as a on p.avc_ano=a.avc_ano "
+                    s = "select p.eje_nume,p.pvc_nume,p.avc_ano,p.avc_serie,p.avc_nume,avc_impres,"
+                        + "pvc_fecent from pedvenc as p left join v_albavec as a on p.avc_ano=a.avc_ano "
                         + " and p.avc_nume = a.avc_nume and p.avc_serie = a.avc_serie "
                         + " where p.cli_codi = " + cli_codiE.getValorInt()
                         + " and pvc_fecent >= '" + Formatear.getFechaDB(Formatear.sumaDiasDate(pvc_fecentE.getDate(), -7)) + "'"

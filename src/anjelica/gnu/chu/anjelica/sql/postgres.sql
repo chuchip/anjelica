@@ -240,20 +240,7 @@ insert into anjelica.calibres_art values(1,'67-82 mm','1G');
 alter table anjelica.v_articulo add constraint cal_profk
    foreign key (cal_codi) references anjelica.calibres_art(cal_codi) DEFERRABLE INITIALLY DEFERRED;
 grant select on  anjelica.calibres_art to public;   
---
--- Tabla  de Lotes
---
--- drop table lotes;
-create table anjelica.lotes
-(
-    pro_codi int not null,     -- Articulo
-	eje_nume int not null,	   -- Ejercicio
-	pro_serie char(1) not null,-- Serie
- 	pro_numpar int not null,   -- Partida
-    lot_costo float not null,  -- Precio costo
-    lot_feulen date not null,  -- Fecha Ult. Entrada
-  constraint ix_lotes primary key(pro_codi,eje_nume ,pro_serie,pro_numpar)
-);
+
 --
 -- Tabla de Clientes
 ---
@@ -3457,6 +3444,7 @@ INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',1); -- C
  insert into parametros values('*','solsinstock','Solucionar productos sin stock',0); 
  insert into parametros values('*','formatocosto','Formato para campos costo','---9.99'); 
  insert into parametros values('*','valde_nuevogrupauto','Nuevo grupo automatico Automatico',1); 
+ insert into parametros values('*','avisoalbrep','Aviso de albaran ventas repetido',0); 
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --
@@ -4102,7 +4090,16 @@ create view anjelica.v_rutas as
 select dis_codi as rut_codi,dis_nomb as rut_nomb  from v_discrim
 where dis_tipo='CU';
 grant select on anjelica.v_rutas to public;
-
+--
+-- Tabla dias de ruta.
+--
+create table diasruta
+(
+rut_codi char(2) not null,  --  Codigo de Ruta
+rut_dia  char(1) not null,  -- Dias de la ruta. (L,m,M,J,V,S,D)
+rut_hora decimal(4,2),		-- Hora de salida.
+tra_codi int,			    -- Transportista Habitual.
+);
 --
 -- Cabecera  albaranes de proveedores
 --

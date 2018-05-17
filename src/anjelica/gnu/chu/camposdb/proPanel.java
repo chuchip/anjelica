@@ -1360,7 +1360,11 @@ public class proPanel extends CPanel
   {
     return pro_nombL;
   }
-  public boolean getConStkInd()
+  /**
+   * Devuelve si tiene control de individuos este produco
+   * @return  true (si)
+   */
+  public boolean getControlStockIndividuo()
   {
     return proCoinst==-1;
   }
