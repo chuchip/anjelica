@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-04-06T09:33:34 -->
+<!-- 2018-03-04T20:22:31 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbvers" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="d7ded3b2-84f7-45f5-954f-3e965a7c9821">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -302,7 +302,7 @@ order by 1,2]]>
 				<textFieldExpression><![CDATA[$V{kilos}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement key="staticText" mode="Opaque" x="220" y="2" width="68" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="0fe9b60d-8fcb-4817-a07d-179a293e898b"/>
+				<reportElement key="staticText" mode="Opaque" x="181" y="2" width="107" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="0fe9b60d-8fcb-4817-a07d-179a293e898b"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -313,7 +313,7 @@ order by 1,2]]>
 					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="CP1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<text><![CDATA[Total Kilos]]></text>
+				<text><![CDATA[Total Kilos Netos]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="2" y="18" width="518" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="0cef038e-2a08-437c-8111-8f40a8536ad2"/>

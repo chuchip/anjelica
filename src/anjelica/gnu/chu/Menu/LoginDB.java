@@ -322,8 +322,7 @@ public class LoginDB extends JFrame
       String fecLic=EU.getValorParam("fl", "", dt);
       if (!fecLic.equals(""))
       {
-          if (Formatear.comparaFechas(Formatear.getDateAct(), Formatear.getDate(fecLic, "dd-MM-yyyy"))>0 
-              && Integer.parseInt(Formatear.getFecha(Formatear.getDateAct(),"HH"))>=9)
+          if (Formatear.comparaFechas(Formatear.getDateAct(), Formatear.getDate(fecLic, "dd-MM-yyyy"))>=0 )
           {
               if (!pedirLic())
                   System.exit(1);

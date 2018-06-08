@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2016-04-14T09:33:18 -->
+<!-- 2018-03-06T21:09:34 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="etiqPapel1" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="279" columnSpacing="3" leftMargin="17" rightMargin="17" topMargin="45" bottomMargin="5" uuid="a8466516-6951-46b9-a4b7-79f6891ee306">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>

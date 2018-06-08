@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2018-01-04T21:49:43 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabfrave" pageWidth="595" pageHeight="842" columnWidth="543" leftMargin="30" rightMargin="22" topMargin="22" bottomMargin="20" uuid="3b1706f1-7a6d-4bd1-90ba-9a7c38e961a1">
+<!-- 2018-01-04T21:48:54 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cabfrave2017" pageWidth="595" pageHeight="842" columnWidth="543" leftMargin="30" rightMargin="22" topMargin="22" bottomMargin="20" uuid="3b1706f1-7a6d-4bd1-90ba-9a7c38e961a1">
 	<property name="ireport.scriptlethandling" value="0"/>
-	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="441"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Anjelica "/>
 	<style name="normal" isDefault="true" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
 	<parameter name="SUBREPORT_FILE_NAME" class="java.lang.String">
 		<parameterDescription><![CDATA[Subreport con las lineas de Albaran]]></parameterDescription>
@@ -28,9 +23,9 @@
 		<defaultValueExpression><![CDATA["26132159 B"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select c.*,cl.* from anjelica.v_facvec as c,anjelica.clientes as cl
- where c.fvc_nume = 1
-and c.fvc_ano=2017
+		<![CDATA[select c.*,cl.* from v_facvec as c,clientes as cl
+ where c.fvc_nume = 8715
+and c.fvc_ano=2007
 and c.emp_codi = 1
 and c.cli_codi = cl.cli_codi
 order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
@@ -132,7 +127,7 @@ order by c.emp_codi,c.fvc_ano,c.fvc_nume]]>
 					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
 						<paragraph lineSpacing="Single"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{numFra}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{fvc_serie}+"/"+$F{fvc_ano}+"-"+$F{fvc_nume}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd-MM-yy" isBlankWhenNull="false">
 					<reportElement key="textField" style="normal" mode="Opaque" x="103" y="127" width="62" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="ec3aa509-0525-457b-acad-b62c0ba899e8"/>
