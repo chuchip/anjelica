@@ -6,6 +6,7 @@ import gnu.chu.sql.*;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
 import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import net.sf.jasperreports.engine.JRException;
@@ -157,8 +158,10 @@ public class Listados
         
     public static JasperReport  getJasperReport(EntornoUsuario EU, String fichJasper) throws JRException
     {
-      File f=getFileJasperReport(EU,fichJasper,"");    
-      JasperReport jr = (JasperReport) JRLoader.loadObjectFromFile(f.getAbsolutePath());
+      if (! fichJasper.endsWith(".jasper"))
+          fichJasper+= ".jasper";
+      InputStream jasperStream= EU.getClass().getResourceAsStream("/gnu/chu/anjelica/reports/"+fichJasper);
+      JasperReport jr = (JasperReport) JRLoader.loadObject(jasperStream);
       return jr;
     }
     public String getPathLogo()
