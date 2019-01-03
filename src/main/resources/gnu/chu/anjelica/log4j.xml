@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+	<appender name="FILE" class="org.apache.log4j.FileAppender">
+		<param name="File" value="anjelica.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+		value="%d{dd-MM-yyyy HH:mm:ss} %-5p - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="DEBUG"/>
+            <param name="LevelMax" value="FATAL"/>
+        </filter>
+    </appender>
+
+    <!--                          -->
+    <!-- Declare the SMTPAppender -->
+    <!--                          -->
+    <appender name="EMAIL"  class="org.apache.log4j.net.SMTPAppender">
+        <param name="BufferSize" value="512" />
+        <param name="SMTPHost" value="smtp.anjelica.com" />
+        <param name="From" value="anjelica@anjelica.com" />
+        <param name="To" value="anjelica@anjelica.com" />
+	<param name="Subject" value="[ANJELICA] Anjelica message" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+		value="%d{dd-MM-yyyy HH:mm:ss} %-5p - %m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="ERROR"/>
+            <param name="LevelMax" value="FATAL"/>
+        </filter>
+    </appender>
+
+    <!--                           -->
+    <!-- setup log4j's root logger -->
+    <!--                           -->
+    <root>
+        <level value="all" />
+        <appender-ref ref="FILE"/>
+       <!-- <appender-ref ref="EMAIL" /> -->
+    </root>
+</log4j:configuration>
+

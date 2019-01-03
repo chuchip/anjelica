@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2015-04-16T13:54:26 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lifravers" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="10dfe8df-9fda-4b2c-ac11-d9f24ae39fc2">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.4641000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="fvc_nume" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(111)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="emp_codi" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(12)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fvc_ano" class="java.lang.Integer" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Integer(1)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="valora" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="emp_obsalb" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="agrupa" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="fvc_serie" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["B"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SB_NAME_POB" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="numLinComCab" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="numLinComPie" class="java.lang.Integer" isForPrompting="false"/>
+	<parameter name="numLinFra" class="java.lang.Integer" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,pro_codi,SUM(l.fvl_canti) as fvl_canti,
+fvl_prven,fvl_nompro FROM v_facvel l
+where fvc_nume= $P{fvc_nume}
+and fvc_serie= $P{fvc_serie}
+and emp_codi= $P{emp_codi}
+and eje_nume = $P{fvc_ano}
+and fvl_canti >= 0
+and $P{agrupa}=1
+GROUP BY emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,PRO_CODI,fvl_prven,fvl_nompro
+UNION ALL
+SELECT emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,pro_codi,SUM(l.fvl_canti) as fvl_canti,
+fvl_prven,fvl_nompro FROM v_facvel l
+where fvc_nume=$P{fvc_nume}
+and fvc_serie = $P{fvc_serie}
+and emp_codi=$P{emp_codi}
+and eje_nume = $P{fvc_ano}
+and fvl_canti < 0
+and $P{agrupa}=1
+GROUP BY emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,PRO_CODI,fvl_prven,fvl_nompro
+union all
+SELECT emp_codi,avc_nume,avc_serie,avc_ano,avc_fecalb,pro_codi,l.fvl_canti as fvl_canti,
+fvl_prven,fvl_nompro FROM v_facvel l
+where fvc_nume= $P{fvc_nume}
+and emp_codi= $P{emp_codi}
+and eje_nume = $P{fvc_ano}
+and fvc_serie= $P{fvc_serie}
+and $P{agrupa}=0
+order by 5,4,3,2,6]]>
+	</queryString>
+	<field name="emp_codi" class="java.lang.Integer"/>
+	<field name="avc_nume" class="java.lang.Integer"/>
+	<field name="avc_serie" class="java.lang.String"/>
+	<field name="avc_ano" class="java.lang.Integer"/>
+	<field name="avc_fecalb" class="java.sql.Date"/>
+	<field name="pro_codi" class="java.lang.Integer"/>
+	<field name="fvl_canti" class="java.lang.Double"/>
+	<field name="fvl_prven" class="java.lang.Double"/>
+	<field name="fvl_nompro" class="java.lang.String"/>
+	<variable name="kilos" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{fvl_canti}]]></variableExpression>
+	</variable>
+	<variable name="implinea" class="java.lang.Double">
+		<variableExpression><![CDATA[new Double($F{fvl_canti}.doubleValue() * $F{fvl_prven}.doubleValue())]]></variableExpression>
+	</variable>
+	<variable name="swPrLineas" class="java.lang.Boolean">
+		<variableExpression><![CDATA[$P{numLinFra}>20]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{numLinFra}>20]]></initialValueExpression>
+	</variable>
+	<group name="albaran" minHeightToStartNewPage="40">
+		<groupExpression><![CDATA[$F{avc_nume}.toString()+$F{avc_serie}+$F{avc_ano}.toString()+$F{avc_nume}]]></groupExpression>
+		<groupHeader>
+			<band height="24" splitType="Prevent">
+				<rectangle radius="4">
+					<reportElement key="rectangle-1" x="88" y="3" width="365" height="17" uuid="62bde727-9459-45e3-81a2-82eca4b1b2f1">
+						<property name="local_mesure_unitheight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+				</rectangle>
+				<staticText>
+					<reportElement key="staticText-1" x="95" y="3" width="47" height="16" uuid="fb1f1c19-f8a1-4cea-aec7-f5a7d2085b6a"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<text><![CDATA[Albaran]]></text>
+				</staticText>
+				<textField pattern="" isBlankWhenNull="false">
+					<reportElement key="textField-2" x="148" y="3" width="156" height="16" uuid="4bf5679e-0c55-4083-982a-b3d01a3ec80a"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA[$F{emp_codi}+"-"+$F{avc_ano}+"/"+$F{avc_serie}+$F{avc_nume}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-2" x="315" y="3" width="50" height="16" uuid="4e3dcd1e-9e6d-45e8-9198-a757cb145128"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[De Fecha]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+					<reportElement key="textField-5" x="376" y="3" width="65" height="16" uuid="10e0a2cf-38ea-4260-809e-f1d080c78d7a"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textFieldExpression><![CDATA[$F{avc_fecalb}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="1" y="0" width="1" height="24" uuid="6ab1bc26-e099-47a4-ace4-770b4cfd0858">
+						<printWhenExpression><![CDATA[$V{swPrLineas}]]></printWhenExpression>
+					</reportElement>
+				</line>
+				<line>
+					<reportElement x="525" y="0" width="1" height="24" uuid="333685ce-5aab-4881-9bb5-f938e584d6bb">
+						<printWhenExpression><![CDATA[$V{swPrLineas}]]></printWhenExpression>
+					</reportElement>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Prevent"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="8"/>
+	</background>
+	<title>
+		<band height="1">
+			<line>
+				<reportElement x="1" y="0" width="524" height="1" uuid="484aecdd-1cf7-4081-a3c7-f7bca0293c1e">
+					<printWhenExpression><![CDATA[$P{numLinFra}>20]]></printWhenExpression>
+				</reportElement>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="25" splitType="Prevent">
+			<printWhenExpression><![CDATA[$P{numLinComCab}.intValue() > 0]]></printWhenExpression>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-2" stretchType="RelativeToBandHeight" mode="Opaque" x="5" y="0" width="520" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="f16b10c7-9ac4-4a37-a613-6aabb9df32c1"/>
+				<subreportParameter name="emp_codi">
+					<subreportParameterExpression><![CDATA[$P{emp_codi}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fvc_serie">
+					<subreportParameterExpression><![CDATA[$P{fvc_serie}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fvc_nume">
+					<subreportParameterExpression><![CDATA[$P{fvc_nume}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="pieCab">
+					<subreportParameterExpression><![CDATA["C"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fvc_ano">
+					<subreportParameterExpression><![CDATA[$P{fvc_ano}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SB_NAME_POB}]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Prevent">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="5" y="0" width="52" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2b7f8300-a480-4272-be7b-1cb7e69d1ce6"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pro_codi}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="65" y="0" width="213" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2f3d2d26-96f0-4ec8-b221-e0903734f05f"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fvl_nompro}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##0.00;-##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="283" y="0" width="65" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="baa444ae-51a2-4342-b8be-830fcc056a7c"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fvl_canti}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.000;-#,##0.000" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="376" y="0" width="42" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="35498d7f-a22a-4e15-855a-462fed55c1a3">
+					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fvl_prven}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
+				<reportElement key="textField" mode="Opaque" x="441" y="0" width="71" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="e1b4def0-a784-4a37-acc4-3c581375e188">
+					<printWhenExpression><![CDATA[$P{valora}]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="CP1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{implinea}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="0" width="1" height="18" uuid="0ed8bec2-1bb3-4cb9-aa2c-a56bd054cf85">
+					<printWhenExpression><![CDATA[$V{swPrLineas}]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="525" y="0" width="1" height="18" uuid="f340f3e4-263e-4107-b9fb-471f35e49945">
+					<printWhenExpression><![CDATA[$V{swPrLineas}]]></printWhenExpression>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="350" y="0" width="14" height="16" uuid="7efb38cc-c324-4785-b808-f65a1274c6de"/>
+				<text><![CDATA[Kg]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="0" width="10" height="16" uuid="322489bb-f436-4bf6-b3ea-092bef7f26c3"/>
+				<text><![CDATA[€]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="515" y="0" width="12" height="16" uuid="257a3b51-863f-4e5f-8648-80ca6ac37385"/>
+				<text><![CDATA[€]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="1">
+			<line>
+				<reportElement x="1" y="0" width="524" height="1" uuid="04f601b8-9da3-45cc-8990-0fdf43c0160c">
+					<printWhenExpression><![CDATA[$P{numLinFra}>20]]></printWhenExpression>
+				</reportElement>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="21">
+			<printWhenExpression><![CDATA[$P{numLinComPie}.intValue()>0]]></printWhenExpression>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" stretchType="RelativeToBandHeight" mode="Opaque" x="5" y="0" width="521" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="e7efe6cb-8055-4751-942e-c3cd0c7d0f71"/>
+				<subreportParameter name="emp_codi">
+					<subreportParameterExpression><![CDATA[$P{emp_codi}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fvc_serie">
+					<subreportParameterExpression><![CDATA[$P{fvc_serie}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fvc_nume">
+					<subreportParameterExpression><![CDATA[$P{fvc_nume}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="pieCab">
+					<subreportParameterExpression><![CDATA["P"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fvc_ano">
+					<subreportParameterExpression><![CDATA[$P{fvc_ano}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SB_NAME_POB}]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

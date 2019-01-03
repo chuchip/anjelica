@@ -1,4 +1,5 @@
 /.svn/*
 /dist/
 /build/
+/target/
 /nbproject/private/
