@@ -1,5 +1,5 @@
 ##       **AnJelica**
-## ANJEstión LIbre de CArnicas
+## AN JEstión LIbre de CArnicas
 
 AnJelica (con J de Java) es un programa para llevar la gestión de una empresa.
 
