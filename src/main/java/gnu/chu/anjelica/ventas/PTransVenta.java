@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.Hashtable;
+import java.util.Map;
 
 public class PTransVenta extends CPanel
 {
@@ -381,7 +382,7 @@ public class PTransVenta extends CPanel
         return  -1;
     }
     
-    public static void getDatosBultos(DatosTabla dt,Hashtable ht,int avcId) throws SQLException
+    public static void getDatosBultos(DatosTabla dt,Map ht,int avcId) throws SQLException
     {
         String s="select * from albventra where avc_id = "+avcId;
         if (!dt.select(s))

@@ -270,6 +270,7 @@ public class pdalbara extends ventanaPad  implements PAD
   int avcImpres=0;
   boolean swAvisoAlbRep;
   boolean AVISOALBREP=false;
+  boolean PERMITMULTIIVA=false;
   sepAlbVen dgAlb;
   boolean isLock=false;
   CButton Bdesgl=new CButton(Iconos.getImageIcon("duplicar"));
@@ -1422,6 +1423,7 @@ public class pdalbara extends ventanaPad  implements PAD
           ERROR_DIASCAD= EU.getValorParam("errordiascad", ERROR_DIASCAD);
           SOLSINSTOCK=EU.getValorParam("solsinstock", SOLSINSTOCK);
           AVISOALBREP=EU.getValorParam("avisoalbrep", AVISOALBREP);
+          PERMITMULTIIVA=EU.getValorParam("permitemultiIva", PERMITMULTIIVA);
           avl_numpalE.setEnabled(swUsaPalets);
           PTrans.iniciarPanel(dtAdd,INC_HOJATRA,this);
           if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
@@ -1524,12 +1526,15 @@ public class pdalbara extends ventanaPad  implements PAD
         opDispSalida.addItem("E-Mail", DSAL_EMAIL);
     }
     
-    Bimpri.addMenu("---","-");
-    Bimpri.addMenu("Alb/H.Traz", ""+IMPR_ALB_TRA);
+    Bimpri.addMenu("---","-");    
+    if (!isEmpPlanta)
+        Bimpri.addMenu("Alb/H.Traz", ""+IMPR_ALB_TRA);
     Bimpri.addMenu("Alb Gráfico", ""+IMPR_ALB_GRAF);
     
     if (IMPALBTEXTO)   
         Bimpri.addMenu("Alb Texto", ""+IMPR_ALB_TEXT);    
+    if (isEmpPlanta)
+        Bimpri.addMenu("Alb/H.Traz", ""+IMPR_ALB_TRA);
     Bimpri.addMenu("H.Traz.", ""+IMPR_HOJA_TRA );
     Bimpri.addMenu("H.Traz.Edic", ""+IMPR_HOJA_TRAF );
    
@@ -2477,31 +2482,16 @@ public class pdalbara extends ventanaPad  implements PAD
         }
       }
     });
-    Butil.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {        
+    Butil.addActionListener((ActionEvent e) -> {        
         imprimir(Butil.getValor(e.getActionCommand()).charAt(0) );
-      }
-    });
+      });
     
-    Bimpri.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {        
+    Bimpri.addActionListener((ActionEvent e) -> {        
         imprimir(e.getActionCommand().equals("---")?ultSelecImpr:Bimpri.getValor(e.getActionCommand()).charAt(0) );
-      }
-    });
-    opAgru.addActionListener(new ActionListener()
-    {
-            @Override
-      public void actionPerformed(ActionEvent e)
-      {
+      });
+    opAgru.addActionListener((ActionEvent e) -> {
         verDatos(dtCons);
-      }
-    });
+      });
     Bfincab.addFocusListener(new FocusAdapter()
     {
         @Override
@@ -2510,36 +2500,25 @@ public class pdalbara extends ventanaPad  implements PAD
         irGridLin();
       }
     });
-    Birgrid.addActionListener(new ActionListener()
-    {
-      @Override
-      public void actionPerformed(ActionEvent e)
-      {
+    Birgrid.addActionListener((e) -> {
         irGrid();
-      }
-    });
+      });
 
-    jt.tableView.getSelectionModel().addListSelectionListener(new
-        ListSelectionListener()
-    {
-            @Override
-      public void valueChanged(ListSelectionEvent e)
-      {
+    jt.tableView.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
         if (e.getValueIsAdjusting() || ( (nav.pulsado == navegador.ADDNEW
-                                          || nav.pulsado == navegador.EDIT) &&
-                                        jt.isEnabled() == false)) // && e.getFirstIndex() == e.getLastIndex())
-          return;
+                || nav.pulsado == navegador.EDIT) &&
+                jt.isEnabled() == false)) // && e.getFirstIndex() == e.getLastIndex())
+            return;
         verDesgLinea(emp_codiE.getValorInt(), avc_anoE.getValorInt(),
-                     avc_seriE.getText(), avc_numeE.getValorInt(),
-                     jt.getValorInt(jt.tableView.getSelectedRow(), JT_NULIAL),
-                     jt.getValorInt(jt.tableView.getSelectedRow(), JT_PROCODI),
-                     jt.getValorInt(jt.tableView.getSelectedRow(), JT_NUMPALE),
-                     jt.getValString(jt.tableView.getSelectedRow(), JT_PRONOMB),  
-                     verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), JT_PRECIO):0,
-                     verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), JT_PRETAR):0,
-                     jt.getValorDec(jt.tableView.getSelectedRow(), JT_CANTI)<0);
-      }
-    });
+                avc_seriE.getText(), avc_numeE.getValorInt(),
+                jt.getValorInt(jt.tableView.getSelectedRow(), JT_NULIAL),
+                jt.getValorInt(jt.tableView.getSelectedRow(), JT_PROCODI),
+                jt.getValorInt(jt.tableView.getSelectedRow(), JT_NUMPALE),
+                jt.getValString(jt.tableView.getSelectedRow(), JT_PRONOMB),
+                verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), JT_PRECIO):0,
+                verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), JT_PRETAR):0,
+                jt.getValorDec(jt.tableView.getSelectedRow(), JT_CANTI)<0);
+      });
     jtDes.addMouseListener(new MouseAdapter()
     {
             @Override
@@ -3663,7 +3642,7 @@ public class pdalbara extends ventanaPad  implements PAD
        return;
     }
 
-    if ( datCab.getCambioIva())
+    if ( datCab.getCambioIva() && !PERMITMULTIIVA)
         throw new SQLException("ALBARAN "+empCodi+"-"+avcAno+"-"+avcSerie+"/"+avcNume+
                             " ERRONEO ... TIENE TIPOS DE IVA DIFERENTES");
 
@@ -3679,9 +3658,12 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avc_basimp", datCab.getValDouble("avc_basimp"));
     dtAdd.setDato("avc_kilos", datCab.getValDouble("kilos"));
     dtAdd.setDato("avc_unid", datCab.getValInt("unidades"));
+   
     if (! cierra)
       return;
     dtAdd.update(stUp);
+    s="select * from albveniva where avc_id = "+datCab.getValInt("avc_id");
+
     if (fvc_numeE.getValorInt() > 0)
       actImpFra();
   }

@@ -1,12 +1,10 @@
 package gnu.chu.anjelica.ventas;
 
 import gnu.chu.anjelica.DatosIVA;
-import gnu.chu.anjelica.pad.MantArticulos;
 import gnu.chu.anjelica.pad.MantTipoIVA;
 import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.sql.*;
 import gnu.chu.utilidades.*;
-import gnu.hylafax.job.TimeParser.ParseException;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
@@ -16,7 +14,7 @@ import java.util.Date;
  *
  * <p>Título: actCabAlbFra</p>
  * <p>Descripción: Calcula Los Importes de los datos de cabecera para albaranes y facturas</p>
- * <p>Copyright: Copyright (c) 2005-2016
+ * <p>Copyright: Copyright (c) 2005-2019
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -35,12 +33,13 @@ import java.util.Date;
 
 public class actCabAlbFra
 {
+  private List<DatosIVA> datosIva;
   DatosTabla dtCab;
   DatosTabla dtLin;
   String s;
   int tipIva;
   boolean swCamTipIva=false;
-  Hashtable ht=new Hashtable();
+  Map<String,Object> ht=new HashMap<>();
   boolean valora=true;
   int numDec=2;
   int numDecPrecio=4;
@@ -149,6 +148,7 @@ public class actCabAlbFra
     ht.put("tra_pobl","");
     ht.put("tra_nif","");
     ht.put("avt_portes","");
+    ht.put("datosIVA",null);
     if (dtLin.getObject("tra_codi")!=null)
     {
          ht.put("avt_portes",dtLin.getString("avt_portes").equals("D")?"DEBIDOS":"PAGADOS");
@@ -172,6 +172,7 @@ public class actCabAlbFra
         " group by l.pro_codi,avl_prven,avl_dtolin,pro_tipiva,pro_indtco,pro_tiplot ";
     if (!dtLin.select(s))
       return false; // SIN LINEAS DE ALBARAN
+    Map<Integer,Double> ivas=new HashMap<>();
     double impLin;
     double kilos=0;
     int unidades=0;
@@ -182,9 +183,10 @@ public class actCabAlbFra
     tipIva=-1;
     do
     {
-      if (tipIva != -1 && tipIva != dtLin.getInt("pro_tipiva") && dtLin.getDouble("avl_canti",true)!=0)
+      int tipIvaArt=dtLin.getInt("pro_tipiva");
+      if (tipIva != -1 && tipIva != tipIvaArt && dtLin.getDouble("avl_canti",true)!=0)
         swCamTipIva = true;
-      tipIva = dtLin.getInt("pro_tipiva");
+      tipIva = tipIvaArt;
       impLin=Formatear.redondea(Formatear.redondea(dtLin.getDouble("avl_canti",true), 2) *
                                 Formatear.redondea(dtLin.getDouble("avl_prven",true),numDecPrecio),numDec);
       if (dtLin.getString("pro_tiplot").equals("V") || dtLin.getString("pro_tiplot").equals("c"))
@@ -192,6 +194,9 @@ public class actCabAlbFra
         kilos+=dtLin.getDouble("avl_canti", true);
         unidades+=dtLin.getInt("avl_unid",true);
       }
+      Double baseImp=ivas.get(tipIva);
+      ivas.put(tipIvaArt,baseImp==null?impLin:baseImp+impLin);
+
       impDtCom+=dtLin.getInt("pro_indtco")==0?0:impLin;    
       impBim += impLin;
       
@@ -219,22 +224,39 @@ public class actCabAlbFra
 
       ht.put("avc_basimp", impBim);
     }
+    
     DatosIVA dtIva=null;
     if (incIva)
     {
-      dtIva= MantTipoIVA.getDatosIva(dtLin, tipIva,fecAlb);
-      
-      if (dtIva!=null)
+      datosIva= new ArrayList<>();
+      for (Map.Entry<Integer,Double> entry : ivas.entrySet() )
       {
-        impIva = Formatear.redondea(impBim * dtIva.getPorcIVA() /
+         dtIva= MantTipoIVA.getDatosIva(dtLin, entry.getKey() ,fecAlb);      
+         if (dtIva!=null)
+         {
+            double impBaseImp=entry.getValue();
+            double impDto=0;
+            impDto += dtopp==0?0:Formatear.redondea(impBaseImp * dtopp / 100, numDec);
+            impDto += dtoCom==0?0:Formatear.redondea(impBaseImp * dtoCom / 100, numDec);
+            impBaseImp = Formatear.redondea(impBaseImp - impDto,numDec);
+            impIva = Formatear.redondea(impBaseImp * dtIva.getPorcIVA() /
                                     100, numDec);
-        if (recequ == -1)
-          impReq = Formatear.redondea(impBim * dtIva.getPorcREQ() /
+            impReq=0;
+            if (recequ == -1)
+                impReq = Formatear.redondea(impBaseImp * dtIva.getPorcREQ() /
                                       100, numDec);
-      }
-      else
-        throw new SQLException(" Tipo de Iva " + tipIva + " NO ENCONTRADO");
+            dtIva.setBaseImp(impBaseImp);
+            dtIva.setImporIva(impIva);
+            dtIva.setImporReq(impReq);
+            datosIva.add(dtIva);
+        }
+        else
+            throw new SQLException(" Tipo de Iva " + tipIva + " NO ENCONTRADO");   
+      }        
     }
+    else
+        datosIva=null;
+    
     double impAlb = Formatear.redondea(impBim + impIva + impReq,numDec);
 
     if (valora)
@@ -245,6 +267,7 @@ public class actCabAlbFra
         ht.put("avc_impiva", impIva);
         ht.put("avc_tipree", recequ == 0?0: dtIva.getPorcREQ());
         ht.put("avc_impree", impReq);
+        ht.put("datosIVA",datosIva);
       }
       ht.put("avc_impalb",impAlb); // Importe de ALbaran con Imp. Incluidos
     }
@@ -258,6 +281,10 @@ public class actCabAlbFra
     }
     PTransVenta.getDatosBultos(dtLin,ht,avcId);
     return true;
+  }
+  public List<DatosIVA>  getDatosIva()
+  {
+      return datosIva;
   }
   public String getValString(String name)
   {
@@ -333,7 +360,7 @@ public class actCabAlbFra
     double impDtoPP=0;
     double impDtoCom=0;
     int tipIva=-1;
-
+  
     double impIva=0;
     double impReq=0,impLin,impLinT=0,impLinDtoComT=0;
     double impBim;
@@ -352,8 +379,10 @@ public class actCabAlbFra
     int avcNume=dtLin.getInt("avc_nume");
     do
     {
+      int tipIvaActual=dtLin.getInt("pro_tipiva");
       if (tipIva!=-1 && tipIva!=dtLin.getInt("pro_tipiva") && dtLin.getDouble("fvl_canti") != 0)
         swCamTipIva=true;
+     
       tipIva=dtLin.getInt("pro_tipiva");
       impLin=Formatear.redondea(Formatear.redondea(dtLin.getDouble("fvl_canti",true), 2) *
                                 Formatear.redondea(dtLin.getDouble("fvl_prven",true),numDecPrecio),2);
@@ -432,7 +461,7 @@ public class actCabAlbFra
     }
     return true;
   }
-  public Hashtable getHashTable()
+  public Map getHashTable()
   {
     return ht;
   }

@@ -72,10 +72,7 @@
     <groupId>commons-digester</groupId>
     <artifactId>commons-digester</artifactId>
     <version>2.1</version>
-</dependency>
-
-
-       
+</dependency>      
         <dependency>
             <groupId>net.sf.gnu-hylafax</groupId>
             <artifactId>gnu-hylafax-core</artifactId>
@@ -153,8 +150,6 @@
     <artifactId>swing-layout-1.0.4</artifactId>
     <version>RELEASE802</version>
 </dependency>
-
-
         <dependency>
             <groupId>net.sourceforge.barbecue</groupId>
             <artifactId>barbecue</artifactId>

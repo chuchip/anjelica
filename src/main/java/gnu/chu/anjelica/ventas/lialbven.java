@@ -1,5 +1,6 @@
 package gnu.chu.anjelica.ventas;
 
+import gnu.chu.anjelica.DatosIVA;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.utilidades.*;
@@ -47,7 +48,8 @@ public class lialbven implements JRDataSource
   int nLinALb;
   String empObsAlb="";
   ResultSet rs;
-  Hashtable ht;
+  Map ht;
+ 
   DatosTabla dtLin;
   DatosTabla dtCab;
   String s;

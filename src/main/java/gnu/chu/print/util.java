@@ -190,7 +190,7 @@ public class util
 
    fOut.write(str.getBytes());
  }
- public static double getValHash(String name,java.util.Hashtable ht)
+ public static double getValHash(String name,java.util.Map ht)
   {
     return ((Double) ht.get(name)).doubleValue();
   }

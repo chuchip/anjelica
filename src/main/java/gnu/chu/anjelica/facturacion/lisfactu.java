@@ -79,7 +79,7 @@ public class lisfactu extends ventana  implements JRDataSource
   JasperPrint jp;
   int nLinALb;
   FileOutputStream fOut;
-  Hashtable htCab;
+  Map htCab;
   boolean swLineas=false;
   String s;
   CPanel Princ = new CPanel();

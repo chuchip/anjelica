@@ -316,7 +316,7 @@ public class EntornoUsuario implements Serializable
     * Devuelve un valor buscado en la tabla parametros
     * @param param Parametro a buscar
     * @param paramDef Valor a devolver si no encuentra el parametro
-    * @return 
+    * @return true si el valor es diferente de 0.
     */
    public boolean getValorParam(String param,boolean paramDef)
    {

@@ -29,8 +29,17 @@ public class DatosIVA {
     private int tipoIVA; // Tipo de IVA
     private double porcIVA; // Porcentaje de IVA
     private double porcREQ; // Porcentaje de Recargo de Equivalencias
-
+    private double baseImp;
+    private double imporIva;
+    private double imporReq;
+            
     public DatosIVA()   {}
+
+    /**
+     *
+     * @param dt
+     * @throws SQLException
+     */
     public DatosIVA(DatosTabla dt) throws SQLException
     {
         setTipoIVA(dt.getInt("tii_codi"));
@@ -60,6 +69,48 @@ public class DatosIVA {
 
     public void setTipoIVA(int tipoIVA) {
         this.tipoIVA = tipoIVA;
+    }
+
+    /**
+     * @return the baseImp
+     */
+    public double getBaseImp() {
+        return baseImp;
+    }
+
+    /**
+     * @param baseImp the baseImp to set
+     */
+    public void setBaseImp(double baseImp) {
+        this.baseImp = baseImp;
+    }
+
+    /**
+     * @return the imporIva
+     */
+    public double getImporIva() {
+        return imporIva;
+    }
+
+    /**
+     * @param imporIva the imporIva to set
+     */
+    public void setImporIva(double imporIva) {
+        this.imporIva = imporIva;
+    }
+
+    /**
+     * @return the imporReq
+     */
+    public double getImporReq() {
+        return imporReq;
+    }
+
+    /**
+     * @param imporReq the imporReq to set
+     */
+    public void setImporReq(double imporReq) {
+        this.imporReq = imporReq;
     }
    
 }

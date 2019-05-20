@@ -6,9 +6,13 @@ import gnu.chu.sql.*;
 import gnu.chu.utilidades.EntornoUsuario;
 import gnu.chu.utilidades.Iconos;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperReport;
@@ -161,6 +165,15 @@ public class Listados
       if (! fichJasper.endsWith(".jasper"))
           fichJasper+= ".jasper";
       InputStream jasperStream= EU.getClass().getResourceAsStream("/gnu/chu/anjelica/reports/"+fichJasper);
+      if (jasperStream==null)
+      {
+          try {
+              File f=getFileJasperReport(EU, fichJasper, "");
+              jasperStream= new FileInputStream(f);
+          } catch (FileNotFoundException ex) {              
+              throw new JRException(ex);
+          }
+      }
       JasperReport jr = (JasperReport) JRLoader.loadObject(jasperStream);
       return jr;
     }

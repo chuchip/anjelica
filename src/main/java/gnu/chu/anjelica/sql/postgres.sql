@@ -534,11 +534,24 @@ avc_ncarg char(17),
 avc_nrelen varchar(17),
 avc_repres varchar(2),
 avc_depos char(1) default 'N' NOT NULL, -- 'N' Normal, 'D' Deposito
-
 constraint ix_albavec primary key (emp_codi,avc_ano,avc_nume,avc_serie)
 );
+create unique index ix_idalbavec on v_albavec  (avc_id);
 create index albavec1 on v_albavec (avc_fecalb,cli_codi);
 create index albavec2 on v_albavec (cli_codi,avc_fecalb);
+--
+-- Tabla con los diferentes tipos de IVA de un albaran
+--
+create table albveniva
+(
+	avc_id int not null,
+    avc_basimp float not null,
+	avc_poriva float not null,
+	avc_porreq float not null,
+	avc_impiva float not null,
+	avc_impreq float not null
+);
+
 --
 -- Tabla de transporte del albaran.
 -- Indica  numero palets, lomos, cajas
@@ -3437,14 +3450,15 @@ insert into parametros values('*','controlprodmin','Control Productos Minoristas
 insert into parametros values('*','tipdespclasi','Tipo despiece Cambio Clasificacion',108);
 INSERT INTO PARAMETROS VALUES('*','avisodiascad','Aviso dias Caducidad',1); -- Comprobar dias
  Caducidad. 1 SI. 0 No
- insert into parametros values('*','tipdesp108A109','Tipo despiece 108 A 109',401);
- insert into parametros values('*','checkCuenCont','Comprueba que la cuenta contable sea valida',1);
- insert into parametros values('*','diasAlbVentaMod','Restrincion modificar Alb.Venta con mas de n dias',0);
- insert into parametros values('*','errordiascad','Error si hay menos de n dias de cad.',-1); 
- insert into parametros values('*','solsinstock','Solucionar productos sin stock',0); 
- insert into parametros values('*','formatocosto','Formato para campos costo','---9.99'); 
- insert into parametros values('*','valde_nuevogrupauto','Nuevo grupo automatico Automatico',1); 
- insert into parametros values('*','avisoalbrep','Aviso de albaran ventas repetido',0); 
+insert into parametros values('*','tipdesp108A109','Tipo despiece 108 A 109',401);
+insert into parametros values('*','checkCuenCont','Comprueba que la cuenta contable sea valida',1);
+insert into parametros values('*','diasAlbVentaMod','Restrincion modificar Alb.Venta con mas de n dias',0);
+insert into parametros values('*','errordiascad','Error si hay menos de n dias de cad.',-1); 
+insert into parametros values('*','solsinstock','Solucionar productos sin stock',0); 
+insert into parametros values('*','formatocosto','Formato para campos costo','---9.99'); 
+insert into parametros values('*','valde_nuevogrupauto','Nuevo grupo automatico Automatico',1); 
+insert into parametros values('*','avisoalbrep','Aviso de albaran ventas repetido',0); 
+insert into parametros values('*','permitemultiIva','Permite albaranes/fras con diferentes IVAS',0); 
 --
 -- Parametros de diferentes prorgrama. Guarda valores por defecto de ciertos programas.
 --
