@@ -3652,7 +3652,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
     selCabAlb(dtAdd,avc_anoE.getValorInt(), emp_codiE.getValorInt() ,avc_seriE.getText(),
               avc_numeE.getValorInt(),true,true);
-    actualizarIvas(datCab.getValInt("avc_id"));
+    actualizarIvas(datCab.getValInt("avc_id"), dtBloq);
     dtAdd.edit(dtAdd.getCondWhere());
     avc_impalbE.setValorDec(datCab.getValDouble("avc_impalb"));
     impDtoE.setValorDec(datCab.getValDouble("avc_impdpp")+datCab.getValDouble("avc_impdco"));
@@ -4028,10 +4028,14 @@ public class pdalbara extends ventanaPad  implements PAD
     double impLin, impBim = 0;
     double impDtCom=0;
     int unidT=0;
-    impDtoCom=0;
-    impDtoPP=0;
+    double impDto=0;    
+    double iDto=0;
+    double iBaseImp;
+    double impLinT=0;
 //    avc_valoraE.setSelected(false);
     Map<Integer,Double> ivas=new HashMap<>();
+    double dtopp  = avc_dtoppE.getValorDec()==0?0:avc_dtoppE.getValorDec()/100;
+    double dtoCom= avc_dtocomE.getValorDec()==0?0:avc_dtocomE.getValorDec() / 100;
     if (dtCon1.select(s))
     {
       do
@@ -4079,8 +4083,6 @@ public class pdalbara extends ventanaPad  implements PAD
                 v.add(dtCon1.getString("tar_preci"));
           }
         }
-
-       
         if (tipIva != -1 &&
             tipIva != dtCon1.getInt("pro_tipiva") &&
             dtCon1.getDouble("avl_canti") != 0)
@@ -4091,14 +4093,22 @@ public class pdalbara extends ventanaPad  implements PAD
         tipIva = dtCon1.getInt("pro_tipiva"); // pro_codiE.getLikeProd().getDatoInt("pro_tipiva");
         v.add(false);
         jt.addLinea(v);
+       
         if (verPrecios)
-        {
+        {          
           impLin = Formatear.redondea(Formatear.redondea(dtCon1.getDouble("avl_canti", true), 2) *
                                       Formatear.redondea(dtCon1.getDouble("avl_prven", true), NUMDECPRECIO), NUMDEC);
-          impBim += impLin;
-          impDtCom+=dtCon1.getInt("pro_indtco")==0?0:impLin;    
+          impLinT+=impLin;
+          iBaseImp = impLin;         
+          iDto=dtopp==0?0:Formatear.redondea(impLin * dtopp, NUMDEC);
+           if (dtCon1.getInt("pro_indtco")!=0)
+            iDto+=dtoCom==0?0:Formatear.redondea(impLin * dtoCom , NUMDEC);
+          iBaseImp-= iDto;
+          impDto+=iDto;
+
+          impBim += iBaseImp;
           Double baseImp=ivas.get(tipIva);
-          ivas.put(tipIva,baseImp==null?impLin:baseImp+impLin);
+          ivas.put(tipIva,baseImp==null?iBaseImp:baseImp+iBaseImp);
         }
         if (dtCon1.getString("pro_tiplot").equals("V") || dtCon1.getString("pro_tiplot").equals("c"))
         {
@@ -4114,39 +4124,31 @@ public class pdalbara extends ventanaPad  implements PAD
       numLinE.setValorDec(nLin);
       kilosE.setValorDec(kilosT);
       unidE.setValorInt(unidT);
-      impLinE.setValorDec(impBim);
+      impLinE.setValorDec(impLinT);
 //      double dtos=Formatear.redondea(avc_dtoppE.getValorDec() + avc_dtocomE.getValorDec(),NUMDEC);
-      double dtopp  = avc_dtoppE.getValorDec()==0?0:avc_dtoppE.getValorDec()/100;
-      double dtoCom= avc_dtoppE.getValorDec()==0?0:avc_dtoppE.getValorDec() / 100;
-      if (avc_dtoppE.getValorDec() != 0)
-        impDtoPP=Formatear.redondea(impBim * dtopp,NUMDEC);
-    
-      if (avc_dtocomE.getValorDec()!=0)
-          impDtoCom=Formatear.redondea(impDtCom*dtoCom,NUMDEC);
       
-      impDtoE.setValorDec(impDtoCom+impDtoPP);
-      impBim = Formatear.redondea(impBim - impDtoE.getValorDec(),NUMDEC);
+//      if (avc_dtoppE.getValorDec() != 0)
+//        impDtoPP=Formatear.redondea(impBim * dtopp,NUMDEC);
+//    
+//      if (avc_dtocomE.getValorDec()!=0)
+//          impDtoCom=Formatear.redondea(impDtCom*dtoCom,NUMDEC);
+      
+      impDtoE.setValorDec(impDto);
+//      impBim = Formatear.redondea(impBim - impDtoE.getValorDec(),NUMDEC);
         if (empCodi < 90 && incIva) {
-            double iBaseImp, iIva, iReq;
-            double impDto = 0;
+            double iIva, iReq;
+           
             int recequ = cli_codiE.getLikeCliente().getInt("cli_recequ");
             DatosIVA dtIva = null;
             for (Map.Entry<Integer, Double> entry : ivas.entrySet()) {
                 dtIva = MantTipoIVA.getDatosIva(dtStat, entry.getKey(), avc_fecalbE.getDate());
                 if (dtIva != null) {
                     iBaseImp = entry.getValue();
-
-                    impDto += avc_dtoppE.getValorDec() == 0 ? 0 : Formatear.redondea(iBaseImp * dtopp, NUMDEC);
-                    impDto += avc_dtocomE.getValorDec() == 0 ? 0 : Formatear.redondea(iBaseImp * dtoCom, NUMDEC);
-                    iBaseImp = Formatear.redondea(iBaseImp - impDto, NUMDEC);
                     iIva = Formatear.redondea(iBaseImp * dtIva.getPorcIVA()
                             / 100, NUMDEC);
                     iReq = recequ == -1 ? Formatear.redondea(iBaseImp * dtIva.getPorcREQ()
                             / 100, NUMDEC) : 0;
-
                     impIva += iIva+iReq;
-
-                  
                 } else {
                     throw new SQLException(" Tipo de Iva " + tipIva + " NO ENCONTRADO");
                 }
@@ -5970,9 +5972,8 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avc_revpre",avc_revpreE.getValor());
     dtAdd.setDato("avc_obser", Formatear.strCorta(avc_obserE.getText(),255));
     dtAdd.update(stUp);
-    actualizarIvas(datCab.getValInt("avc_id"));
-    // Actualizo Ivas de albaran
-    
+    actualizarIvas(datCab.getValInt("avc_id"),dtBloq);
+   
     // Actualizo tabla de clientes
     dtAdd.executeUpdate("update clientes set "+
             " cli_feulve = to_date('"+avc_fecalbE.getFecha("dd-MM-yyyy")+"','dd-MM-yyyy')  "+
@@ -5994,20 +5995,20 @@ public class pdalbara extends ventanaPad  implements PAD
         actAcumLinAlb(emp_codiE.getValorInt(),avc_anoE.getValorInt(), avc_seriE.getText(),avc_numeE.getValorInt());
     }
   }
-  void actualizarIvas(double avcId) throws SQLException
+  void actualizarIvas(double avcId,DatosTabla dt) throws SQLException
   {
     s="delete from albveniva where avc_id = "+avcId;
-    dtAdd.executeUpdate(s);
+    dt.executeUpdate(s);
     for ( DatosIVA iva: datCab.getDatosIva())
     {
-        dtAdd.addNew("albveniva");
-        dtAdd.setDato("avc_id",datCab.getValInt("avc_id"));        
-        dtAdd.setDato("avc_basimp",iva.getBaseImp());
-        dtAdd.setDato("avc_poriva",iva.getPorcIVA());
-        dtAdd.setDato("avc_porreq",iva.getPorcREQ());
-        dtAdd.setDato("avc_impiva",iva.getImporIva());
-        dtAdd.setDato("avc_impreq",iva.getImporReq());
-        dtAdd.update(stUp);
+        dt.addNew("albveniva");
+        dt.setDato("avc_id",datCab.getValInt("avc_id"));        
+        dt.setDato("avc_basimp",iva.getBaseImp());
+        dt.setDato("avc_poriva",iva.getPorcIVA());
+        dt.setDato("avc_porreq",iva.getPorcREQ());
+        dt.setDato("avc_impiva",iva.getImporIva());
+        dt.setDato("avc_impreq",iva.getImporReq());
+        dt.update();
     }
   }
   void guardaPalets() throws SQLException

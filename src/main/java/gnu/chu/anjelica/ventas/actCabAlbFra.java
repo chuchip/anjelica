@@ -181,6 +181,8 @@ public class actCabAlbFra
     
     int nLin=0;
     tipIva=-1;
+    double iBaseImp,iIva,iReq;    
+    double iDtoCom,iDtoPP;
     do
     {
       int tipIvaArt=dtLin.getInt("pro_tipiva");
@@ -194,12 +196,17 @@ public class actCabAlbFra
         kilos+=dtLin.getDouble("avl_canti", true);
         unidades+=dtLin.getInt("avl_unid",true);
       }
+      iBaseImp = impLin;
+      iDtoPP= dtopp==0?0:Formatear.redondea(impLin * dtopp / 100, numDec);  
+      iDtoCom=0;
+      if (dtLin.getInt("pro_indtco")!=0)
+        iDtoCom = dtoCom==0?0:Formatear.redondea(impLin * dtoCom / 100, numDec);                  
+      impDtoPP+=iDtoPP;
+      impDtoCom+=iDtoCom;
+      iBaseImp-= iDtoCom+iDtoPP;     
       Double baseImp=ivas.get(tipIva);
-      ivas.put(tipIvaArt,baseImp==null?impLin:baseImp+impLin);
-
-      impDtCom+=dtLin.getInt("pro_indtco")==0?0:impLin;    
-      impBim += impLin;
-      
+      ivas.put(tipIvaArt,baseImp==null?iBaseImp:baseImp+iBaseImp);
+      impBim += iBaseImp;      
       nLin++;
     }  while (dtLin.next());
   
@@ -209,19 +216,18 @@ public class actCabAlbFra
     ht.put("unidades", unidades);
     ht.put("nLin", nLin);
 
-    if (dtopp != 0)
-      impDtoPP = Formatear.redondea(impBim * dtopp / 100, numDec);
-     if (dtoCom != 0)
-      impDtoCom = Formatear.redondea(impDtCom * dtoCom / 100, numDec);
+//    if (dtopp != 0)
+//      impDtoPP = Formatear.redondea(impBim * dtopp / 100, numDec);
+//     if (dtoCom != 0)
+//      impDtoCom = Formatear.redondea(impDtCom * dtoCom / 100, numDec);
      
-    impBim = Formatear.redondea(impBim - impDtoPP-impDtoCom,numDec);
+    impBim = Formatear.redondea(impBim,numDec);
     if (valora)
     {
       ht.put("avc_dtopp", dtopp);
       ht.put("avc_impdpp", impDtoPP);
       ht.put("avc_dtocom", dtoCom);
       ht.put("avc_impdco", impDtoCom);
-
       ht.put("avc_basimp", impBim);
     }
     
@@ -229,23 +235,16 @@ public class actCabAlbFra
     if (incIva)
     {
       datosIva= new ArrayList<>();
-      double iBaseImp,iIva,iReq;
-      double impDto=0;
       for (Map.Entry<Integer,Double> entry : ivas.entrySet() )
       {
          dtIva= MantTipoIVA.getDatosIva(dtLin, entry.getKey() ,fecAlb);      
          if (dtIva!=null)
          {
-            iBaseImp=entry.getValue();
-            
-            impDto += dtopp==0?0:Formatear.redondea(iBaseImp * dtopp / 100, numDec);            
-            impDto += dtoCom==0?0:Formatear.redondea(iBaseImp * dtoCom / 100, numDec);            
-            iBaseImp = Formatear.redondea(iBaseImp - impDto,numDec);
+            iBaseImp=entry.getValue();                
             iIva = Formatear.redondea(iBaseImp * dtIva.getPorcIVA() /
                                     100, numDec);
             iReq = recequ==-1?Formatear.redondea(iBaseImp * dtIva.getPorcREQ() /
-                                      100, numDec):0;
-                      
+                                      100, numDec):0;                      
             impIva += iIva;
             impReq += iReq;
          

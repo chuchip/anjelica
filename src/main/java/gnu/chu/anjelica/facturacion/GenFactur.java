@@ -54,6 +54,9 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GenFactur extends ventana {
   int fvcId;
@@ -85,7 +88,9 @@ public class GenFactur extends ventana {
   String s;
   DatosTabla dtAlb;
   DatosTabla dtAdd;
-
+  Map<Integer,Double> ivas=new HashMap<>();
+  private List<DatosIVA> datosIva;
+  
   public GenFactur()
   {
     try  {
@@ -703,6 +708,8 @@ public void iniciarVentana() throws Exception
       }
       nFras=0;
       int tipIvaPro=0;
+      datosIva.clear();
+      ivas.clear();
       resetValores();
      
       do
@@ -717,24 +724,21 @@ public void iniciarVentana() throws Exception
           guardaFra();
         }
 
-        s="SELECT * FROM v_albavel  "+
-            " WHERE emp_codi = "+emp_codiE.getValorInt()+
-            " and avc_ano = "+dtAlb.getInt("avc_ano")+
-            " and avc_serie = '"+dtAlb.getString("avc_serie")+"'"+
-            " and avc_nume = "+dtAlb.getInt("avc_nume")+
-            " ORDER BY avl_numlin ";
+        s="SELECT l.*,a.pro_tipiva FROM v_albavel as l, v_articulo  a"+
+            " WHERE l.emp_codi = "+emp_codiE.getValorInt()+
+            " and l.avc_ano = "+dtAlb.getInt("avc_ano")+
+            " and l.avc_serie = '"+dtAlb.getString("avc_serie")+"'"+
+            " and l.avc_nume = "+dtAlb.getInt("avc_nume")+
+            " and l.pro_codi = a.pro_codi "+
+            " ORDER BY l.avl_numlin ";
         if (dtCon1.select(s))
         {
-          s=" SELECT pro_tipiva FROM v_articulo "+
-              " WHERE  pro_codi = "+dtCon1.getInt("pro_codi");
-          if (! dtStat.select(s))
-            throw new Exception ("Error tratando Albaran: "+dtAlb.getInt("avc_nume")+ "\n NO ENCONTRADO ARTICULO "+dtCon1.getInt("pro_codi")+" EN TABLA MAESTRA");
-          tipIvaPro=dtStat.getInt("pro_tipiva");
-          if (tipIva!=-1 && tipIva!=tipIvaPro)
-            guardaFra(); // Tipos de Iva distintos.
-          tipIva=tipIvaPro;
+          double impLinAlb=0;
           do
-          {
+          {                
+             impLinAlb=dtCon1.getDouble("avl_prbase")*dtCon1.getDouble("avl_canti");
+             Double baseImp=ivas.get(dtCon1.getInt("pro_tipiva"));
+             ivas.put(dtCon1.getInt("pro_tipiva"),baseImp==null?impLinAlb:baseImp+impLinAlb);
 //            debug("Linea de Factura: "+nLinFra+" Albaran: "+dtAlb.getInt("avc_nume"));
             stUp.executeUpdate("update v_albavel set fvl_numlin = "+nLinFra+
                                "  where emp_codi = "+emp_codiE.getValorInt()+
