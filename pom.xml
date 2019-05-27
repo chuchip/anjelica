@@ -106,14 +106,21 @@
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-            <version>6.7.0</version>
+            <version>6.8.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports-fonts -->
 <dependency>
     <groupId>net.sf.jasperreports</groupId>
     <artifactId>jasperreports-fonts</artifactId>
-    <version>6.0.0</version>
+    <version>6.8.0</version>
 </dependency>
+<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi</artifactId>
+    <version>4.1.0</version>
+</dependency>
+
 <!-- https://mvnrepository.com/artifact/org.jfree/jcommon -->
 <dependency>
     <groupId>org.jfree</groupId>

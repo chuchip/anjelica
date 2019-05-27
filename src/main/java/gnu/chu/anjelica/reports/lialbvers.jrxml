@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2018-03-04T20:22:31 -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lialbvers" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="d7ded3b2-84f7-45f5-954f-3e965a7c9821">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -23,6 +22,9 @@
 	<parameter name="emp_obsalb" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="avc_serie" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["A"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="avc_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1682]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT avl_numpal,l.pro_codi,SUM(l.avl_canti) as avl_canti,
@@ -134,6 +136,18 @@ order by 1,2]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{kilosPale}]]></textFieldExpression>
 				</textField>
+				<line>
+					<reportElement key="line-2" mode="Opaque" x="526" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="30ec3f7e-2ad9-4203-a1af-4e993f03efb3"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.5" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement key="line-4" mode="Opaque" x="0" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="fff912b6-9ffd-4147-9e78-d968e2a3d176"/>
+					<graphicElement fill="Solid">
+						<pen lineWidth="0.5" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
 			</band>
 		</groupFooter>
 	</group>
@@ -286,7 +300,7 @@ order by 1,2]]>
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="40" splitType="Stretch">
+		<band height="37" splitType="Stretch">
 			<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField" mode="Opaque" x="292" y="0" width="65" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4c6ce4d0-3a20-42f9-a37e-c2421a3bf0a6"/>
 				<box>
@@ -330,7 +344,7 @@ order by 1,2]]>
 				<textFieldExpression><![CDATA[$P{emp_obsalb}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-5" mode="Opaque" x="1" y="36" width="526" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="984ba606-4300-4a8e-a4ed-6a4e9afc8ccd"/>
+				<reportElement key="line-5" mode="Opaque" x="1" y="35" width="526" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="984ba606-4300-4a8e-a4ed-6a4e9afc8ccd"/>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
@@ -342,7 +356,9 @@ order by 1,2]]>
 				</graphicElement>
 			</line>
 			<line>
-				<reportElement key="line-6" mode="Opaque" x="526" y="1" width="1" height="34" forecolor="#000000" backcolor="#FFFFFF" uuid="93fcfad8-3a5d-4872-adb4-83a2e9d9298d"/>
+				<reportElement key="line-6" mode="Opaque" x="526" y="0" width="1" height="34" forecolor="#000000" backcolor="#FFFFFF" uuid="93fcfad8-3a5d-4872-adb4-83a2e9d9298d">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
 				<graphicElement fill="Solid">
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>

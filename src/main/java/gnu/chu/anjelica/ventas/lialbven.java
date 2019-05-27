@@ -175,7 +175,7 @@ public class lialbven implements JRDataSource
    mp.put("empNif",MantPaises.getInicialesPais(lk.getInt("pai_codi"),dtCon1)+
          lk.getString("emp_nif"));
    mp.put("avs_nume", avsNume);
-  
+   
    if (avsNume!=0)
    { // Busco la fecha de albaran de servicio.
     DatosTabla dtTemp=new DatosTabla(ct);
@@ -191,6 +191,9 @@ public class lialbven implements JRDataSource
         Listados.getNombListado(EU.em_cod,avsNume>0?Listados.LINENT_AVC:
             Listados.LIN_AVC, dtCon1));
    
+    mp.put("SUBREPORTIVA_FILE_NAME",EU.pathReport +"/"+
+        Listados.getNombListado(EU.em_cod,Listados.LINIMP_AVC, dtCon1));
+    
    if (!getDatosAlb(rs.getInt("avc_ano"),rs.getInt("avc_empcod"),rs.getString("avc_serie"),
                      rs.getInt("avc_nume")))
          return 0;
@@ -310,8 +313,10 @@ public class lialbven implements JRDataSource
             return (double)ht.get("avc_dtopp")+(double)ht.get("avc_dtocom");
         if (nombre.equals("avc_impdpp"))
             return (double)ht.get("avc_impdpp")+(double)ht.get("avc_impdco");
-        if (nombre.equals("avt_numcaj"))
-            return (int)ht.get("avt_numcaj");
+        if (nombre.equals("avt_numcaj") || nombre.equals("avc_id") )
+            return (int)ht.get(nombre);
+        if (nombre.equals("multiiva"))
+            return datCab.getCambioIva()?1:0;
         if (nombre.equals("avt_numpal"))
             return (int)ht.get("avt_numpal");
         if (nombre.equals("avt_numbol"))
@@ -320,7 +325,7 @@ public class lialbven implements JRDataSource
             return (int)ht.get("avt_numcol");
          if (nombre.equals("avt_portes") || nombre.equals("tra_pobl")  || nombre.equals("tra_nomb") || nombre.equals("tra_direc") || nombre.equals("tra_nif"))
             return (String)ht.get(nombre);
-    throw new Exception("Campo "+jRField.getName()+" NO encontrado");
+    throw new Exception("Error: Campo "+nombre+" NO encontrado");
     } catch (Exception k)
     {
         k.printStackTrace();
@@ -412,9 +417,9 @@ public class lialbven implements JRDataSource
                 Formatear.space(2) +
                 Formatear.ajusIzq(proNomb,30) +
                 Formatear.space(2) +
-                Formatear.format(Formatear.Redondea(dtLin.getDouble("avl_canti",true), 2),"---,--9.99") +
+                Formatear.format(Formatear.redondea(dtLin.getDouble("avl_canti",true), 2),"---,--9.99") +
                 Formatear.space(2) +
-                (valora?Formatear.format(Formatear.Redondea(dtLin.getDouble("avl_prven",true),3), "--9.999"):"       ") +
+                (valora?Formatear.format(Formatear.redondea(dtLin.getDouble("avl_prven",true),3), "--9.999"):"       ") +
                 Formatear.space(2) +
                 (valora?Formatear.format(impLin, "---,--9.99"):"          "));
           totUni+=dtLin.getInt("avl_unid",true);

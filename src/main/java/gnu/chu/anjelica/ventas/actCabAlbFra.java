@@ -102,8 +102,8 @@ public class actCabAlbFra
    * @param avcNume
    * @param incIva
    * @param dtopp
-   * @param dtoCom
-   * @param recequ
+   * @param dtoCom 
+   * @param recequ Indica si el cliente lleva recargo equivalencia.
    * @return
    * @throws SQLException
    */
@@ -229,25 +229,31 @@ public class actCabAlbFra
     if (incIva)
     {
       datosIva= new ArrayList<>();
+      double iBaseImp,iIva,iReq;
+      double impDto=0;
       for (Map.Entry<Integer,Double> entry : ivas.entrySet() )
       {
          dtIva= MantTipoIVA.getDatosIva(dtLin, entry.getKey() ,fecAlb);      
          if (dtIva!=null)
          {
-            double impBaseImp=entry.getValue();
-            double impDto=0;
-            impDto += dtopp==0?0:Formatear.redondea(impBaseImp * dtopp / 100, numDec);
-            impDto += dtoCom==0?0:Formatear.redondea(impBaseImp * dtoCom / 100, numDec);
-            impBaseImp = Formatear.redondea(impBaseImp - impDto,numDec);
-            impIva = Formatear.redondea(impBaseImp * dtIva.getPorcIVA() /
+            iBaseImp=entry.getValue();
+            
+            impDto += dtopp==0?0:Formatear.redondea(iBaseImp * dtopp / 100, numDec);            
+            impDto += dtoCom==0?0:Formatear.redondea(iBaseImp * dtoCom / 100, numDec);            
+            iBaseImp = Formatear.redondea(iBaseImp - impDto,numDec);
+            iIva = Formatear.redondea(iBaseImp * dtIva.getPorcIVA() /
                                     100, numDec);
-            impReq=0;
-            if (recequ == -1)
-                impReq = Formatear.redondea(impBaseImp * dtIva.getPorcREQ() /
-                                      100, numDec);
-            dtIva.setBaseImp(impBaseImp);
-            dtIva.setImporIva(impIva);
-            dtIva.setImporReq(impReq);
+            iReq = recequ==-1?Formatear.redondea(iBaseImp * dtIva.getPorcREQ() /
+                                      100, numDec):0;
+                      
+            impIva += iIva;
+            impReq += iReq;
+         
+            if (recequ==0)
+                dtIva.setPorcREQ(0);
+            dtIva.setBaseImp(iBaseImp);
+            dtIva.setImporIva(iIva);
+            dtIva.setImporReq(iReq);
             datosIva.add(dtIva);
         }
         else
@@ -265,7 +271,7 @@ public class actCabAlbFra
       {
         ht.put("avc_tipiva", dtIva.getPorcIVA());
         ht.put("avc_impiva", impIva);
-        ht.put("avc_tipree", recequ == 0?0: dtIva.getPorcREQ());
+        ht.put("avc_tipree", dtIva.getPorcREQ());
         ht.put("avc_impree", impReq);
         ht.put("datosIVA",datosIva);
       }

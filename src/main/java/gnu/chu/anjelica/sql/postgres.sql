@@ -3964,6 +3964,7 @@ insert into anjelica.listados values(0,8, 'Listado Albaran Ventas (Linea)','lial
 insert into anjelica.listados values(0,9, 'Listado Albaran Ventas Desgl.(Linea)','lialbvedep',null);
 insert into anjelica.listados values(0,10, 'Listado Hojas Palets','etiqPalets',null);
 insert into anjelica.listados values(0,11,'Listado Tarifas Precios','tarifa','vp25.jpg');
+insert into anjelica.listados values(0,12, 'Listado Detalle Impuesto Alb. Ventas','lialbvers',null);
 --
 -- Tabla de Envases
 --

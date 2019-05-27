@@ -1,3 +1,16 @@
+-- cambios del 21/5/2019
+insert into anjelica.listados values(0,12, 'Listado Detalle Impuesto Alb. Ventas','lialbvers',null);
+insert into parametros values('*','permitemultiIva','Permite albaranes/fras con diferentes IVAS',0); 
+create table albveniva
+(
+	avc_id int not null,
+    avc_basimp float not null,
+	avc_poriva float not null,
+	avc_porreq float not null,
+	avc_impiva float not null,
+	avc_impreq float not null
+);
+---
 alter table tarifa alter tar_preci type float;
 --
 CREATE INDEX ix_mvtalm4 on anjelica.mvtosalm(mvt_tipdoc,mvt_empcod,mvt_ejedoc,mvt_serdoc,MVT_NUMDOC);

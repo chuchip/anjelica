@@ -1527,9 +1527,13 @@ public class pdalbara extends ventanaPad  implements PAD
     }
     
     Bimpri.addMenu("---","-");    
-    if (!isEmpPlanta)
+    if (!isEmpPlanta)       
         Bimpri.addMenu("Alb/H.Traz", ""+IMPR_ALB_TRA);
-    Bimpri.addMenu("Alb Gráfico", ""+IMPR_ALB_GRAF);
+    else
+    {
+       ultSelecImpr=IMPR_ALB_GRAF;
+       Bimpri.addMenu("Alb Gráfico", ""+IMPR_ALB_GRAF);
+    }
     
     if (IMPALBTEXTO)   
         Bimpri.addMenu("Alb Texto", ""+IMPR_ALB_TEXT);    
@@ -3648,7 +3652,7 @@ public class pdalbara extends ventanaPad  implements PAD
 
     selCabAlb(dtAdd,avc_anoE.getValorInt(), emp_codiE.getValorInt() ,avc_seriE.getText(),
               avc_numeE.getValorInt(),true,true);
-
+    actualizarIvas(datCab.getValInt("avc_id"));
     dtAdd.edit(dtAdd.getCondWhere());
     avc_impalbE.setValorDec(datCab.getValDouble("avc_impalb"));
     impDtoE.setValorDec(datCab.getValDouble("avc_impdpp")+datCab.getValDouble("avc_impdco"));
@@ -3661,9 +3665,8 @@ public class pdalbara extends ventanaPad  implements PAD
    
     if (! cierra)
       return;
-    dtAdd.update(stUp);
-    s="select * from albveniva where avc_id = "+datCab.getValInt("avc_id");
-
+    dtAdd.update(stUp);   
+    
     if (fvc_numeE.getValorInt() > 0)
       actImpFra();
   }
@@ -4022,12 +4025,13 @@ public class pdalbara extends ventanaPad  implements PAD
     boolean swCamTipIva = false;
 //    double recEqu;
     double impIva = 0, kilosT = 0;
-    double impReq = 0, impLin, impBim = 0;
+    double impLin, impBim = 0;
     double impDtCom=0;
     int unidT=0;
     impDtoCom=0;
     impDtoPP=0;
 //    avc_valoraE.setSelected(false);
+    Map<Integer,Double> ivas=new HashMap<>();
     if (dtCon1.select(s))
     {
       do
@@ -4093,6 +4097,8 @@ public class pdalbara extends ventanaPad  implements PAD
                                       Formatear.redondea(dtCon1.getDouble("avl_prven", true), NUMDECPRECIO), NUMDEC);
           impBim += impLin;
           impDtCom+=dtCon1.getInt("pro_indtco")==0?0:impLin;    
+          Double baseImp=ivas.get(tipIva);
+          ivas.put(tipIva,baseImp==null?impLin:baseImp+impLin);
         }
         if (dtCon1.getString("pro_tiplot").equals("V") || dtCon1.getString("pro_tiplot").equals("c"))
         {
@@ -4103,40 +4109,50 @@ public class pdalbara extends ventanaPad  implements PAD
       impBim=Formatear.redondea(impBim,NUMDEC);
       avl_prvenE.setCambio(true);
       jt.requestFocusInicio();
-      if (swCamTipIva)
+      if (swCamTipIva && !PERMITMULTIIVA)
         msgBox("ALBARAN ERRONEO ... TIENE TIPOS DE IVA DIFERENTES");
       numLinE.setValorDec(nLin);
       kilosE.setValorDec(kilosT);
       unidE.setValorInt(unidT);
       impLinE.setValorDec(impBim);
 //      double dtos=Formatear.redondea(avc_dtoppE.getValorDec() + avc_dtocomE.getValorDec(),NUMDEC);
-
+      double dtopp  = avc_dtoppE.getValorDec()==0?0:avc_dtoppE.getValorDec()/100;
+      double dtoCom= avc_dtoppE.getValorDec()==0?0:avc_dtoppE.getValorDec() / 100;
       if (avc_dtoppE.getValorDec() != 0)
-        impDtoPP=Formatear.redondea(impBim * (avc_dtoppE.getValorDec() / 100),NUMDEC);
+        impDtoPP=Formatear.redondea(impBim * dtopp,NUMDEC);
     
       if (avc_dtocomE.getValorDec()!=0)
-          impDtoCom=Formatear.redondea(impDtCom*(avc_dtocomE.getValorDec()/100),NUMDEC);
+          impDtoCom=Formatear.redondea(impDtCom*dtoCom,NUMDEC);
       
       impDtoE.setValorDec(impDtoCom+impDtoPP);
       impBim = Formatear.redondea(impBim - impDtoE.getValorDec(),NUMDEC);
-      if (empCodi < 90 && incIva)
-      {
-        DatosIVA dtIva=MantTipoIVA.getDatosIva(dtStat, tipIva,avc_fecalbE.getDate());
+        if (empCodi < 90 && incIva) {
+            double iBaseImp, iIva, iReq;
+            double impDto = 0;
+            int recequ = cli_codiE.getLikeCliente().getInt("cli_recequ");
+            DatosIVA dtIva = null;
+            for (Map.Entry<Integer, Double> entry : ivas.entrySet()) {
+                dtIva = MantTipoIVA.getDatosIva(dtStat, entry.getKey(), avc_fecalbE.getDate());
+                if (dtIva != null) {
+                    iBaseImp = entry.getValue();
 
-        if (dtIva!=null)
-        {
-          impIva = Formatear.redondea(impBim * dtIva.getPorcIVA() / 100,NUMDEC);
-          if (cli_codiE.getLikeCliente().getInt("cli_recequ") == -1)
-            impReq = Formatear.redondea(impBim * dtIva.getPorcREQ() / 100,NUMDEC);
+                    impDto += avc_dtoppE.getValorDec() == 0 ? 0 : Formatear.redondea(iBaseImp * dtopp, NUMDEC);
+                    impDto += avc_dtocomE.getValorDec() == 0 ? 0 : Formatear.redondea(iBaseImp * dtoCom, NUMDEC);
+                    iBaseImp = Formatear.redondea(iBaseImp - impDto, NUMDEC);
+                    iIva = Formatear.redondea(iBaseImp * dtIva.getPorcIVA()
+                            / 100, NUMDEC);
+                    iReq = recequ == -1 ? Formatear.redondea(iBaseImp * dtIva.getPorcREQ()
+                            / 100, NUMDEC) : 0;
+
+                    impIva += iIva+iReq;
+
+                  
+                } else {
+                    throw new SQLException(" Tipo de Iva " + tipIva + " NO ENCONTRADO");
+                }
+            }
         }
-        else
-        {
-          msgBox("Tipo de Iva (" +tipIva+
-                 ") de Prod: " + dtCon1.getString("pro_Codi") +
-                 " NO ENCONTRADO");
-        }
-      }
-      avc_impalbE.setValorDec(Formatear.redondea(impBim + impIva + impReq,NUMDEC));
+      avc_impalbE.setValorDec(Formatear.redondea(impBim + impIva ,NUMDEC));
       avc_impcobE.setValorDec(avcImpcob);
      
       swActDesg = true;
@@ -5954,6 +5970,9 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("avc_revpre",avc_revpreE.getValor());
     dtAdd.setDato("avc_obser", Formatear.strCorta(avc_obserE.getText(),255));
     dtAdd.update(stUp);
+    actualizarIvas(datCab.getValInt("avc_id"));
+    // Actualizo Ivas de albaran
+    
     // Actualizo tabla de clientes
     dtAdd.executeUpdate("update clientes set "+
             " cli_feulve = to_date('"+avc_fecalbE.getFecha("dd-MM-yyyy")+"','dd-MM-yyyy')  "+
@@ -5975,7 +5994,22 @@ public class pdalbara extends ventanaPad  implements PAD
         actAcumLinAlb(emp_codiE.getValorInt(),avc_anoE.getValorInt(), avc_seriE.getText(),avc_numeE.getValorInt());
     }
   }
-  
+  void actualizarIvas(double avcId) throws SQLException
+  {
+    s="delete from albveniva where avc_id = "+avcId;
+    dtAdd.executeUpdate(s);
+    for ( DatosIVA iva: datCab.getDatosIva())
+    {
+        dtAdd.addNew("albveniva");
+        dtAdd.setDato("avc_id",datCab.getValInt("avc_id"));        
+        dtAdd.setDato("avc_basimp",iva.getBaseImp());
+        dtAdd.setDato("avc_poriva",iva.getPorcIVA());
+        dtAdd.setDato("avc_porreq",iva.getPorcREQ());
+        dtAdd.setDato("avc_impiva",iva.getImporIva());
+        dtAdd.setDato("avc_impreq",iva.getImporReq());
+        dtAdd.update(stUp);
+    }
+  }
   void guardaPalets() throws SQLException
   {
       dtAdd.executeUpdate("delete from paletventa where avc_id="+avc_idE.getValorInt());
