@@ -59,7 +59,6 @@ import java.util.List;
 import java.util.Map;
 
 public class GenFactur extends ventana {
-  int fvcId;
   conexion ctCom;
   String fecAlb;
   int nFras;
@@ -78,7 +77,7 @@ public class GenFactur extends ventana {
   int fvcCobrad=-1; // NO cobrado
   double fvcImpcob=0; // Importe Cobrado
   int numFra[]=new int[4];
-  int nLinFra,numFraB, tipIva,cliCodi,fvcNumfra;
+  int nLinFra,numFraB, cliCodi,fvcNumfra;
   boolean opAgrCli;
   String avcClinom="",avcSerie="",fvcSerie;
   boolean esGiro=false,swAutNumFra;
@@ -89,7 +88,7 @@ public class GenFactur extends ventana {
   DatosTabla dtAlb;
   DatosTabla dtAdd;
   Map<Integer,Double> ivas=new HashMap<>();
-  private List<DatosIVA> datosIva;
+  private List<DatosIVA> datosIva=new ArrayList<>();
   
   public GenFactur()
   {
@@ -707,7 +706,7 @@ public void iniciarVentana() throws Exception
           numFraB=fvc_numeE.getValorInt();
       }
       nFras=0;
-      int tipIvaPro=0;
+//      int tipIvaPro=0;
       datosIva.clear();
       ivas.clear();
       resetValores();
@@ -736,7 +735,7 @@ public void iniciarVentana() throws Exception
           double impLinAlb=0;
           do
           {                
-             impLinAlb=dtCon1.getDouble("avl_prbase")*dtCon1.getDouble("avl_canti");
+             impLinAlb=dtCon1.getDouble("avl_prbase")*dtCon1.getDouble("avl_canti");             
              Double baseImp=ivas.get(dtCon1.getInt("pro_tipiva"));
              ivas.put(dtCon1.getInt("pro_tipiva"),baseImp==null?impLinAlb:baseImp+impLinAlb);
 //            debug("Linea de Factura: "+nLinFra+" Albaran: "+dtAlb.getInt("avc_nume"));
@@ -826,13 +825,13 @@ public void iniciarVentana() throws Exception
       guardaFra();
       if ( swAutNumFra)
       {
-            s = "UPDATE v_numerac SET  num_factur= " + (numFra[0]-1) +
-                    ", num_factub="+(numFra[1]-1)+
-                    " , num_factuc="+(numFra[2]-1)+
-                    " , num_factud="+(numFra[3]-1)+
-              " WHERE emp_codi = " + emp_codiE.getValorInt() +
-              " and eje_nume = " + eje_numeE.getValorInt();
-            stUp.executeUpdate(dtAdd.getStrSelect(s));
+        s = "UPDATE v_numerac SET  num_factur= " + (numFra[0]-1) +
+                ", num_factub="+(numFra[1]-1)+
+                " , num_factuc="+(numFra[2]-1)+
+                " , num_factud="+(numFra[3]-1)+
+          " WHERE emp_codi = " + emp_codiE.getValorInt() +
+          " and eje_nume = " + eje_numeE.getValorInt();
+        stUp.executeUpdate(dtAdd.getStrSelect(s));
       }
       mensajeErr(nFras+" Facturas ... GENERADAS");
       mensaje("");
@@ -941,7 +940,7 @@ public void iniciarVentana() throws Exception
     dtAdd.setDato("fvc_modif", "A");
 
     double impDtoPP = 0,impDtoCom=0;
-    double impIva = 0, impReq = 0;
+    //double impIva = 0, impReq = 0;
     //double dtos = dtoCom + dtoPP;
 
     if (dtoPP != 0)
@@ -950,27 +949,40 @@ public void iniciarVentana() throws Exception
       impDtoCom = Formatear.redondea(impDtCom* dtoCom / 100, numDec);
     double impBim = Formatear.redondea(impLin - impDtoPP - impDtoCom, numDec);
     DatosIVA datoIva=null;
+    double impIvaT=0,impReqT=0;
     if (incIva)
     {
-      datoIva= MantTipoIVA.getDatosIva(dtStat, tipIva,Formatear.getDate(fvcFecfra,"dd-MM-yyyy"));
-      
-      if (datoIva!=null)
+      datosIva= new ArrayList<>();
+      for (Map.Entry<Integer,Double> entry : ivas.entrySet() )
       {
-        impIva = Formatear.redondea(impBim * datoIva.getPorcIVA() /
+        datoIva= MantTipoIVA.getDatosIva(dtStat, entry.getKey(),Formatear.getDate(fvcFecfra,"dd-MM-yyyy"));
+        
+        if (datoIva!=null)
+        {
+            double iBaseImp=entry.getValue();   
+            double impIva = Formatear.redondea(iBaseImp * datoIva.getPorcIVA() /
                                     100, numDec);
-        if (cliRecequ != 0)
-          impReq = Formatear.redondea(impBim * datoIva.getPorcREQ() /
-                               100, numDec);
+            double impReq = cliRecequ == 0?0:Formatear.redondea(iBaseImp * datoIva.getPorcREQ() /
+                                   100, numDec);
+            impIvaT+=impIva;
+            impReqT+=impReq;
+            if (cliRecequ==0)
+                datoIva.setPorcREQ(0);
+            datoIva.setBaseImp(iBaseImp);
+            datoIva.setImporIva(impIva);
+            datoIva.setImporReq(impReq);
+            datosIva.add(datoIva);
+        }
+        else
+            throw new SQLException(" Tipo de Iva " + entry.getKey() + " NO ENCONTRADO");
       }
-      else
-        throw new SQLException(" Tipo de Iva " + tipIva + " NO ENCONTRADO");
     }
-    double impFra = Formatear.redondea(impBim + impIva + impReq,numDec) ;
+    double impFra = Formatear.redondea(impBim + impIvaT + impReqT,numDec) ;
 
     dtAdd.setDato("fvc_trasp", 0); // Fact. Trasp. A contabilidad
     dtAdd.setDato("fvc_sumtot", impFra);
-    dtAdd.setDato("fvc_impiva", impIva);
-    dtAdd.setDato("fvc_imprec", impReq);
+    dtAdd.setDato("fvc_impiva", impIvaT);
+    dtAdd.setDato("fvc_imprec", impReqT);
     dtAdd.setDato("fvc_cobrad", fvcCobrad);
     dtAdd.setDato("fvc_cobtra", 0); // Cobro traspasado
     dtAdd.setDato("fvc_impres", 0); // Factura Impresa
@@ -980,7 +992,7 @@ public void iniciarVentana() throws Exception
     dtAdd.setDato("fvc_dtopp", dtoPP);
     dtAdd.setDato("fvc_dtocom", dtoCom);
     dtAdd.setDato("fvc_dtootr", 0);
-    if (incIva)
+    if (ivas.size()==1)
     {
       dtAdd.setDato("fvc_poriva", datoIva.getPorcIVA());
       dtAdd.setDato("fvc_porreq",
@@ -991,9 +1003,12 @@ public void iniciarVentana() throws Exception
       dtAdd.setDato("fvc_poriva", 0);
       dtAdd.setDato("fvc_porreq",0);
     }
-    dtAdd.update(stUp);
-//    dtAdd.select("SELECT lastval()");
-//    fvcId=(dtAdd.getInt(1));
+   
+    dtAdd.update(stUp);    
+    dtAdd.select("SELECT lastval()");
+    int fvcId=dtAdd.getInt(1) ;  
+    actualizarIvas(fvcId,dtStat);
+
     if (esGiro)
     { // Crear Recibos en tabla v_recibo
       generaRecibos(fpaCodi,impFra);
@@ -1003,6 +1018,22 @@ public void iniciarVentana() throws Exception
     else
       numFraB++;
     resetValores();
+  }
+  void actualizarIvas(double fvcId,DatosTabla dt) throws SQLException
+  {
+    s="delete from fraveniva where fvc_id = "+fvcId;
+    dt.executeUpdate(s);
+    for ( DatosIVA iva: datosIva)
+    {
+        dt.addNew("fraveniva");
+        dt.setDato("fvc_id",fvcId);        
+        dt.setDato("fvc_basimp",iva.getBaseImp());
+        dt.setDato("fvc_poriva",iva.getPorcIVA());
+        dt.setDato("fvc_porreq",iva.getPorcREQ());
+        dt.setDato("fvc_impiva",iva.getImporIva());
+        dt.setDato("fvc_impreq",iva.getImporReq());
+        dt.update();
+    }
   }
   int getNumFra(String serie)
   {
@@ -1064,7 +1095,8 @@ public void iniciarVentana() throws Exception
   void resetValores() throws Exception
   {
     opAgrCli=opAgrCliC.isSelected();
-    tipIva=-1;
+    ivas.clear();
+    datosIva.clear();
     impLin=0;
     impDtCom=0;
     cliCodi=dtAlb.getInt(opAgrCli?"cli_codfa":"cli_codi");

@@ -10,6 +10,15 @@ create table albveniva
 	avc_impiva float not null,
 	avc_impreq float not null
 );
+create table fraveniva
+(
+	fvc_id int not null,
+    fvc_basimp float not null,
+	fvc_poriva float not null,
+	fvc_porreq float not null,
+	fvc_impiva float not null,
+	fvc_impreq float not null
+);
 ---
 alter table tarifa alter tar_preci type float;
 --

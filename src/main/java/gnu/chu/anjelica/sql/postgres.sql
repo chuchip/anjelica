@@ -540,7 +540,7 @@ create unique index ix_idalbavec on v_albavec  (avc_id);
 create index albavec1 on v_albavec (avc_fecalb,cli_codi);
 create index albavec2 on v_albavec (cli_codi,avc_fecalb);
 --
--- Tabla con los diferentes tipos de IVA de un albaran
+-- Tabla con los diferentes tipos de IVA de un albaran de venta
 --
 create table albveniva
 (
@@ -551,7 +551,18 @@ create table albveniva
 	avc_impiva float not null,
 	avc_impreq float not null
 );
-
+--
+-- Tabla con los diferentes tipos de IVA de una factura de venta
+--
+create table fraveniva
+(
+	fvc_id int not null,
+    fvc_basimp float not null,
+	fvc_poriva float not null,
+	fvc_porreq float not null,
+	fvc_impiva float not null,
+	fvc_impreq float not null
+);
 --
 -- Tabla de transporte del albaran.
 -- Indica  numero palets, lomos, cajas

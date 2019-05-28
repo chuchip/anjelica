@@ -433,7 +433,7 @@ public class AnuFactur extends ventana
           if (msgErr == null)
           {
             PadFactur.deleteFra(jtFra.getValorInt(n, 1), jtFra.getValorInt(n, 0),fvcSerie,
-                 fvcNume, dtAdd);
+                 fvcNume,  dtAdd.getInt("fvc_id"),dtAdd);
             dtAdd.commit();
             jtFra.setValor(true,n,9);
             jtFra.setValor(false,n,8);

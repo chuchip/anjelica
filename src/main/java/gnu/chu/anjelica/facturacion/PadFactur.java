@@ -1630,7 +1630,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     mensaje("Borrando la Factura ....");
     Bcancelar.requestFocus();
   }
-
+  @Override
   public void ej_delete1()
   {
     this.setEnabled(false);
@@ -1639,7 +1639,7 @@ public class PadFactur extends ventanaPad   implements PAD {
       deleteFra(emp_codiE.getValorInt(),
                 fvc_anoE.getValorInt(),
                 fvc_serieE.getValor(),
-                fvc_numeE.getValorInt(),dtAdd);
+                fvc_numeE.getValorInt(),fvc_idE.getValorLong(),dtAdd);
       resetBloqueo(dtAdd, "v_facvec",
                       fvc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
                       "|" +   fvc_serieE.getValor()+fvc_numeE.getValorInt(),false);
@@ -1676,7 +1676,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     }
     nav.pulsado = navegador.NINGUNO;
   }
-  public static void deleteFra(int empCodi,int fvcAno, String fvcSerie,int fvcNume,DatosTabla dt) throws SQLException
+  public static void deleteFra(int empCodi,int fvcAno, String fvcSerie,int fvcNume,long fvcId,DatosTabla dt) throws SQLException
   {      // Borro la cabecera de la factura
        dt.delete();
       // Quito la referencia en la cabecera de Albaran
@@ -1700,13 +1700,14 @@ public class PadFactur extends ventanaPad   implements PAD {
           " AND fvc_nume = " + fvcNume;
       dt.executeUpdate(s);
       // Borro las lineas de La factura
-      s = "DELETE FROM v_facvel "+
+      s = "DELETE FROM v_facvel  "+
           " WHERE emp_codi = " + empCodi +
           " and fvc_serie ='"+fvcSerie+"'"+
           " AND eje_nume = " + fvcAno +
           "  AND fvc_nume = " + fvcNume;
       dt.executeUpdate(s);
-
+      s="delete from fraveniva where fvc_id = "+fvcId;
+      dt.executeUpdate(s);
       // Anulo los cobros que haya sobre esta factura y se los pongo al primer albaran
       //  que tenga.
       s="UPDATE v_cobros set cob_serie = '"+albSerie+"', fac_nume = 0 "+

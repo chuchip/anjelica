@@ -1088,6 +1088,13 @@ public class proPanel extends CPanel
         return null;
     return proNomb==null?dt.getString("pro_nomb"):proNomb;    
   }
+   public  static String getNombreArticulo(int proCodi,DatosTabla dt) throws SQLException
+  {
+    String s = "SELECT * FROM v_articulo WHERE pro_codi= " + proCodi;
+    if (!dt.select(s))
+        return null;
+    return dt.getString("pro_nomb");    
+  }
   public String getNombArt() throws SQLException
   {
     return getNombArt(pro_codiE.getText(),eu.em_cod);

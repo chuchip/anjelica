@@ -5785,9 +5785,13 @@ public class pdalbara extends ventanaPad  implements PAD
 //        avl_prvenE.setValorDec(jt.getValorDec(row,5)); // Restaurado valor anterior
         return;
       }
-      
+      if (proPanel.getNombreArticulo(jt.getValorInt(row,JT_PROCODI), dtStat)==null)
+          throw new SQLException("No encontrado articulo "+jt.getValorInt(row,JT_PROCODI)+" en maestro articulos");
+      int proIndtco=dtStat.getInt("pro_indtco");
       double avlPrven=Formatear.redondea(precio,NUMDECPRECIO);
-      double avlPrbase = avlPrven - (avlPrven * ((avc_dtocomE.getValorDec()+avc_dtoppE.getValorDec())/100)) ;
+      double avlPrbase = avlPrven - (avlPrven * ((
+              (proIndtco==0?0:avc_dtocomE.getValorDec())
+              +avc_dtoppE.getValorDec())/100)) ;
 
       avlPrbase=Formatear.redondea(avlPrbase,NUMDECPRECIO);
 
@@ -5860,23 +5864,26 @@ public class pdalbara extends ventanaPad  implements PAD
     int nRow = jt.getRowCount();
     // Actualizo las Linea de Albaran.
     double prPedido;
+    int proIndtco;
     for (int n = 0; n < nRow; n++)
     {
       if (jt.getValorInt(n, 0) == 0)
         continue;
-
+      if (proPanel.getNombreArticulo(jt.getValorInt(n, JT_PROCODI),dtStat)==null)
+          throw new Exception("No encontrado codigo: "+jt.getValorInt(n, JT_PROCODI)+" en maestro articulos");
+      proIndtco=dtStat.getInt("pro_indtco");
       s = "SELECT * FROM V_albavel WHERE avc_ano =" + avc_anoE.getValorInt() +
           " and emp_codi = " + emp_codiE.getValorInt() +
           " and avc_serie = '" + avc_seriE.getText() + "'" +
           " and avc_nume = " + avc_numeE.getValorInt() +
           " AND avl_numlin = " + jt.getValorInt(n, 0);
       if (!dtAdd.select(s, true))
-        throw new Exception("No encontrado Linea Albaran: " + jt.getValorInt(n, 0) +
+        throw new Exception("No encontrado Linea Albaran: " + jt.getValorInt(n, JT_NULIAL) +
                             "\n Select: " + s);
       dtAdd.edit(dtAdd.getCondWhere());
-      dtAdd.setDato("pro_codi", jt.getValorInt(n, 1));
-      dtAdd.setDato("pro_nomb", jt.getValString(n, 2));
-      dtAdd.setDato("avl_canti", jt.getValorDec(n, 3));
+      dtAdd.setDato("pro_codi", jt.getValorInt(n, JT_PROCODI));
+      dtAdd.setDato("pro_nomb", jt.getValString(n, JT_PRONOMB));
+      dtAdd.setDato("avl_canti", jt.getValorDec(n, JT_CANTI));
       dtAdd.setDato("avc_cerra", avc_cerraE.isSelected()?-1:0);
       dtAdd.setDato("avl_canbru", jt.getValorDec(n, JT_KILBRU));
       double precio = dtAdd.getDouble("avl_prven");
@@ -5916,12 +5923,9 @@ public class pdalbara extends ventanaPad  implements PAD
         }
       }
       precio=Formatear.redondea(precio,NUMDECPRECIO);
-      double avlPrbase = precio - (precio * ((avc_dtocomE.getValorDec() + avc_dtoppE.getValorDec())/100)) ;
-//      if (avc_dtocomE.getValorDec()!=0)
-//          avlPrbase-=precio*(avc_dtocomE.getValorDec()/100);
-//      if (avc_dtoppE.getValorDec()!=0)
-//          avlPrbase-=precio*(avc_dtoppE.getValorDec()/100); 
-
+     
+      double avlPrbase = precio - (precio * (
+              ((proIndtco==0?0:avc_dtocomE.getValorDec()) + avc_dtoppE.getValorDec())/100)) ;
       if (verPrecios || (avc_valoraE.getValorInt()==AVC_NOVALORADO && avc_revpreE.getValorInt()==0 && prPedido>=0))
       {
          avlPrbase = Formatear.redondea(avlPrbase, NUMDECPRECIO);
@@ -6002,7 +6006,7 @@ public class pdalbara extends ventanaPad  implements PAD
     for ( DatosIVA iva: datCab.getDatosIva())
     {
         dt.addNew("albveniva");
-        dt.setDato("avc_id",datCab.getValInt("avc_id"));        
+        dt.setDato("avc_id",avcId);        
         dt.setDato("avc_basimp",iva.getBaseImp());
         dt.setDato("avc_poriva",iva.getPorcIVA());
         dt.setDato("avc_porreq",iva.getPorcREQ());
