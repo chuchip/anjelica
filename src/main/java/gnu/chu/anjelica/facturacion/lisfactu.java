@@ -49,7 +49,6 @@ import net.sf.jasperreports.engine.*;
  */
 public class lisfactu extends ventana  implements JRDataSource
 {
- 
   IFMail ifMail=null;
   String subject;
   String emailCC;
@@ -1133,7 +1132,7 @@ private String buscaBanco(int banCodi) throws SQLException
        mensajes.mensajeAviso(msgError);
        return 0;
      }
-
+     
       cliCodi=dtFra.getInt("cli_codi");
       fvcAno=dtFra.getInt("fvc_ano");
       empCodi=dtFra.getInt("emp_codi");
@@ -1161,6 +1160,8 @@ private String buscaBanco(int banCodi) throws SQLException
             gnu.chu.print.util.getPathReport(EU, Listados.getNombListado(EU.em_cod,Listados.LIN_FRV, dtStat)));
      mp.put("SB_NAME_POB",
             gnu.chu.print.util.getPathReport(EU, Listados.getNombListado(EU.em_cod, Listados.PCO_FRV, dtStat)));
+      mp.put("SUBREPORTIVA_FILE_NAME",EU.pathReport +"/"+
+        Listados.getNombListado(EU.em_cod,Listados.LINIMP_FVC, dtCon1));
      swFirst = true;
      nFraImp = 1;
 //     rs = dtFra.getResultSet();
@@ -1222,7 +1223,7 @@ private String buscaBanco(int banCodi) throws SQLException
         if (campo.equals("numfra"))
             return dtFra.getString("fvc_ano").substring(2,4) +dtFra.getString("fvc_serie")+
                 Formatear.format(dtFra.getString("fvc_nume"),"99999");
-        
+       
        if (campo.equals("cli_nomb") ||
            campo.equals("cli_nomco") ||
            campo.equals("cli_direc") ||
@@ -1234,7 +1235,8 @@ private String buscaBanco(int banCodi) throws SQLException
            campo.equals("fvc_nume") ||
            campo.equals("cli_codi") ||
            campo.equals("cli_recequ") ||
-           campo.equals("fvc_ano"))
+           campo.equals("fvc_ano") ||
+            campo.equals("fvc_id"))
          return dtFra.getInt(campo);
        if (campo.equals("cli_codpo"))
            return dtFra.getString("cli_codpo");

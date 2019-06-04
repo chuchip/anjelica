@@ -49,6 +49,7 @@ public class Listados
     public final static int PALE_AVC=10;
     public final static int TARIFA=11; // Tarifa precios
     public final static int LINIMP_AVC=12; // Lineas Impuestos Albaranes ventas
+    public final static int LINIMP_FVC=13; // Lineas Impuestos Albaranes ventas
     private String nombFich;
     private String nombLogo;
     private int codListado;

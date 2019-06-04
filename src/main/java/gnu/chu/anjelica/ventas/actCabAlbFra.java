@@ -189,6 +189,7 @@ public class actCabAlbFra
       if (tipIva != -1 && tipIva != tipIvaArt && dtLin.getDouble("avl_canti",true)!=0)
         swCamTipIva = true;
       tipIva = tipIvaArt;
+      
       impLin=Formatear.redondea(Formatear.redondea(dtLin.getDouble("avl_canti",true), 2) *
                                 Formatear.redondea(dtLin.getDouble("avl_prven",true),numDecPrecio),numDec);
       if (dtLin.getString("pro_tiplot").equals("V") || dtLin.getString("pro_tiplot").equals("c"))
@@ -326,7 +327,7 @@ public class actCabAlbFra
         " and f.fvc_nume = " + fvcNume;
     if (! dtCab.select(s))
       return false;
-
+    ht.put("fvc_id",dtCab.getInt("fvc_id"));
     boolean incIva=dtCab.getInt("cli_exeiva")==0 && empCodi<90;
     return actDatosFra(ejeNume,empCodi,fvcSerie,fvcNume,incIva,
                        Formatear.redondea(dtCab.getDouble("fvc_dtopp"),numDec),
@@ -343,15 +344,15 @@ public class actCabAlbFra
    * @param dtopp double
    *  @param dtoCom double
    * @param cliRecequ boolean (Cliente tiene rec.equiv)
-     * @param fecha
+     * @param fechaFra
    * @throws SQLException
    * 
    * @return boolean
    */
   public boolean actDatosFra(int ejeNume,int empCodi,String fvcSerie,int fvcNume,
-       boolean incIva,double dtopp,double dtoCom,boolean cliRecequ,Date fecha) throws SQLException
+       boolean incIva,double dtopp,double dtoCom,boolean cliRecequ,Date fechaFra) throws SQLException
   {
-      if (fecha==null)
+      if (fechaFra==null)
       {
            s = "SELECT fvc_fecfra  FROM v_facvec WHERE  fvc_ano = " + ejeNume+
             " and emp_codi = " + empCodi +
@@ -359,16 +360,16 @@ public class actCabAlbFra
             " and  fvc_nume = " + fvcNume ;
           if (! dtLin.select(s))
               throw new SQLException("Error al buscar factura: "+s);
-          fecha=dtLin.getDate("fvc_fecfra");
+          fechaFra=dtLin.getDate("fvc_fecfra");
       }
 //    double impBruto=0;
     double impDtoPP=0;
     double impDtoCom=0;
     int tipIva=-1;
-  
+    Map<Integer,Double> ivas=new HashMap<>();
     double impIva=0;
     double impReq=0,impLin,impLinT=0,impLinDtoComT=0;
-    double impBim;
+    double impBim=0;
     s = "SELECT l.avc_fecalb,l.avc_ano,l.avc_serie,l.avc_nume, l.pro_codi,"+
         " sum(l.fvl_canti) as fvl_canti,  fvl_prven,fvl_dto,pro_tipiva,pro_indtco"
         + "  FROM v_facvel as l, v_articulo as a "+
@@ -382,6 +383,8 @@ public class actCabAlbFra
     if (! dtLin.select(s))
       return false; // SIN LINEAS DE Factura
     int avcNume=dtLin.getInt("avc_nume");
+    double iBaseImp,iDtoPP,iDtoCom;
+    
     do
     {
       int tipIvaActual=dtLin.getInt("pro_tipiva");
@@ -392,6 +395,17 @@ public class actCabAlbFra
       impLin=Formatear.redondea(Formatear.redondea(dtLin.getDouble("fvl_canti",true), 2) *
                                 Formatear.redondea(dtLin.getDouble("fvl_prven",true),numDecPrecio),2);
       impLinDtoComT+=dtLin.getInt("pro_indtco")==0?0:impLin;
+       iBaseImp = impLin;
+      iDtoPP= dtopp==0?0:Formatear.redondea(impLin * dtopp / 100, numDec);  
+      iDtoCom=0;
+      if (dtLin.getInt("pro_indtco")!=0)
+        iDtoCom = dtoCom==0?0:Formatear.redondea(impLin * dtoCom / 100, numDec);                  
+      impDtoPP+=iDtoPP;
+      impDtoCom+=iDtoCom;
+      iBaseImp-= iDtoCom+iDtoPP;     
+      Double baseImp=ivas.get(tipIva);
+      ivas.put(tipIvaActual,baseImp==null?iBaseImp:baseImp+iBaseImp);
+      impBim += iBaseImp; 
       impLinT+=impLin;
     } while (dtLin.next());
   
@@ -400,12 +414,12 @@ public class actCabAlbFra
       ht.put("fvc_impbru", impLinT);
     else
       ht.put("fvc_impbru", (double) 0);
-    if (dtopp!=0 )
-      impDtoPP= Formatear.redondea(impLinT *dtopp / 100,numDec);
-    if (dtoCom!=0 )
-        impDtoCom= Formatear.redondea(impLinDtoComT *dtoCom / 100,numDec);
-
-    impBim= Formatear.redondea(impLinT-impDtoPP-impDtoCom,numDec);
+//    if (dtopp!=0 )
+//      impDtoPP= Formatear.redondea(impLinT *dtopp / 100,numDec);
+//    if (dtoCom!=0 )
+//        impDtoCom= Formatear.redondea(impLinDtoComT *dtoCom / 100,numDec);
+//
+//    impBim= Formatear.redondea(impLinT-impDtoPP-impDtoCom,numDec);
     if (valora)
     {
       ht.put("fvc_dtopp",dtopp);
@@ -421,29 +435,47 @@ public class actCabAlbFra
       ht.put("fvc_impdpp", (double) 0);
       ht.put("fvc_basimp", (double) 0);
     }
-    DatosIVA tipoIva=null;
+    
+    DatosIVA dtIva=null;
+    double iIva,iReq;
     if (incIva)
     {
-      tipoIva= MantTipoIVA.getDatosIva(dtLin, tipIva,fecha);
-     
-      if (tipoIva!=null)
+      datosIva= new ArrayList<>();
+      for (Map.Entry<Integer,Double> entry : ivas.entrySet() )
       {
-        impIva = Formatear.redondea(impBim * tipoIva.getPorcIVA() / 100, numDec);
-        if (cliRecequ )
-          impReq = Formatear.redondea(impBim * tipoIva.getPorcREQ() / 100,numDec );
-      }
-      else
-        throw new SQLException(" Tipo de Iva " + tipIva + " NO ENCONTRADO. Albaran: "+    avcNume);
+         dtIva= MantTipoIVA.getDatosIva(dtLin, entry.getKey() ,fechaFra);      
+         if (dtIva!=null)
+         {
+            iBaseImp=entry.getValue();                
+            iIva = Formatear.redondea(iBaseImp * dtIva.getPorcIVA() /
+                                    100, numDec);
+            iReq = cliRecequ?Formatear.redondea(iBaseImp * dtIva.getPorcREQ() /
+                                      100, numDec):0;                      
+            impIva += iIva;
+            impReq += iReq;
+         
+            if (cliRecequ)
+                dtIva.setPorcREQ(0);
+            dtIva.setBaseImp(iBaseImp);
+            dtIva.setImporIva(iIva);
+            dtIva.setImporReq(iReq);
+            datosIva.add(dtIva);
+        }
+        else
+            throw new SQLException(" Tipo de Iva " + tipIva + " NO ENCONTRADO");   
+      }        
     }
+    else
+        datosIva=null;
     double impFra = Formatear.redondea(impBim + impIva + impReq,numDec);
 
     if (valora)
     {
-      if (incIva)
+      if (incIva && dtIva!=null)
       {
-        ht.put("fvc_tipiva", tipoIva.getPorcIVA());
+        ht.put("fvc_tipiva", dtIva.getPorcIVA());
         ht.put("fvc_impiva", impIva);
-        ht.put("fvc_tipree", cliRecequ ?tipoIva.getPorcREQ():(double) 0);
+        ht.put("fvc_tipree", cliRecequ ?dtIva.getPorcREQ():(double) 0);
         ht.put("fvc_impree", impReq);
       }
       else
