@@ -1875,8 +1875,9 @@ public class PadFactur extends ventanaPad   implements PAD {
     if (! datCab.actDatosFra(fvc_anoE.getValorInt() ,emp_codiE.getValorInt() ,
          fvc_serieE.getValor(), fvc_numeE.getValorInt()))
       return;
-    if ( datCab.getCambioIva())
-        throw new Exception("FACTURA ERRONEA ... TIENE TIPOS DE IVA DIFERENTES");
+   
+//    if ( datCab.getCambioIva())
+//        throw new Exception("FACTURA ERRONEA ... TIENE TIPOS DE IVA DIFERENTES");
 
     s = "SELECT * FROM v_facvec WHERE fvc_ano = " + fvc_anoE.getValorInt() +
         " and emp_codi = " + emp_codiE.getValorInt() +
@@ -1895,12 +1896,29 @@ public class PadFactur extends ventanaPad   implements PAD {
     dtAdd.setDato("fvc_porreq", datCab.getValDouble("fvc_tipree"));
 
     dtAdd.update(stUp);
+    actualizarIvas(dtAdd.getInt("fvc_id"),dtBloq);
     verDatos(dtCons);
     dtAdd.commit();
     mensajeErr("Importes de Factura ... ACTUALIZADOS");
     } catch (Exception k)
     {
       Error("Error al Actualizar Cabecera",k);
+    }
+  }
+   void actualizarIvas(double fvcId,DatosTabla dt) throws SQLException
+  {
+    s="delete from fraveniva where fvc_id = "+fvcId;
+    dt.executeUpdate(s);
+    for ( DatosIVA iva: datCab.getDatosIva())
+    {
+        dt.addNew("fraveniva");
+        dt.setDato("fvc_id",fvcId);        
+        dt.setDato("fvc_basimp",iva.getBaseImp());
+        dt.setDato("fvc_poriva",iva.getPorcIVA());
+        dt.setDato("fvc_porreq",iva.getPorcREQ());
+        dt.setDato("fvc_impiva",iva.getImporIva());
+        dt.setDato("fvc_impreq",iva.getImporReq());
+        dt.update();
     }
   }
   String getSqlListFra()

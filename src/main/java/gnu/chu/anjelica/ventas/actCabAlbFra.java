@@ -452,9 +452,8 @@ public class actCabAlbFra
             iReq = cliRecequ?Formatear.redondea(iBaseImp * dtIva.getPorcREQ() /
                                       100, numDec):0;                      
             impIva += iIva;
-            impReq += iReq;
-         
-            if (cliRecequ)
+            impReq += iReq;         
+            if (!cliRecequ)
                 dtIva.setPorcREQ(0);
             dtIva.setBaseImp(iBaseImp);
             dtIva.setImporIva(iIva);
