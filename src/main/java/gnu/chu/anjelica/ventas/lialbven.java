@@ -1,6 +1,6 @@
 package gnu.chu.anjelica.ventas;
 
-import gnu.chu.anjelica.DatosIVA;
+
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.pad.MantPaises;
 import gnu.chu.utilidades.*;

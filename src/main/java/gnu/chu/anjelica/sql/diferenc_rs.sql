@@ -1,7 +1,8 @@
 -- cambios del 21/5/2019
 insert into anjelica.listados values(0,12, 'Listado Detalle Impuesto Alb. Ventas','lialbvers',null);
 INSERT INTO LISTADOS (emp_codi,lis_codi,lis_nomb,lis_file,lis_logo) VALUES (0,13,'Listado Detalle Impuesto Fra. Ventas ','ivafrars',null);
-insert into parametros values('*','permitemultiIva','Permite albaranes/fras con diferentes IVAS',0); 
+insert into parametros values('*','permitemultiIva','Permite albaranes/fras con diferentes IVAS',1); 
+insert into parametros values('*','loteunico','En albaran ventas pone siempre lote A1-1',1); 
 create table albveniva
 (
 	avc_id int not null,

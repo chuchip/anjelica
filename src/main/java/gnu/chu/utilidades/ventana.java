@@ -356,7 +356,7 @@ public class ventana extends CInternalFrame implements ejecutable
         if (s.compareTo("")==0)
             mensaje(s,false);
         else
-            mensaje(s,true);
+            mensaje(s,false);
     }
     
 /**

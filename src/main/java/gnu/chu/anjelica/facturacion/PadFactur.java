@@ -1911,6 +1911,8 @@ public class PadFactur extends ventanaPad   implements PAD {
     dt.executeUpdate(s);
     for ( DatosIVA iva: datCab.getDatosIva())
     {
+        if (iva.getBaseImp()==0)
+            continue;
         dt.addNew("fraveniva");
         dt.setDato("fvc_id",fvcId);        
         dt.setDato("fvc_basimp",iva.getBaseImp());

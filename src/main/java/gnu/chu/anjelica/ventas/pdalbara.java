@@ -76,6 +76,7 @@ import gnu.chu.anjelica.despiece.DatTrazFrame;
 import gnu.chu.anjelica.despiece.DespVenta;
 import gnu.chu.anjelica.despiece.listraza;
 import gnu.chu.anjelica.despiece.utildesp;
+import gnu.chu.anjelica.facturacion.GenFactur;
 import gnu.chu.anjelica.listados.Listados;
 import gnu.chu.anjelica.listados.etiqueta;
 import static gnu.chu.anjelica.listados.etiqueta.LOGOTIPO;
@@ -271,6 +272,7 @@ public class pdalbara extends ventanaPad  implements PAD
   boolean swAvisoAlbRep;
   boolean AVISOALBREP=false;
   boolean PERMITMULTIIVA=false;
+  boolean LOTEUNICO=false;
   sepAlbVen dgAlb;
   boolean isLock=false;
   CButton Bdesgl=new CButton(Iconos.getImageIcon("duplicar"));
@@ -1424,6 +1426,7 @@ public class pdalbara extends ventanaPad  implements PAD
           SOLSINSTOCK=EU.getValorParam("solsinstock", SOLSINSTOCK);
           AVISOALBREP=EU.getValorParam("avisoalbrep", AVISOALBREP);
           PERMITMULTIIVA=EU.getValorParam("permitemultiIva", PERMITMULTIIVA);
+          LOTEUNICO=EU.getValorParam("loteunico", LOTEUNICO);
           avl_numpalE.setEnabled(swUsaPalets);
           PTrans.iniciarPanel(dtAdd,INC_HOJATRA,this);
           if (pdconfig.getConfiguracion(EU.em_cod,dtStat))
@@ -2486,16 +2489,28 @@ public class pdalbara extends ventanaPad  implements PAD
         }
       }
     });
-    Butil.addActionListener((ActionEvent e) -> {        
-        imprimir(Butil.getValor(e.getActionCommand()).charAt(0) );
-      });
+    Butil.addActionListener(new ActionListener()
+    {
+        @Override
+         public void actionPerformed(ActionEvent e) {
+              imprimir(Butil.getValor(e.getActionCommand()).charAt(0) );
+        }
+    });       
     
-    Bimpri.addActionListener((ActionEvent e) -> {        
-        imprimir(e.getActionCommand().equals("---")?ultSelecImpr:Bimpri.getValor(e.getActionCommand()).charAt(0) );
-      });
-    opAgru.addActionListener((ActionEvent e) -> {
-        verDatos(dtCons);
-      });
+    Bimpri.addActionListener(new ActionListener()
+    {
+        @Override
+         public void actionPerformed(ActionEvent e) {
+             imprimir(e.getActionCommand().equals("---")?ultSelecImpr:Bimpri.getValor(e.getActionCommand()).charAt(0) );
+        }
+    });
+    opAgru.addActionListener(new ActionListener()
+    {
+        @Override
+         public void actionPerformed(ActionEvent e) {
+            verDatos(dtCons);
+        }
+    });
     Bfincab.addFocusListener(new FocusAdapter()
     {
         @Override
@@ -2504,11 +2519,17 @@ public class pdalbara extends ventanaPad  implements PAD
         irGridLin();
       }
     });
-    Birgrid.addActionListener((e) -> {
-        irGrid();
-      });
+    Birgrid.addActionListener(new ActionListener()
+    {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+               irGrid();
+          }
+    });
 
-    jt.tableView.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+    jt.tableView.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+    {
+        public  void valueChanged(ListSelectionEvent e){
         if (e.getValueIsAdjusting() || ( (nav.pulsado == navegador.ADDNEW
                 || nav.pulsado == navegador.EDIT) &&
                 jt.isEnabled() == false)) // && e.getFirstIndex() == e.getLastIndex())
@@ -2522,6 +2543,7 @@ public class pdalbara extends ventanaPad  implements PAD
                 verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), JT_PRECIO):0,
                 verPrecios?jt.getValorDec(jt.tableView.getSelectedRow(), JT_PRETAR):0,
                 jt.getValorDec(jt.tableView.getSelectedRow(), JT_CANTI)<0);
+        }
       });
     jtDes.addMouseListener(new MouseAdapter()
     {
@@ -3680,7 +3702,7 @@ public class pdalbara extends ventanaPad  implements PAD
     double sumtot;
     if (! datCab.actDatosFra(fvc_anoE.getValorInt() ,emp_codiE.getValorInt()  ,fvc_serieE.getText() ,fvc_numeE.getValorInt()))
       return;
-    if ( datCab.getCambioIva())
+    if ( datCab.getCambioIva() && !PERMITMULTIIVA)
         throw new SQLException("FACTURA ERRONEA ... TIENE TIPOS DE IVA DIFERENTES");
 
     s = "SELECT * FROM v_facvec WHERE fvc_ano = " + fvc_anoE.getValorInt() +
@@ -3701,6 +3723,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("fvc_poriva", datCab.getValDouble("fvc_tipiva"));
     dtAdd.setDato("fvc_porreq", datCab.getValDouble("fvc_tipree"));
     dtAdd.update(stUp);
+    GenFactur.actualizarIvas(dtAdd.getDouble("fvc_id"),dtAdd,datCab.getDatosIva());
     // Busco  giros SIN Remesar
     s="SELECT * FROM v_recibo WHERE eje_nume = "+fvc_anoE.getValorInt()+
         " and emp_codi = " + emp_codiE.getValorInt() +
@@ -6003,8 +6026,14 @@ public class pdalbara extends ventanaPad  implements PAD
   {
     s="delete from albveniva where avc_id = "+avcId;
     dt.executeUpdate(s);
+    if (datCab==null)
+        return;
+    if (datCab.getDatosIva()==null)
+        return;
     for ( DatosIVA iva: datCab.getDatosIva())
     {
+        if (iva.getBaseImp()==0)
+            continue;
         dt.addNew("albveniva");
         dt.setDato("avc_id",avcId);        
         dt.setDato("avc_basimp",iva.getBaseImp());
@@ -6822,6 +6851,15 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   void ponValorLoteAnt()
   {
+      if (LOTEUNICO)
+        { 
+       jtDes.setValor(EU.em_cod,JTDES_EMP);   
+        jtDes.setValor(1,JTDES_LOTE);
+        jtDes.setValor(1,JTDES_NUMIND );
+        jtDes.setValor("A",JTDES_SERIE);            
+        jtDes.setValor(EU.ejercicio,JTDES_EJE);
+        return;
+       }
        if (avpNumparAnt!=0 && isEmpPlanta && jtDes.getValorInt(JTDES_LOTE)==0)
        {
         jtDes.setValor(EU.em_cod,JTDES_EMP);   

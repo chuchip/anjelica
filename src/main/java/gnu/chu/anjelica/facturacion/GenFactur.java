@@ -1007,7 +1007,7 @@ public void iniciarVentana() throws Exception
     dtAdd.update(stUp);    
     dtAdd.select("SELECT lastval()");
     int fvcId=dtAdd.getInt(1) ;  
-    actualizarIvas(fvcId,dtStat);
+    actualizarIvas(fvcId,dtStat,datosIva);
 
     if (esGiro)
     { // Crear Recibos en tabla v_recibo
@@ -1019,12 +1019,16 @@ public void iniciarVentana() throws Exception
       numFraB++;
     resetValores();
   }
-  void actualizarIvas(double fvcId,DatosTabla dt) throws SQLException
+  public static void actualizarIvas(double fvcId,DatosTabla dt,List<DatosIVA>  datosIva) throws SQLException
   {
-    s="delete from fraveniva where fvc_id = "+fvcId;
+    String s="delete from fraveniva where fvc_id = "+fvcId;
     dt.executeUpdate(s);
+    if (datosIva ==null)
+        return;
     for ( DatosIVA iva: datosIva)
     {
+        if (iva.getBaseImp()==0)
+            continue;
         dt.addNew("fraveniva");
         dt.setDato("fvc_id",fvcId);        
         dt.setDato("fvc_basimp",iva.getBaseImp());
