@@ -27,7 +27,7 @@ import java.util.*;
  *   Consulta Listado de Stock Agrupandolos por fecha caducidad.
  *   Saca los datos de la tabla de stock-partidas (v_stkpart)
  *
- *  <p>  Copyright: Copyright (c) 2005-2018
+ *  <p>  Copyright: Copyright (c) 2005-2020
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
@@ -351,9 +351,9 @@ public class CLinvcong extends ventana
         Pprinc.setLayout(new java.awt.GridBagLayout());
 
         Pcabe.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, java.awt.Color.orange, null));
-        Pcabe.setMaximumSize(new java.awt.Dimension(584, 85));
-        Pcabe.setMinimumSize(new java.awt.Dimension(584, 85));
-        Pcabe.setPreferredSize(new java.awt.Dimension(584, 85));
+        Pcabe.setMaximumSize(new java.awt.Dimension(604, 85));
+        Pcabe.setMinimumSize(new java.awt.Dimension(604, 85));
+        Pcabe.setPreferredSize(new java.awt.Dimension(604, 85));
         Pcabe.setLayout(null);
 
         Baceptar.setText("Aceptar");
@@ -430,7 +430,7 @@ public class CLinvcong extends ventana
 
         opSoloTot.setText("Solo Totales");
         Pcabe.add(opSoloTot);
-        opSoloTot.setBounds(270, 22, 90, 18);
+        opSoloTot.setBounds(260, 20, 110, 18);
 
         cLabel12.setText("Kilos Minimos");
         Pcabe.add(cLabel12);
@@ -442,17 +442,17 @@ public class CLinvcong extends ventana
         opDesgInd.setText("Desg. Indiv.");
         opDesgInd.setToolTipText("Desglosar Individuos");
         Pcabe.add(opDesgInd);
-        opDesgInd.setBounds(460, 20, 90, 18);
+        opDesgInd.setBounds(480, 20, 110, 18);
 
         opIncRes.setText("Inc. Reservas");
         Pcabe.add(opIncRes);
-        opIncRes.setBounds(360, 20, 110, 18);
+        opIncRes.setBounds(370, 20, 110, 18);
 
         opDesgEstado.setSelected(true);
         opDesgEstado.setText("Desg. Estado");
         opDesgEstado.setToolTipText("Desglosar Estado");
         Pcabe.add(opDesgEstado);
-        opDesgEstado.setBounds(460, 40, 100, 18);
+        opDesgEstado.setBounds(480, 40, 120, 18);
 
         cLabel13.setText("Lote");
         Pcabe.add(cLabel13);
@@ -854,8 +854,8 @@ public class CLinvcong extends ventana
                {
                       precCompra = utdesp.getPrecioCompra() == -1 ? 0 : utdesp.getPrecioCompra();
                       prvNomb = gnu.chu.anjelica.pad.pdprove.getNombPrv(utdesp.getPrvCompra(), dtStat);
-                }
-                fecDesp =  utdesp.getFechaDespiece();                
+               }
+               fecDesp =  utdesp.getFechaDespiece();                
             }
             else
             {

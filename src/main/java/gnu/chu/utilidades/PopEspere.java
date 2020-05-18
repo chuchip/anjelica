@@ -72,7 +72,7 @@ public class PopEspere extends CInternalFrame
     private void jbInit() throws Exception
     {
       cPanel1.setLayout(null);
-      this.setSize(new Dimension(385, 180));
+      this.setSize(new Dimension(385, 200));
 //      this.setIconifiable(false);
 //      this.setResizable(false);
 //      this.setMaximizable(false);

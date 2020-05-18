@@ -180,6 +180,7 @@ JMenuItem mantArticVenta = new JMenuItem();
    JMenuItem repeti = new JMenuItem();
   JMenuItem clstkfeca = new JMenuItem();
   JMenuItem clinvcong = new JMenuItem();
+  JMenuItem coinvcongtra = new JMenuItem();
    JMenuItem clresmvtos = new JMenuItem();
    JMenuItem cvregalm = new JMenuItem();
    JMenuItem mantAlbRuta = new JMenuItem();
@@ -856,6 +857,12 @@ JMenuItem mantArticVenta = new JMenuItem();
         clinvcong_actionPerformed(e);
       }
     });
+    coinvcongtra.setText("Cons Stock Cong. Trazabilidad");
+    coinvcongtra.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        coinvcongtra_actionPerformed(e);
+      }
+    });
     pdnumerac.setText("Numeraciones");
     pdnumerac.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -1073,7 +1080,7 @@ JMenuItem mantArticVenta = new JMenuItem();
      JPopupAlmacen.add(repeti);
     JPopupAlmacen.add(clstkfeca);
     JPopupAlmacen.add(clinvcong);
-    
+    JPopupAlmacen.add(coinvcongtra);
      JPopupAlmacen.add(clresmvtos);
      JPopupAlmacen.add(clprodrec);
      JPopupAlmacen.add(cvregalm);
@@ -2295,6 +2302,13 @@ void pdreprese_actionPerformed(ActionEvent e) {
     ht.put("verCostos","true");
 //    ht.put("verCostos","false");
     lanzaEjecutable(new gnu.chu.anjelica.almacen.CLinvcong(menu.this,EU,ht));
+
+  }
+ void coinvcongtra_actionPerformed(ActionEvent e) {
+     Hashtable ht=new Hashtable();
+    ht.put("verCostos","false");
+//    ht.put("verCostos","false");
+    lanzaEjecutable(new gnu.chu.anjelica.almacen.CoInvCongTraz(menu.this,EU,ht));
 
   }
  void clresmvtos_actionPerformed(ActionEvent e) {

@@ -462,7 +462,7 @@ public class DatTrazPanel extends CPanel {
 
         acp_saldesE.setMayusc(true);
         add(acp_saldesE);
-        acp_saldesE.setBounds(250, 80, 150, 17);
+        acp_saldesE.setBounds(250, 80, 140, 17);
 
         cLabel6.setText("Proveedor ");
         add(cLabel6);
@@ -546,7 +546,7 @@ public class DatTrazPanel extends CPanel {
         forzadaTrazC.setEnabledParent(false);
         forzadaTrazC.setFocusable(false);
         add(forzadaTrazC);
-        forzadaTrazC.setBounds(410, 80, 90, 17);
+        forzadaTrazC.setBounds(390, 80, 110, 17);
 
         acp_paisdeE.setEditable(false);
         add(acp_paisdeE);

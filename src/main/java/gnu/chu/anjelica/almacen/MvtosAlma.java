@@ -219,6 +219,10 @@ public class MvtosAlma
   {
       this.swSoloInv=swSoloInv;
   }
+  /**
+   * Establece el almacen sobre el que se buscaran datos
+   * @param almacen  Si es 0 buscara en todos los almacenenes.
+   */
   public void setAlmacen(int almacen)
   {
       almCodi=almacen;
@@ -1985,8 +1989,14 @@ public class MvtosAlma
       */
      public static Date getFechaUltInv(DatosTabla dt, Date fecmax,int empCodi) throws SQLException
      {
+         return getFechaUltInv(dt,fecmax,0,empCodi);
+     }
+     public static Date getFechaUltInv(DatosTabla dt, Date fecmax,int proCodi,int empCodi) throws SQLException
+     {
          String s = "select max(rgs_fecha) as cci_feccon from v_inventar as r  " +               
-                "  where rgs_fecha <= '"+Formatear.getFechaDB(fecmax)+"'"+
+                "  where 1= 1 "+
+                (proCodi==0 ?"": " and pro_codi = "+proCodi)+
+                (fecmax==null?"":" and rgs_fecha <= '"+Formatear.getFechaDB(fecmax)+"'")+
                 (empCodi==0?"": " and  r.emp_codi = " + empCodi);
          if (!dt.select(s))
              return null;

@@ -627,7 +627,7 @@ public class RepEtiqueta extends ventana
         BImpEtiInt = new gnu.chu.controles.CButton(Iconos.getImageIcon("print"));
         opGuardar = new gnu.chu.controles.CCheckBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         Pprinc.setLayout(null);
 
@@ -729,7 +729,7 @@ public class RepEtiqueta extends ventana
         opGuardar.setSelected(true);
         opGuardar.setText("Guardar");
         Pprinc.add(opGuardar);
-        opGuardar.setBounds(390, 222, 70, 18);
+        opGuardar.setBounds(370, 222, 100, 18);
 
         getContentPane().add(Pprinc, java.awt.BorderLayout.CENTER);
 

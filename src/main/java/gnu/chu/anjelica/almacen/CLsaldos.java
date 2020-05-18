@@ -234,7 +234,8 @@ public class CLsaldos extends ventana implements JRDataSource
         Pdatcon.add(cLabel2);
         cLabel2.setBounds(10, 2, 60, 17);
         Pdatcon.add(fecsalE);
-        fecsalE.setBounds(75, 20, 65, 17);
+        fecsalE.setBounds(70, 20, 65, 17);
+        fecsalE.getAccessibleContext().setAccessibleDescription("");
 
         opIgnDespSVal.setSelected(true);
         opIgnDespSVal.setText("Ign. Desp. SV");
@@ -246,15 +247,15 @@ public class CLsaldos extends ventana implements JRDataSource
         Pdatcon.add(cLabel3);
         cLabel3.setBounds(210, 60, 50, 17);
         Pdatcon.add(sbe_codiE);
-        sbe_codiE.setBounds(280, 20, 40, 17);
+        sbe_codiE.setBounds(300, 20, 40, 17);
 
         cLabel4.setText("Seccion");
         Pdatcon.add(cLabel4);
-        cLabel4.setBounds(230, 20, 50, 17);
+        cLabel4.setBounds(250, 20, 50, 17);
 
         cam_codiE.setAncTexto(30);
         Pdatcon.add(cam_codiE);
-        cam_codiE.setBounds(380, 20, 210, 17);
+        cam_codiE.setBounds(390, 20, 200, 17);
 
         opAjuCosto.setText("Aj. Costos");
         opAjuCosto.setToolTipText("Ignorar despieces sin valorar");
@@ -271,7 +272,7 @@ public class CLsaldos extends ventana implements JRDataSource
 
         cLabel6.setText("Camara");
         Pdatcon.add(cLabel6);
-        cLabel6.setBounds(330, 20, 50, 17);
+        cLabel6.setBounds(340, 20, 50, 17);
 
         pro_artconE.addItem("TODOS","0");
         pro_artconE.addItem("Congelado","1");
@@ -289,7 +290,7 @@ public class CLsaldos extends ventana implements JRDataSource
         opIncSemana.setText("Inc. Semana");
         opIncSemana.setToolTipText("Mostrar todos los productos que hayan tenido stock en la semana");
         Pdatcon.add(opIncSemana);
-        opIncSemana.setBounds(140, 20, 88, 17);
+        opIncSemana.setBounds(135, 20, 110, 17);
 
         cLabel7.setText("Almacen");
         Pdatcon.add(cLabel7);
