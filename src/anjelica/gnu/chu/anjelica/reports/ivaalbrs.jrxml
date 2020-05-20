@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ivaalbrs" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="5" rightMargin="5" topMargin="0" bottomMargin="0" uuid="d7ded3b2-84f7-45f5-954f-3e965a7c9821">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Anjelicars"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="avc_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1682]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT avc_basimp,avc_poriva, avc_porreq, avc_impiva, avc_impreq 
+FROM anjelica.albveniva
+where avc_id=  $P{avc_id} 
+order by avc_poriva]]>
+	</queryString>
+	<field name="avc_basimp" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="avc_basimp"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="albveniva"/>
+	</field>
+	<field name="avc_poriva" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="avc_poriva"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="albveniva"/>
+	</field>
+	<field name="avc_porreq" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="avc_porreq"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="albveniva"/>
+	</field>
+	<field name="avc_impiva" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="avc_impiva"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="albveniva"/>
+	</field>
+	<field name="avc_impreq" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="avc_impreq"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="albveniva"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20">
+			<line>
+				<reportElement key="line-8" mode="Opaque" x="434" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="d52e2afb-b70f-4a2b-85d7-080907fee982">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line-6" mode="Opaque" x="396" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="4f92c2e3-784b-40a4-8a9f-35d665f712dc">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement key="staticText-15" mode="Opaque" x="433" y="0" width="81" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="c2ff6caa-189a-4262-aed1-c38fe2d7dd5c">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[IMPORTE IMPUESTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-14" mode="Opaque" x="399" y="0" width="34" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="8dbe9953-163c-42cf-a821-f0b7f26c5830">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[I.V.A.]]></text>
+			</staticText>
+			<rectangle radius="5">
+				<reportElement key="rectangle-3" mode="Transparent" x="264" y="0" width="262" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="6c639ddb-b260-4c1c-9f6b-9895492cfb74">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement key="staticText-12" mode="Opaque" x="363" y="0" width="29" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="92d2698d-1f4d-4841-aa91-ea87b1b8b15c">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[R.E.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-13" mode="Opaque" x="270" y="0" width="90" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="5e07570f-adff-411a-a10c-fa66a36bb2eb">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[BASE IMPONIBLE]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line-7" mode="Opaque" x="360" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="da13becc-6b4e-431a-8d85-1a1fabeed644">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField pattern="#0.00">
+				<reportElement x="397" y="0" width="35" height="16" uuid="3adf401a-4fde-47c8-bbf9-3c5a6bc54706">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{avc_poriva}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#0.00">
+				<reportElement x="361" y="0" width="35" height="16" uuid="241ce72b-4e58-46b8-8a5c-de39acdc089c">
+					<printWhenExpression><![CDATA[$F{avc_porreq}>0]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{avc_porreq}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##,##0.00;-##,##0.00">
+				<reportElement x="297" y="0" width="60" height="16" uuid="8862fadb-1305-4ca3-8310-2edac3d83466"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{avc_basimp}]]></textFieldExpression>
+			</textField>
+			<textField pattern="##,##0.00;-##,##0.00">
+				<reportElement x="439" y="0" width="76" height="16" uuid="8d0b1abc-dfd9-4188-9225-648aea66375f">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{avc_impiva}+$F{avc_impreq}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-2" mode="Opaque" x="360" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="b6a2e629-7467-41f0-a2cd-294348860fc2">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line-2" mode="Opaque" x="396" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="52bfcb9d-8adc-4330-b3ee-b5160c839bee">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line-2" mode="Opaque" x="434" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="65cb1e09-4e3a-40d0-8d49-df5182320fcb">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line-2" mode="Opaque" x="526" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="a8741274-73a0-4503-b547-e2c765823513">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="line-2" mode="Opaque" x="264" y="0" width="1" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="8faafd54-04d7-4366-9064-4118d14e62fb">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="2" splitType="Stretch">
+			<line>
+				<reportElement key="line-2" mode="Opaque" x="264" y="0" width="262" height="2" forecolor="#000000" backcolor="#FFFFFF" uuid="019450b9-4d15-4f08-b0b8-e0615cca290d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>
