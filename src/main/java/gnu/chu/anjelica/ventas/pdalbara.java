@@ -3723,7 +3723,7 @@ public class pdalbara extends ventanaPad  implements PAD
     dtAdd.setDato("fvc_poriva", datCab.getValDouble("fvc_tipiva"));
     dtAdd.setDato("fvc_porreq", datCab.getValDouble("fvc_tipree"));
     dtAdd.update(stUp);
-    GenFactur.actualizarIvas(dtAdd.getDouble("fvc_id"),dtAdd,datCab.getDatosIva());
+    GenFactur.actualizarIvas(dtAdd.getDouble("fvc_id"),dtAdd,datCab.getDatosIva(),isEmpPlanta);
     // Busco  giros SIN Remesar
     s="SELECT * FROM v_recibo WHERE eje_nume = "+fvc_anoE.getValorInt()+
         " and emp_codi = " + emp_codiE.getValorInt() +
@@ -6024,6 +6024,9 @@ public class pdalbara extends ventanaPad  implements PAD
   }
   void actualizarIvas(double avcId,DatosTabla dt) throws SQLException
   {
+    if (!isEmpPlanta)
+        return;
+    
     s="delete from albveniva where avc_id = "+avcId;
     dt.executeUpdate(s);
     if (datCab==null)

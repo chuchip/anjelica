@@ -1160,8 +1160,11 @@ private String buscaBanco(int banCodi) throws SQLException
             gnu.chu.print.util.getPathReport(EU, Listados.getNombListado(EU.em_cod,Listados.LIN_FRV, dtStat)));
      mp.put("SB_NAME_POB",
             gnu.chu.print.util.getPathReport(EU, Listados.getNombListado(EU.em_cod, Listados.PCO_FRV, dtStat)));
+     if ( Listados.getNombListado(EU.em_cod,Listados.LINIMP_FVC, dtCon1)!=null)
+     {
       mp.put("SUBREPORTIVA_FILE_NAME",EU.pathReport +"/"+
         Listados.getNombListado(EU.em_cod,Listados.LINIMP_FVC, dtCon1));
+     }
      swFirst = true;
      nFraImp = 1;
 //     rs = dtFra.getResultSet();

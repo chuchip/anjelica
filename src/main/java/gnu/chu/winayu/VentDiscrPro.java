@@ -5,12 +5,12 @@
  * los productos. Creando la sentencia SQL para poder buscar los productos
  * por esos conceptos.
  * </p>
- * <p>Copyright: Copyright (c) 2005-2010
+ * <p>Copyright: Copyright (c) 2005-2020
  *  Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo
  *  los terminos de la Licencia Pública General de GNU según es publicada por
  *  la Free Software Foundation, bien de la versión 2 de dicha Licencia
  *  o bien (según su elección) de cualquier versión posterior.
- *  Este programa se distribuye con la esperanza de que sea útil,ed
+ *  Este programa se distribuye con la esperanza de que sea útil,
  *  pero SIN NINGUNA GARANTIA, incluso sin la garantía MERCANTIL implícita
  *  o sin garantizar la CONVENIENCIA PARA UN PROPOSITO PARTICULAR.
  *  Véase la Licencia Pública General de GNU para más detalles.
@@ -35,7 +35,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 public class VentDiscrPro extends ventana {
     DatosTabla dt;

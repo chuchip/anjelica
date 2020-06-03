@@ -121,7 +121,14 @@ public class Listados
             nombLogo="logotipo.jpg";
         this.nombLogo = nombLogo;
     }
-    
+    /**
+     * Devuelve null si el listado no exite.
+     * @param empCodi
+     * @param codList
+     * @param dtStat
+     * @return
+     * @throws SQLException 
+     */
     public  static Listados getListado(int empCodi,int codList, DatosTabla dtStat) throws SQLException
     {
       String s;
@@ -136,12 +143,15 @@ public class Listados
       if (dtStat.select(s))
         return new Listados(empCodi,codList,dtStat.getString("lis_file"),dtStat.getString("lis_logo"));
       
-      throw new SQLException("NO encontrado codigo Listado: "+codList+ " en Empresa: "+empCodi);
+      return null;
     }
     public  static String getNombListado(int empCodi,int codList, DatosTabla dtStat) throws SQLException
     {
         Listados lis=getListado(empCodi,codList,dtStat);
-        return lis.getNombFich();
+        if (lis==null)
+            return null;
+        else
+            return lis.getNombreFichero();
     }
     
     public static File getFileJasperReport(EntornoUsuario EU, String fichJasper,String extension)

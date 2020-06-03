@@ -1,20 +1,13 @@
 package gnu.chu.anjelica.almacen;
 
 import gnu.chu.Menu.Principal;
-import gnu.chu.anjelica.compras.MantAlbCom;
-import gnu.chu.anjelica.compras.MantAlbComCarne;
-import gnu.chu.anjelica.despiece.MantDesp;
 import gnu.chu.anjelica.despiece.MantTipDesp;
 import gnu.chu.anjelica.despiece.utildesp;
-import gnu.chu.anjelica.pad.MantFamPro;
-import gnu.chu.camposdb.empPanel;
 import gnu.chu.controles.StatusBar;
-import gnu.chu.controles.miCellRender;
 import gnu.chu.interfaces.ejecutable;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.sql.PreparedStatement;
@@ -23,8 +16,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.text.ParseException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *   Consulta Inventario Congelado con datos Trazabilidad.
@@ -125,7 +116,7 @@ public class CoInvCongTraz extends ventana
     conecta();
     initComponents();
     this.setSize(new Dimension(712, 502));
-    this.setVersion("2020-05-13");
+    this.setVersion("2020-06-03");
   }
     @Override
   public void iniciarVentana() throws Exception
@@ -741,9 +732,9 @@ public class CoInvCongTraz extends ventana
         v.add(""); // 4 
         v.add(""); // 5
         v.add(""); // 6
-        v.add(""); // 7
-        v.add(uniAct); // 8
-        v.add(kilAct); // 9
+        v.add(""); // 7        
+        v.add(kilAct); // 8
+        v.add(uniAct); // 9
         v.add(""); // 10
         v.add(""); // 11
         v.add("");// 12

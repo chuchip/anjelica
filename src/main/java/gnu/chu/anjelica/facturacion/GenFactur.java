@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GenFactur extends ventana {
+  boolean isEmpPlanta=false;
   conexion ctCom;
   String fecAlb;
   int nFras;
@@ -439,6 +440,7 @@ public void iniciarVentana() throws Exception
         ctUp.setCatalog(EU.catalog);
 
     ctUp.setAutoCommit(false);
+    isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
     pdclien.llenaTipoFact(cli_tipfacE,false);
     Pprinc.setDefButton(Bconsalb);
     cli_codiE.iniciar(dtStat, this, vl, EU);
@@ -1007,7 +1009,7 @@ public void iniciarVentana() throws Exception
     dtAdd.update(stUp);    
     dtAdd.select("SELECT lastval()");
     int fvcId=dtAdd.getInt(1) ;  
-    actualizarIvas(fvcId,dtStat,datosIva);
+    actualizarIvas(fvcId,dtStat,datosIva,isEmpPlanta);
 
     if (esGiro)
     { // Crear Recibos en tabla v_recibo
@@ -1019,8 +1021,11 @@ public void iniciarVentana() throws Exception
       numFraB++;
     resetValores();
   }
-  public static void actualizarIvas(double fvcId,DatosTabla dt,List<DatosIVA>  datosIva) throws SQLException
+ 
+  public static void actualizarIvas(double fvcId,DatosTabla dt,List<DatosIVA>  datosIva,boolean isEmpPlanta) throws SQLException
   {
+    if (! isEmpPlanta)
+        return;
     String s="delete from fraveniva where fvc_id = "+fvcId;
     dt.executeUpdate(s);
     if (datosIva ==null)
