@@ -49,6 +49,7 @@ import java.text.*;
 import java.util.*;
 
 public class PadFactur extends ventanaPad   implements PAD {
+   boolean isEmpPlanta=false;
   double impLinDtCom;
   boolean proIndtco;
   private boolean IMPFRATEXTO=false;
@@ -754,6 +755,7 @@ public class PadFactur extends ventanaPad   implements PAD {
    fvc_traspE.setColumnaAlias("fvc_trasp");
    fvc_dtoppE.setColumnaAlias("fvc_dtopp");
    fvc_dtocomE.setColumnaAlias("fvc_dtocom");
+   isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
    activarEventos();
    activar(false);
  }
@@ -1639,7 +1641,7 @@ public class PadFactur extends ventanaPad   implements PAD {
       deleteFra(emp_codiE.getValorInt(),
                 fvc_anoE.getValorInt(),
                 fvc_serieE.getValor(),
-                fvc_numeE.getValorInt(),fvc_idE.getValorLong(),dtAdd);
+                fvc_numeE.getValorInt(),fvc_idE.getValorLong(),dtAdd,isEmpPlanta);
       resetBloqueo(dtAdd, "v_facvec",
                       fvc_anoE.getValorInt() + "|" + emp_codiE.getValorInt() +
                       "|" +   fvc_serieE.getValor()+fvc_numeE.getValorInt(),false);
@@ -1676,7 +1678,7 @@ public class PadFactur extends ventanaPad   implements PAD {
     }
     nav.pulsado = navegador.NINGUNO;
   }
-  public static void deleteFra(int empCodi,int fvcAno, String fvcSerie,int fvcNume,long fvcId,DatosTabla dt) throws SQLException
+  public static void deleteFra(int empCodi,int fvcAno, String fvcSerie,int fvcNume,long fvcId,DatosTabla dt, boolean isEmpPlanta) throws SQLException
   {      // Borro la cabecera de la factura
        dt.delete();
       // Quito la referencia en la cabecera de Albaran
@@ -1705,9 +1707,13 @@ public class PadFactur extends ventanaPad   implements PAD {
           " and fvc_serie ='"+fvcSerie+"'"+
           " AND eje_nume = " + fvcAno +
           "  AND fvc_nume = " + fvcNume;
+      
       dt.executeUpdate(s);
-      s="delete from fraveniva where fvc_id = "+fvcId;
-      dt.executeUpdate(s);
+      if ( isEmpPlanta)
+      {
+        s="delete from fraveniva where fvc_id = "+fvcId;
+        dt.executeUpdate(s);
+      }
       // Anulo los cobros que haya sobre esta factura y se los pongo al primer albaran
       //  que tenga.
       s="UPDATE v_cobros set cob_serie = '"+albSerie+"', fac_nume = 0 "+
@@ -1896,7 +1902,8 @@ public class PadFactur extends ventanaPad   implements PAD {
     dtAdd.setDato("fvc_porreq", datCab.getValDouble("fvc_tipree"));
 
     dtAdd.update(stUp);
-    actualizarIvas(dtAdd.getInt("fvc_id"),dtBloq);
+    if (isEmpPlanta)
+        actualizarIvas(dtAdd.getInt("fvc_id"),dtBloq);
     verDatos(dtCons);
     dtAdd.commit();
     mensajeErr("Importes de Factura ... ACTUALIZADOS");

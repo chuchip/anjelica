@@ -23,6 +23,7 @@ package gnu.chu.anjelica.facturacion;
  */
 import gnu.chu.Menu.*;
 import gnu.chu.anjelica.pad.pdclien;
+import gnu.chu.anjelica.pad.pdconfig;
 import gnu.chu.controles.*;
 import gnu.chu.sql.DatosTabla;
 import gnu.chu.utilidades.*;
@@ -33,6 +34,7 @@ import java.util.*;
 
 public class AnuFactur extends ventana
 {
+  boolean isEmpPlanta=false;
   String s;
  CButton Bbuscar = new CButton("Buscar (F4)",Iconos.getImageIcon("check"));
    CLabel cLabel1 = new CLabel();
@@ -214,6 +216,7 @@ public class AnuFactur extends ventana
     cli_tipfacE.setQuery(true);
     PcondBus.feciniE.setText("01-"+Formatear.getFechaAct("MM-yyyy"));
     dtAdd=new DatosTabla(ctUp);
+    isEmpPlanta=pdconfig.getTipoEmpresa(EU.em_cod, dtStat)==pdconfig.TIPOEMP_PLANTACION;
   }
   void configurarGrid() throws Exception
   {
@@ -433,7 +436,7 @@ public class AnuFactur extends ventana
           if (msgErr == null)
           {
             PadFactur.deleteFra(jtFra.getValorInt(n, 1), jtFra.getValorInt(n, 0),fvcSerie,
-                 fvcNume,  dtAdd.getInt("fvc_id"),dtAdd);
+                 fvcNume,  dtAdd.getInt("fvc_id"),dtAdd,isEmpPlanta);
             dtAdd.commit();
             jtFra.setValor(true,n,9);
             jtFra.setValor(false,n,8);
