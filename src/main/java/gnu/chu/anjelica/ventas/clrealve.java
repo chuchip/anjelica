@@ -281,8 +281,10 @@ public class clrealve extends ventana
         try {
             if (liAlb == null)
               liAlb = new lialbven(dtStat, EU);
-            String s="SELECT a.emp_codi as avc_empcod, a.*,cl.*" +
-              " FROM v_albavec as a,clientes cl "+
+            String s="SELECT a.emp_codi as avc_empcod, a.*,cl.*,"
+                    + "tra_codi,avt_kilos,avt_connom,avt_condni,avt_matri1,avt_matri2 " +
+              " FROM v_albavec as a left join albvenht as ht on a.avc_id=ht.avc_id,"
+                    + "clientes cl "+
               " WHERE cl.cli_codi = a.cli_codi " +
                 PcondBus.getCondWhere(EU)+" ORDER BY  "+  
                 (ordenE.getValor().equals("C")? "a.cli_codi,":"")+

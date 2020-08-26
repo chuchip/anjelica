@@ -257,7 +257,8 @@ public class actCabAlbFra
             datosIva.add(dtIva);
         }
         else
-            throw new SQLException(" Tipo de Iva " + tipIva + " NO ENCONTRADO");   
+            throw new SQLException(" Tipo de Iva " + tipIva + " para ALBARAN : " + 
+                    avcAno + avcSerie  + avcNume +" NO ENCONTRADO");   
       }        
     }
     else
